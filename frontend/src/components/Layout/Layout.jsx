@@ -38,12 +38,31 @@ export default function Layout() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const [headerToast, setHeaderToast] = useState(null)
+  const [searchQuery, setSearchQuery] = useState('')
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20)
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
+
+  const handleSearch = (e) => {
+    if (e.key === 'Enter') {
+      setHeaderToast(`Buscando "${searchQuery}" en todo el sistema...`)
+      setTimeout(() => setHeaderToast(null), 3000)
+    }
+  }
+
+  const handleHeaderAction = (action) => {
+    const messages = {
+       notifications: 'No tienes nuevas notificaciones por el momento.',
+       settings: 'Abriendo configuración del sistema DocenTico...',
+       zap: '¡Modo IA Boost activado! El rendimiento de las sugerencias ha mejorado.'
+    }
+    setHeaderToast(messages[action])
+    setTimeout(() => setHeaderToast(null), 3000)
+  }
 
   const sidebarVariants = {
     expanded: { width: '280px' },
@@ -192,33 +211,62 @@ export default function Layout() {
                   type="text" 
                   placeholder="Buscar recursos, aulas..." 
                   className="bg-transparent border-none outline-none text-[11px] font-bold uppercase tracking-widest text-gray-300 placeholder:text-gray-700 w-full"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={handleSearch}
                 />
                 <span className="text-[10px] px-1.5 py-0.5 bg-white/5 rounded border border-white/10 text-gray-700 font-black">⌘K</span>
              </div>
           </div>
           
           <div className="flex items-center gap-3 md:gap-5">
-            <div className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-accent-rose/10 border border-accent-rose/20 rounded-lg">
+            <div 
+              onClick={() => window.dispatchEvent(new CustomEvent('toggle-ai-chat'))}
+              className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-accent-rose/10 border border-accent-rose/20 rounded-lg cursor-pointer hover:bg-accent-rose/20 transition-all active:scale-95"
+            >
                <Sparkles size={12} className="text-accent-rose" />
                <span className="text-[9px] font-black uppercase tracking-widest text-accent-rose">IA Aktiva</span>
             </div>
 
-            <button className="relative w-11 h-11 flex items-center justify-center text-gray-500 hover:text-white hover:bg-white/5 rounded-xl border border-transparent hover:border-white/10 transition-all">
+            <button 
+              onClick={() => handleHeaderAction('notifications')}
+              className="relative w-11 h-11 flex items-center justify-center text-gray-500 hover:text-white hover:bg-white/5 rounded-xl border border-transparent hover:border-white/10 transition-all"
+            >
               <Bell size={20} />
               <span className="absolute top-3 right-3 w-2 h-2 bg-primary-500 rounded-full border-2 border-surface animate-pulse" />
             </button>
             
-            <button className="hidden sm:flex w-11 h-11 items-center justify-center text-gray-500 hover:text-white hover:bg-white/5 rounded-xl border border-transparent hover:border-white/10 transition-all">
+            <button 
+              onClick={() => handleHeaderAction('settings')}
+              className="hidden sm:flex w-11 h-11 items-center justify-center text-gray-500 hover:text-white hover:bg-white/5 rounded-xl border border-transparent hover:border-white/10 transition-all"
+            >
                <Settings size={20} />
             </button>
             
             <div className="h-8 w-[1px] bg-white/5 mx-1" />
             
-            <div className="w-10 h-10 rounded-xl bg-surface-subtle border border-white/10 flex items-center justify-center text-primary-400 shadow-lg cursor-pointer hover:border-primary-500 transition-all active:scale-95">
+            <div 
+              onClick={() => handleHeaderAction('zap')}
+              className="w-10 h-10 rounded-xl bg-surface-subtle border border-white/10 flex items-center justify-center text-primary-400 shadow-lg cursor-pointer hover:border-primary-500 transition-all active:scale-95"
+            >
                <Zap size={20} />
             </div>
           </div>
         </header>
+
+        <AnimatePresence>
+          {headerToast && (
+            <motion.div 
+              initial={{ opacity: 0, y: -20, x: '-50%' }}
+              animate={{ opacity: 1, y: 0, x: '-50%' }}
+              exit={{ opacity: 0, y: -20, x: '-50%' }}
+              className="fixed top-24 left-1/2 -translate-x-1/2 z-[100] px-6 py-3 bg-surface-subtle/90 border border-primary-500/30 text-white text-[10px] font-black uppercase tracking-widest rounded-2xl backdrop-blur-xl shadow-2xl flex items-center gap-3"
+            >
+               <Sparkles className="text-primary-500" size={16} />
+               {headerToast}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         <main className="flex-1 overflow-y-auto p-4 md:p-8 custom-scrollbar">
           <div className="max-w-7xl mx-auto h-full space-y-8 pb-10">

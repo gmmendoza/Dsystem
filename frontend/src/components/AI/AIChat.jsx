@@ -25,14 +25,17 @@ const SUGGESTIONS = [
 export default function AIChat() {
   const [isOpen, setIsOpen] = useState(false)
   const [messages, setMessages] = useState([
-    { 
-      id: 1, 
-      role: 'assistant', 
-      content: '¡Hola! Soy **DocenTico**, tu copiloto pedagógico. He analizado tus clases y tengo nuevos *insights* listos. ¿En qué te ayudo hoy?' 
-    }
+    { id: 1, role: 'assistant', content: 'Hola, soy DocenTico. ¿En qué puedo ayudarte con tu planificación hoy? Puedo analizar el progreso de tus alumnos o sugerirte recursos dinámicos.' }
   ])
   const [input, setInput] = useState('')
   const [isTyping, setIsTyping] = useState(false)
+
+  // Listener para abrir el chat desde cualquier parte del sistema
+  useEffect(() => {
+    const handleOpenChat = () => setIsOpen(true)
+    window.addEventListener('toggle-ai-chat', handleOpenChat)
+    return () => window.removeEventListener('toggle-ai-chat', handleOpenChat)
+  }, [])
   const chatEndRef = useRef(null)
 
   const scrollToBottom = () => {

@@ -42,13 +42,23 @@ export const mockDataService = {
   getAlumnoById: (id) => mockDataService.getAlumnos().find(a => a.id === Number(id)),
   saveAlumno: (data) => {
     const students = mockDataService.getAlumnos();
-    const newStudent = { ...data, id: Date.now(), asistencia: data.asistencia || 100, participacion: data.participacion || 100 };
+    const newStudent = { 
+      ...data, 
+      id: Date.now(), 
+      asistencia: Number(data.asistencia) || Math.floor(Math.random() * (100 - 80 + 1)) + 80, 
+      participacion: Number(data.participacion) || Math.floor(Math.random() * (100 - 70 + 1)) + 70 
+    };
     setLS(KEYS.ALUMNOS, [newStudent, ...students]);
     return newStudent;
   },
   updateAlumno: (id, data) => {
     const students = mockDataService.getAlumnos();
-    const updated = students.map(s => s.id === Number(id) ? { ...s, ...data } : s);
+    const updated = students.map(s => s.id === Number(id) ? { 
+      ...s, 
+      ...data,
+      asistencia: Number(data.asistencia) || s.asistencia || 100,
+      participacion: Number(data.participacion) || s.participacion || 100
+    } : s);
     setLS(KEYS.ALUMNOS, updated);
     return updated.find(s => s.id === Number(id));
   },

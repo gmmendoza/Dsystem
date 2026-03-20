@@ -425,10 +425,10 @@ export default function AulaWorkspace() {
                                <div className="space-y-1.5 min-w-[120px]">
                                   <div className="flex justify-between items-center text-[9px] font-black uppercase tracking-widest">
                                      <span className="text-gray-500">Asistencia</span>
-                                     <span className={a.asistencia > 90 ? 'text-green-500' : 'text-orange-500'}>{a.asistencia}%</span>
+                                     <span className={(a.asistencia || 0) > 90 ? 'text-green-500' : 'text-orange-500'}>{a.asistencia ?? 100}%</span>
                                   </div>
                                   <div className="h-1 bg-white/5 rounded-full overflow-hidden">
-                                     <div className={`h-full rounded-full ${a.asistencia > 90 ? 'bg-green-500' : 'bg-orange-500'}`} style={{ width: `${a.asistencia}%` }} />
+                                     <div className={`h-full rounded-full ${(a.asistencia || 0) > 90 ? 'bg-green-500' : 'bg-orange-500'}`} style={{ width: `${a.asistencia ?? 100}%` }} />
                                   </div>
                                </div>
                             </td>
@@ -496,12 +496,22 @@ export default function AulaWorkspace() {
                        </p>
                     </div>
                     <div className="flex gap-4 shrink-0 relative z-10">
-                       <button onClick={() => setPreviewResource({
-                         titulo: 'Célula Animal 3D',
-                         tipo: 'Modelo Interactivo',
-                         url: 'https://images.unsplash.com/photo-1530210124550-912dc1381cb8?q=80&w=1000'
-                       })} className="btn-secondary">Previsualizar</button>
-                       <button onClick={handleAddSuggestedActivity} className="btn-primary">Añadir al Plan</button>
+                       <button 
+                         type="button"
+                         onClick={(e) => {
+                           e.preventDefault();
+                           e.stopPropagation();
+                           setPreviewResource({
+                             titulo: 'Célula Animal 3D',
+                             tipo: 'Modelo Interactivo',
+                             url: 'https://images.unsplash.com/photo-1544333346-633ca58682cd?q=80&w=1200' 
+                           });
+                         }} 
+                         className="btn-secondary"
+                       >
+                         Previsualizar
+                       </button>
+                       <button type="button" onClick={handleAddSuggestedActivity} className="btn-primary">Añadir al Plan</button>
                     </div>
                  </div>
 
