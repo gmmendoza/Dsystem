@@ -5,10 +5,11 @@ export const initialAlumnos = [
     apellido: "Pérez", 
     dni: "42.123.456", 
     email: "juan.perez@escuela.edu",
-    asistencia: 95,
+    asistencia: 78,
     participacion: 85,
     dificultades: ["Tablas del 7 y 8", "División compleja"],
-    progreso: [8, 7, 9, 8, 9]
+    progreso: [8, 7, 9, 8, 9],
+    notas: { "Matemática": 6, "Lengua": 8, "Sociales": 7, "Naturales": 8 }
   },
   { 
     id: 2, 
@@ -19,7 +20,8 @@ export const initialAlumnos = [
     asistencia: 88,
     participacion: 92,
     dificultades: ["Comprensión lectora"],
-    progreso: [9, 9, 10, 9, 10]
+    progreso: [9, 9, 10, 9, 10],
+    notas: { "Matemática": 9, "Lengua": 7, "Sociales": 9, "Naturales": 10 }
   },
   { 
     id: 3, 
@@ -27,10 +29,11 @@ export const initialAlumnos = [
     apellido: "Rodríguez", 
     dni: "43.555.444", 
     email: "pedro.rod@escuela.edu",
-    asistencia: 75,
+    asistencia: 72,
     participacion: 60,
     dificultades: ["Ortografía", "Geometría"],
-    progreso: [6, 5, 7, 6, 6]
+    progreso: [6, 5, 7, 6, 6],
+    notas: { "Matemática": 5, "Lengua": 6, "Sociales": 5, "Naturales": 6 }
   },
   { 
     id: 4, 
@@ -41,7 +44,8 @@ export const initialAlumnos = [
     asistencia: 100,
     participacion: 95,
     dificultades: [],
-    progreso: [10, 10, 10, 10, 10]
+    progreso: [10, 10, 10, 10, 10],
+    notas: { "Matemática": 10, "Lengua": 10, "Sociales": 10, "Naturales": 10 }
   },
   { 
     id: 5, 
@@ -49,10 +53,11 @@ export const initialAlumnos = [
     apellido: "Sánchez", 
     dni: "44.111.999", 
     email: "lucas.sanchez@escuela.edu",
-    asistencia: 82,
+    asistencia: 65,
     participacion: 70,
     dificultades: ["Cálculo mental"],
-    progreso: [7, 8, 7, 8, 7]
+    progreso: [7, 8, 7, 8, 7],
+    notas: { "Matemática": 4, "Lengua": 7, "Sociales": 6, "Naturales": 5 }
   },
   {
     id: 6,
@@ -63,7 +68,8 @@ export const initialAlumnos = [
     asistencia: 91,
     participacion: 88,
     dificultades: ["Fracciones"],
-    progreso: [8, 9, 8, 9, 8]
+    progreso: [8, 9, 8, 9, 8],
+    notas: { "Matemática": 8, "Lengua": 9, "Sociales": 8, "Naturales": 8 }
   },
   {
     id: 7,
@@ -74,7 +80,8 @@ export const initialAlumnos = [
     asistencia: 94,
     participacion: 90,
     dificultades: [],
-    progreso: [9, 9, 9, 9, 10]
+    progreso: [9, 9, 9, 9, 10],
+    notas: { "Matemática": 9, "Lengua": 9, "Sociales": 9, "Naturales": 9 }
   },
   {
     id: 8,
@@ -85,7 +92,8 @@ export const initialAlumnos = [
     asistencia: 85,
     participacion: 75,
     dificultades: ["Lectura en voz alta"],
-    progreso: [7, 7, 8, 7, 8]
+    progreso: [7, 7, 8, 7, 8],
+    notas: { "Matemática": 7, "Lengua": 7, "Sociales": 8, "Naturales": 7 }
   },
   {
     id: 9,
@@ -96,7 +104,8 @@ export const initialAlumnos = [
     asistencia: 98,
     participacion: 94,
     dificultades: ["Geometría"],
-    progreso: [9, 10, 9, 10, 9]
+    progreso: [9, 10, 9, 10, 9],
+    notas: { "Matemática": 10, "Lengua": 9, "Sociales": 10, "Naturales": 9 }
   },
   {
     id: 10,
@@ -107,7 +116,8 @@ export const initialAlumnos = [
     asistencia: 90,
     participacion: 82,
     dificultades: ["Multiplicación"],
-    progreso: [8, 8, 7, 8, 8]
+    progreso: [8, 8, 7, 8, 8],
+    notas: { "Matemática": 7, "Lengua": 8, "Sociales": 8, "Naturales": 8 }
   }
 ];
 

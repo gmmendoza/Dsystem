@@ -30,6 +30,7 @@ import AIChat from '../AI/AIChat'
 const navItems = [
   { to: '/dashboard',    icon: LayoutDashboard, label: 'Panel Dashboard' },
   { to: '/mi-aula',      icon: BookOpen,        label: 'Mis Aulas' },
+  { to: '/estudiantes',  icon: Users,           label: 'Estudiantes' },
   { to: '/planificador', icon: ClipboardList,   label: 'Planificador Pro' },
   { to: '/agenda',       icon: CalendarDays,    label: 'Calendario' },
   { to: '/historial',    icon: History,         label: 'Historial' },
@@ -133,10 +134,10 @@ export default function Layout() {
                 key={to}
                 to={to}
                 className={({ isActive }) =>
-                  `flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all group relative ${
+                      `flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all group relative ${
                     isActive 
-                      ? 'bg-primary-600/10 text-primary-400 border border-primary-500/20' 
-                      : 'text-gray-500 hover:text-primary-500 hover:bg-white/5 border border-transparent'
+                      ? 'bg-primary-600/10 text-primary-500 dark:text-primary-400 border border-primary-500/20 shadow-sm' 
+                      : 'text-gray-900 dark:text-gray-500 hover:text-primary-600 dark:hover:text-primary-500 hover:bg-black/5 dark:hover:bg-white/5 border border-transparent'
                   }`
                 }
               >
@@ -209,18 +210,18 @@ export default function Layout() {
              </button>
              
              {/* Search Bar SaaS Style */}
-             <div className="hidden md:flex items-center gap-3 bg-surface-subtle border border-black/5 dark:border-white/5 px-4 py-2.5 rounded-xl w-80 group focus-within:border-primary-500/50 transition-all">
-                <Search size={16} className="text-gray-600 group-focus-within:text-primary-500" />
+             <div className="hidden md:flex items-center gap-3 bg-surface-subtle border border-black/10 dark:border-white/5 px-4 py-2.5 rounded-xl w-80 group focus-within:border-primary-500/50 transition-all shadow-sm">
+                <Search size={16} className="text-gray-900 dark:text-gray-500 group-focus-within:text-primary-500" />
                 <input 
                   type="text" 
-                  placeholder="Buscar recursos, aulas..." 
-                  className="bg-transparent border-none outline-none text-[11px] font-bold uppercase tracking-widest placeholder:text-gray-700 w-full"
+                  placeholder="BUSCAR RECURSOS, AULAS..." 
+                  className="bg-transparent border-none outline-none text-[11px] font-black uppercase tracking-widest placeholder:text-gray-800 dark:placeholder:text-gray-500 w-full"
                   style={{ color: 'rgb(var(--color-text))' }}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyDown={handleSearch}
                 />
-                <span className="text-[10px] px-1.5 py-0.5 bg-surface-muted rounded border border-black/5 dark:border-white/10 text-gray-700 font-black">⌘K</span>
+                <span className="text-[10px] px-1.5 py-0.5 bg-surface-muted rounded border border-black/10 dark:border-white/10 text-gray-900 dark:text-gray-400 font-black">⌘K</span>
              </div>
           </div>
           
@@ -228,7 +229,7 @@ export default function Layout() {
 
             <button 
               onClick={() => handleHeaderAction('notifications')}
-              className="relative w-11 h-11 flex items-center justify-center text-gray-500 hover:text-primary-500 hover:bg-surface-subtle rounded-xl border border-transparent hover:border-black/5 dark:hover:border-white/10 transition-all"
+              className="relative w-11 h-11 flex items-center justify-center text-gray-900 dark:text-gray-500 hover:text-primary-600 dark:hover:text-primary-500 hover:bg-surface-subtle rounded-xl border border-transparent hover:border-black/10 dark:hover:border-white/10 transition-all"
             >
               <Bell size={20} />
               <span className="absolute top-3 right-3 w-2 h-2 bg-primary-500 rounded-full border-2 border-surface animate-pulse" />
@@ -236,7 +237,7 @@ export default function Layout() {
             
             <button 
               onClick={toggleTheme}
-              className="w-11 h-11 flex items-center justify-center text-gray-500 hover:text-primary-500 hover:bg-surface-subtle rounded-xl border border-transparent hover:border-black/5 dark:hover:border-white/10 transition-all"
+              className="w-11 h-11 flex items-center justify-center text-gray-900 dark:text-gray-500 hover:text-primary-600 dark:hover:text-primary-500 hover:bg-surface-subtle rounded-xl border border-transparent hover:border-black/10 dark:hover:border-white/10 transition-all"
               title={theme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
             >
               {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}

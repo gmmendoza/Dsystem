@@ -286,22 +286,22 @@ export default function Planificador() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
                  <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-600 block">Título de la Unidad</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-900 dark:text-gray-600 block">Título de la Unidad</label>
                     <input 
-                       className="w-full bg-transparent border-none p-0 text-3xl font-black placeholder:text-gray-400 outline-none focus:ring-0 italic"
+                       className="w-full bg-transparent border-none p-0 text-3xl font-black placeholder:text-gray-600 dark:placeholder:text-gray-400 outline-none focus:ring-0 italic"
                        style={{ color: 'rgb(var(--color-text))' }}
                        value={formData.titulo}
                        onChange={e => setFormData({...formData, titulo: e.target.value})}
-                       placeholder="Escribe el título aquí..."
+                       placeholder="ESCRIBE EL TÍTULO AQUÍ..."
                     />
                  </div>
                  <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-600 block">Materia o Área</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-900 dark:text-gray-600 block">Materia o Área</label>
                     <input 
-                       className="w-full bg-transparent border-none p-0 text-3xl font-black text-indigo-400 placeholder:text-gray-800 outline-none focus:ring-0 italic"
+                       className="w-full bg-transparent border-none p-0 text-3xl font-black text-indigo-600 dark:text-indigo-400 placeholder:text-gray-800 dark:placeholder:text-gray-700 outline-none focus:ring-0 italic"
                        value={formData.materia}
                        onChange={e => setFormData({...formData, materia: e.target.value})}
-                       placeholder="Ej: Matemática"
+                       placeholder="EJ: MATEMÁTICA"
                     />
                  </div>
                  

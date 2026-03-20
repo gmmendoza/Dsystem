@@ -6,11 +6,11 @@
 
 :root {
   --color-surface: 255 255 255;
-  --color-surface-subtle: 248 250 252; /* Slate 50 */
-  --color-surface-muted: 241 245 249;  /* Slate 100 */
+  --color-surface-subtle: 241 245 249; /* Slate 100 (Was 50) */
+  --color-surface-muted: 226 232 240;  /* Slate 200 (Was 100) */
   --color-primary: 14 165 233; /* Sky 500 */
   --color-text: 15 23 42;      /* Slate 900 */
-  --color-border: 226 232 240; /* Slate 200 */
+  --color-border: 203 213 225; /* Slate 300 (Was 200) */
 }
 
 .dark {

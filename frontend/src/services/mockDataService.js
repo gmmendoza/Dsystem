@@ -79,7 +79,11 @@ export const mockDataService = {
     let savedItem;
 
     if (isUpdate) {
-      savedItem = { ...courses.find(c => c.id === Number(data.id)), ...data };
+      savedItem = { 
+        ...courses.find(c => c.id === Number(data.id)), 
+        ...data,
+        id: Number(data.id) // ensure id remains number
+      };
       updatedCourses = courses.map(c => c.id === Number(data.id) ? savedItem : c);
     } else {
       savedItem = { 

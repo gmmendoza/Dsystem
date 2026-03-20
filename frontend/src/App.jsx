@@ -9,6 +9,7 @@ import Agenda from './pages/Agenda'
 import Planificador from './pages/Planificador'
 import AulaWorkspace from './pages/AulaWorkspace'
 import Historial from './pages/Historial'
+import Estudiantes from './pages/Estudiantes'
 
 function ProtectedRoute({ children }) {
   const { token } = useAuth()
@@ -36,6 +37,7 @@ export default function App() {
         <Route path="/agenda" element={<Agenda />} />
         <Route path="/planificador" element={<Planificador />} />
         <Route path="/historial" element={<Historial />} />
+        <Route path="/estudiantes" element={<Estudiantes />} />
       </Route>
 
       {/* Redirección por defecto */}

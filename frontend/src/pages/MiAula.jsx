@@ -14,7 +14,9 @@ import {
   TrendingUp,
   Clock,
   Zap,
-  GraduationCap
+  GraduationCap,
+  Settings,
+  Edit2
 } from 'lucide-react'
 import { CardSkeleton } from '../components/Common/LoadingSkeleton'
 import { Toast } from '../components/Common/Toast'
@@ -179,20 +181,28 @@ export default function MiAula() {
                        {curso.nivel === 'Inicial' ? <Sparkles size={32} /> : <School size={32} />}
                     </div>
                     <div className="flex flex-col items-end gap-2">
-                       <span className="px-3 py-1 bg-primary-500/10 text-primary-400 text-[8px] font-black uppercase tracking-widest rounded-lg border border-primary-500/20">
-                          {curso.nivel}
-                       </span>
-                       <div className="flex items-center gap-1 text-[8px] font-black text-gray-700 uppercase tracking-widest">
-                          <Clock size={10} /> {curso.horario || '08:00 AM'}
+                       <div className="flex gap-2">
+                          <button 
+                            onClick={(e) => { e.stopPropagation(); setEditingCurso(curso); setIsModalOpen(true); }}
+                            className="p-2 bg-surface hover:bg-primary-600/20 rounded-lg border border-black/5 dark:border-white/5 text-gray-900 hover:text-primary-500 transition-all shadow-sm"
+                          >
+                             <Edit2 size={12} />
+                          </button>
+                          <span className="px-3 py-1 bg-primary-500/20 text-primary-700 dark:text-primary-400 text-[8px] font-black uppercase tracking-widest rounded-lg border border-primary-500/20">
+                             {curso.nivel}
+                          </span>
+                       </div>
+                       <div className="flex items-center gap-1 text-[8px] font-black text-gray-900 dark:text-gray-300 uppercase tracking-widest bg-black/5 dark:bg-white/5 px-2 py-1 rounded-md">
+                          <Clock size={10} className="text-primary-500" /> {curso.horario || '08:00 AM'}
                        </div>
                     </div>
                   </div>
 
                   <div className="space-y-3">
-                    <h3 className="text-3xl font-black uppercase italic tracking-tighter group-hover:text-primary-300 transition-colors leading-none">
+                    <h3 className="text-3xl font-black uppercase italic tracking-tighter text-gray-900 dark:text-white group-hover:text-primary-500 transition-colors leading-none">
                       {curso.nombre}
                     </h3>
-                    <p className="text-[10px] font-bold text-gray-600 uppercase tracking-widest leading-relaxed line-clamp-2 italic">
+                    <p className="text-[10px] font-bold text-gray-800 dark:text-gray-400 uppercase tracking-widest leading-relaxed line-clamp-2 italic opacity-80">
                       {curso.descripcion}
                     </p>
                   </div>
@@ -200,15 +210,15 @@ export default function MiAula() {
                   <div className="mt-10 pt-8 border-t border-black/5 dark:border-white/5 flex items-center justify-between">
                     <div className="flex items-center gap-6">
                       <div className="flex flex-col">
-                        <span className="text-[8px] font-black text-gray-700 uppercase mb-1">Alumnado</span>
-                        <div className="flex items-center gap-1.5 font-black uppercase tracking-widest text-[10px] text-gray-400">
+                        <span className="text-[8px] font-black text-gray-900 dark:text-gray-500 uppercase mb-1 opacity-60">Alumnado</span>
+                        <div className="flex items-center gap-1.5 font-black uppercase tracking-widest text-[10px] text-gray-900 dark:text-gray-400">
                           <Users size={14} className="text-primary-500" />
                           <span>{curso.alumnos?.length || 0}</span>
                         </div>
                       </div>
                       <div className="w-[1px] h-6 bg-black/5 dark:bg-white/5" />
                       <div className="flex flex-col">
-                        <span className="text-[8px] font-black text-gray-700 uppercase mb-1">Estado</span>
+                        <span className="text-[8px] font-black text-gray-900 dark:text-gray-500 uppercase mb-1 opacity-60">Estado</span>
                         <div className="flex items-center gap-1.5 font-black uppercase tracking-widest text-[10px] text-green-500">
                           <Zap size={14} />
                           <span>Live</span>

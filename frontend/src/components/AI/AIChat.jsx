@@ -14,6 +14,7 @@ import {
   ThumbsUp,
   RotateCcw
 } from 'lucide-react'
+import { mockDataService } from '../../services/mockDataService'
 
 const SUGGESTIONS = [
   "¿Cómo va la asistencia de 3° A?",
@@ -55,23 +56,30 @@ export default function AIChat() {
     setInput('')
     setIsTyping(true)
 
-    // Simulate AI Response logic
+    // Simulate AI Response logic with Data Context
     setTimeout(() => {
-        let aiContent = "Estoy procesando tu solicitud basándome en los datos del aula..."
+        const alumnos = mockDataService.getAlumnos()
+        const cursos = mockDataService.getCursos()
+        
+        let aiContent = "Soy DocenTico. Estoy analizando los datos de tus aulas para darte una respuesta precisa..."
         let canCopyToPlan = false
         const prompt = input.toLowerCase()
         
         if (prompt.includes('asistencia')) {
-            aiContent = "La asistencia promedio de **3° A** es del **88%**. He notado un patrón de inasistencias los viernes (78%). ¿Quieres que redacte un aviso para los padres?"
+            const lowAtt = alumnos.filter(a => a.asistencia < 80)
+            const avgAtt = (alumnos.reduce((acc, a) => acc + a.asistencia, 0) / alumnos.length).toFixed(1)
+            
+            aiContent = `La asistencia promedio general es del **${avgAtt}%**. He detectado que **${lowAtt.length} alumnos** (incluyendo a ${lowAtt[0]?.nombre || 'algunos'}) están por debajo del umbral del 80%. ¿Deseas que prepare un reporte para los tutores?`
+            canCopyToPlan = true
         } else if (prompt.includes('geometría') || prompt.includes('recurso')) {
-            aiContent = "Para **Geometría**, te sugiero el recurso 'Cuerpos Platónicos 3D' disponible en tu banco. Los alumnos de 4° B están mostrando un interés alto en contenido visual este mes."
+            aiContent = "Para **Geometría**, el 3° A muestra una dificultad específica en 'Cuerpos 3D'. Te sugiero el recurso interactivo de 'Realidad Aumentada' que tienes en tu banco para reforzar este tema el lunes."
             canCopyToPlan = true
-        } else if (prompt.includes('participación') || prompt.includes('alumnos')) {
-            aiContent = "Pedro Rodríguez y Lucas Sánchez han bajado su participación un **15%** esta semana. Recomiendo una actividad de gamificación para reintegrarlos."
+        } else if (prompt.includes('pedro') || prompt.includes('rodríguez')) {
+            const pedro = alumnos.find(a => a.id === 3)
+            aiContent = `Análisis de **Pedro Rodríguez**: Su promedio actual es **${Object.values(pedro.notas).reduce((a,b)=>a+b,0)/4}**. Su asistencia ha bajado al **${pedro.asistencia}%**. Sugiero una reunión de seguimiento pedagógico prioritaria.`
             canCopyToPlan = true
-        } else if (prompt.includes('planificaci') || prompt.includes('clase')) {
-            aiContent = "He generado una propuesta de **3 actividades** para tu próxima clase de Ciencias Naturales sobre el sistema solar. ¿Deseas ver el detalle?"
-            canCopyToPlan = true
+        } else if (prompt.includes('resumen') || prompt.includes('semana')) {
+            aiContent = `Resumen Docente: Tienes **${cursos.length} aulas** activas. El rendimiento en Matemática subió un **12%** general, pero la asistencia los lunes sigue siendo un punto de atención (82% promedio).`
         }
 
         setMessages(prev => [...prev, { 

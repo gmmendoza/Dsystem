@@ -23,6 +23,8 @@ import {
   X
 } from 'lucide-react'
 import { CardSkeleton } from '../components/Common/LoadingSkeleton'
+import { AIService } from '../services/AIService'
+import DashboardHero from '../components/Dashboard/DashboardHero'
 
 export default function Panel() {
   const navigate = useNavigate()
@@ -31,6 +33,7 @@ export default function Panel() {
   const [recentPlans, setRecentPlans] = useState([])
   const [loading, setLoading] = useState(true)
   const [showReport, setShowReport] = useState(false)
+  const [aiSummary, setAiSummary] = useState(null)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -59,6 +62,10 @@ export default function Panel() {
 
         const sorted = plans.data.sort((a, b) => new Date(b.lastModified || b.fechaInicio) - new Date(a.lastModified || a.fechaInicio))
         setRecentPlans(sorted.slice(0, 3))
+        
+        // Fetch AI Summary
+        const summary = AIService.getDailySummary()
+        setAiSummary(summary)
       } catch (err) {
         console.error(err)
       } finally {
@@ -85,14 +92,14 @@ export default function Panel() {
                 <LayoutDashboard size={20} />
              </div>
              <div>
-                <span className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-600 block">Licencia Profesional</span>
-                <span className="text-[9px] font-bold text-gray-800 uppercase tracking-widest leading-none">Centro de Control Académico</span>
+                <span className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-800 dark:text-gray-400 block">Licencia Profesional</span>
+                <span className="text-[9px] font-bold text-gray-900 dark:text-gray-200 uppercase tracking-widest leading-none">Centro de Control Académico</span>
              </div>
           </div>
           <h2 className="text-4xl md:text-6xl font-black uppercase italic tracking-tighter leading-tight">
              Panel del <br className="hidden md:block" /> <span className="text-primary-500">Docente</span>.
           </h2>
-          <p className="text-gray-500 text-xs md:text-sm font-bold uppercase tracking-widest max-w-xl">
+          <p className="text-gray-900 dark:text-gray-400 text-xs md:text-sm font-bold uppercase tracking-widest max-w-xl opacity-90">
              Bienvenido, Prof. Mendoza. Aquí tienes el resumen de tu ciclo lectivo 2026.
           </p>
         </div>
@@ -107,6 +114,8 @@ export default function Panel() {
         </div>
       </div>
 
+      {aiSummary && <DashboardHero summary={aiSummary} />}
+
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-10">
         
         {/* ── SECCIÓN IZQUIERDA: RESUMEN Y AULAS ── */}
@@ -115,31 +124,31 @@ export default function Panel() {
           {/* ESTA SEMANA (ESTADÍSTICAS PEDAGÓGICAS) */}
           <section className="space-y-6">
             <div className="flex items-center justify-between px-2">
-               <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-600 flex items-center gap-3">
+               <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-900 dark:text-gray-400 flex items-center gap-3">
                   <Activity className="text-primary-500" size={16} /> Resumen Semanal
                </h3>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-               <div className="bg-surface-subtle border border-black/5 dark:border-white/5 p-6 rounded-3xl space-y-4 shadow-sm hover:shadow-md transition-shadow">
-                  <div className="flex items-center gap-3 text-primary-500">
+               <div className="bg-surface-subtle border border-black/10 dark:border-white/5 p-6 rounded-3xl space-y-4 shadow-sm hover:shadow-md transition-shadow">
+                  <div className="flex items-center gap-3 text-primary-600 dark:text-primary-400">
                      <BookOpen size={18} />
-                     <span className="text-[9px] font-black uppercase tracking-widest text-primary-600/70">Planificaciones</span>
+                     <span className="text-[9px] font-black uppercase tracking-widest opacity-80">Planificaciones</span>
                   </div>
-                  <p className="text-3xl font-black italic">{stats.planificaciones} <span className="text-[10px] text-gray-500 not-italic uppercase tracking-widest">Creadas</span></p>
+                  <p className="text-3xl font-black italic">{stats.planificaciones} <span className="text-[10px] text-gray-900 dark:text-gray-500 not-italic uppercase tracking-widest">Creadas</span></p>
                </div>
-               <div className="bg-surface-subtle border border-black/5 dark:border-white/5 p-6 rounded-3xl space-y-4 shadow-sm hover:shadow-md transition-shadow">
-                  <div className="flex items-center gap-3 text-amber-500">
+               <div className="bg-surface-subtle border border-black/10 dark:border-white/5 p-6 rounded-3xl space-y-4 shadow-sm hover:shadow-md transition-shadow">
+                  <div className="flex items-center gap-3 text-amber-600 dark:text-amber-500">
                      <Calendar size={18} />
-                     <span className="text-[9px] font-black uppercase tracking-widest text-amber-600/70">Clases hoy</span>
+                     <span className="text-[9px] font-black uppercase tracking-widest opacity-80">Clases hoy</span>
                   </div>
-                  <p className="text-3xl font-black italic">4 <span className="text-[10px] text-gray-500 not-italic uppercase tracking-widest">Programadas</span></p>
+                  <p className="text-3xl font-black italic">4 <span className="text-[10px] text-gray-900 dark:text-gray-500 not-italic uppercase tracking-widest">Programadas</span></p>
                </div>
-               <div className="bg-surface-subtle border border-black/5 dark:border-white/5 p-6 rounded-3xl space-y-4 shadow-sm hover:shadow-md transition-shadow">
-                  <div className="flex items-center gap-3 text-red-500">
+               <div className="bg-surface-subtle border border-black/10 dark:border-white/5 p-6 rounded-3xl space-y-4 shadow-sm hover:shadow-md transition-shadow">
+                  <div className="flex items-center gap-3 text-red-600 dark:text-red-500">
                      <Activity size={18} />
-                     <span className="text-[9px] font-black uppercase tracking-widest text-red-600/70">Pendientes</span>
+                     <span className="text-[9px] font-black uppercase tracking-widest opacity-80">Pendientes</span>
                   </div>
-                  <p className="text-3xl font-black italic">1 <span className="text-[10px] text-gray-500 not-italic uppercase tracking-widest">Evaluación</span></p>
+                  <p className="text-3xl font-black italic">1 <span className="text-[10px] text-gray-900 dark:text-gray-500 not-italic uppercase tracking-widest">Evaluación</span></p>
                </div>
             </div>
           </section>
@@ -168,10 +177,10 @@ export default function Panel() {
           {/* MIS AULAS (WORKSPACE BROWSER) */}
           <section className="space-y-6">
             <div className="flex items-center justify-between px-2">
-               <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-600 flex items-center gap-3">
+               <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-900 dark:text-gray-400 flex items-center gap-3">
                   <Layers className="text-primary-500" size={16} /> Mis Aulas Activas
                </h3>
-               <button onClick={() => navigate('/mi-aula')} className="text-[9px] font-black uppercase tracking-widest text-primary-500 hover:text-white transition-all">Ver todas</button>
+               <button onClick={() => navigate('/mi-aula')} className="text-[9px] font-black uppercase tracking-widest text-primary-600 dark:text-primary-400 hover:text-primary-500 transition-all">Ver todas</button>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -182,16 +191,16 @@ export default function Panel() {
                    <div 
                      key={curso.id} 
                      onClick={() => navigate(`/aula/${curso.id}`)}
-                     className="group cursor-pointer bg-surface-subtle border border-white/5 hover:border-primary-500/20 p-8 rounded-[2.5rem] transition-all relative overflow-hidden active:scale-95 hover:bg-primary-950/5"
+                     className="group cursor-pointer bg-surface-subtle border border-black/10 dark:border-white/5 hover:border-primary-500/30 p-8 rounded-[2.5rem] transition-all relative overflow-hidden active:scale-95 hover:bg-primary-500/[0.02] shadow-sm"
                    >
                      <div className="relative z-10 space-y-4">
                         <div className="flex items-center gap-2">
-                           <span className="px-2 py-0.5 bg-white/5 text-[8px] font-black uppercase tracking-widest text-gray-500 rounded-full border border-white/5">{curso.nivel}</span>
-                           <div className="h-[1px] w-4 bg-gray-800" />
-                           <span className="text-[8px] font-bold text-gray-700 uppercase tracking-widest">{curso.alumnos?.length || 0} Alumnos</span>
+                           <span className="px-2 py-0.5 bg-primary-500/10 text-[8px] font-black uppercase tracking-widest text-primary-700 dark:text-primary-400 rounded-full border border-primary-500/10">{curso.nivel}</span>
+                           <div className="h-[1px] w-4 bg-gray-300 dark:bg-gray-800" />
+                           <span className="text-[8px] font-bold text-gray-900 dark:text-gray-400 uppercase tracking-widest">{curso.alumnos?.length || 0} Alumnos</span>
                         </div>
-                        <h4 className="text-2xl font-black uppercase italic tracking-tighter group-hover:text-primary-500 transition-colors">{curso.nombre}</h4>
-                        <div className="flex items-center gap-2 text-primary-600 text-[10px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all translate-x-[-10px] group-hover:translate-x-0">
+                        <h4 className="text-2xl font-black uppercase italic tracking-tighter text-gray-900 dark:text-white group-hover:text-primary-500 transition-colors">{curso.nombre}</h4>
+                        <div className="flex items-center gap-2 text-primary-600 dark:text-primary-400 text-[10px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all translate-x-[-10px] group-hover:translate-x-0">
                            Entrar al Aula <ArrowRight size={14} />
                         </div>
                      </div>
@@ -223,14 +232,14 @@ export default function Panel() {
                        <BookOpen size={20} />
                     </div>
                     <div className="flex-1 min-w-0">
-                       <h4 className="text-sm font-black uppercase italic tracking-tighter truncate">{plan.titulo}</h4>
+                       <h4 className="text-sm font-black uppercase italic tracking-tighter truncate text-gray-900 dark:text-gray-100">{plan.titulo}</h4>
                        <div className="flex items-center gap-3 mt-1">
-                          <span className="text-[9px] font-bold uppercase tracking-widest text-gray-600">{plan.materia}</span>
-                          <div className="w-1 h-1 rounded-full bg-gray-900" />
-                          <span className="text-[9px] font-bold uppercase tracking-widest text-gray-800">Sincronizado {new Date(plan.lastModified).toLocaleDateString()}</span>
+                          <span className="text-[9px] font-bold uppercase tracking-widest text-primary-700 dark:text-primary-400">{plan.materia}</span>
+                          <div className="w-1 h-1 rounded-full bg-gray-400" />
+                          <span className="text-[9px] font-bold uppercase tracking-widest text-gray-900 dark:text-gray-500">Sincronizado {new Date(plan.lastModified).toLocaleDateString()}</span>
                        </div>
                     </div>
-                    <ChevronRight size={18} className="text-gray-800 transition-all transform group-hover:translate-x-1" />
+                    <ChevronRight size={18} className="text-gray-800 dark:text-gray-400 transition-all transform group-hover:translate-x-1" />
                  </div>
                ))}
             </div>
