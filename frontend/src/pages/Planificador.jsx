@@ -444,7 +444,7 @@ export default function Planificador() {
            </LayoutGroup>
 
             <section className="space-y-8 pt-10">
-               <span className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-400 dark:text-gray-700">03. Criterios de Evaluación</span>
+               <span className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-900 dark:text-gray-700">03. Criterios de Evaluación</span>
                <textarea 
                   className="w-full bg-surface-subtle border border-black/5 dark:border-white/5 rounded-[2.5rem] p-10 text-xs outline-none focus:border-primary-500/40 transition-all font-medium min-h-[160px] resize-none leading-relaxed focus:bg-surface-muted shadow-sm"
                  style={{ color: 'rgb(var(--color-text))' }}
