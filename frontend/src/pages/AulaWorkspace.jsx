@@ -256,7 +256,10 @@ export default function AulaWorkspace() {
 
         {activeTab === 'recursos' && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-             <div className="group border-2 border-dashed border-white/5 rounded-2xl p-6 flex flex-col items-center justify-center text-center gap-3 hover:border-primary-500/30 hover:bg-primary-500/[0.02] transition-all cursor-pointer min-h-[200px]">
+             <div 
+               onClick={() => setToast({ message: 'El banco de recursos se sincroniza con tu nube docente', type: 'info' })}
+               className="group border-2 border-dashed border-white/5 rounded-2xl p-6 flex flex-col items-center justify-center text-center gap-3 hover:border-primary-500/30 hover:bg-primary-500/[0.02] transition-all cursor-pointer min-h-[200px]"
+             >
                 <Plus size={24} className="text-gray-700 group-hover:text-primary-500 transition-colors" />
                 <p className="text-[9px] font-black uppercase tracking-widest text-gray-600">Nuevo Recurso</p>
              </div>
