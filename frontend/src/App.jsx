@@ -18,26 +18,24 @@ function ProtectedRoute({ children }) {
 export default function App() {
   return (
     <Routes>
-      {/* Ruta Principal de Introducción y Login */}
+      {/* Rutas Públicas */}
       <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<Navigate to="/" replace />} />
 
-      {/* Rutas Protegidas (Dashboard) */}
+      {/* Rutas Privadas (Sin prefijo /app para mayor simplicidad) */}
       <Route
-        path="/app"
         element={
           <ProtectedRoute>
             <Layout />
           </ProtectedRoute>
         }
       >
-        <Route index element={<Navigate to="dashboard" replace />} />
-        <Route path="dashboard" element={<Dashboard />} />
-        <Route path="mi-aula" element={<MiAula />} />
-        <Route path="aula/:id" element={<AulaWorkspace />} />
-        <Route path="agenda" element={<Agenda />} />
-        <Route path="planificador" element={<Planificador />} />
-        <Route path="historial" element={<Historial />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/mi-aula" element={<MiAula />} />
+        <Route path="/aula/:id" element={<AulaWorkspace />} />
+        <Route path="/agenda" element={<Agenda />} />
+        <Route path="/planificador" element={<Planificador />} />
+        <Route path="/historial" element={<Historial />} />
       </Route>
 
       {/* Redirección por defecto */}

@@ -93,7 +93,7 @@ export default function MiAula() {
             {filteredCursos.map(curso => (
               <div 
                 key={curso.id} 
-                onClick={() => navigate(`/app/aula/${curso.id}`)}
+                onClick={() => navigate(`/aula/${curso.id}`)}
                 className="group relative cursor-pointer"
               >
                 <div className="absolute -inset-0.5 bg-gradient-to-br from-primary-600/20 to-indigo-600/20 rounded-[2rem] blur-sm opacity-0 group-hover:opacity-100 transition duration-500" />

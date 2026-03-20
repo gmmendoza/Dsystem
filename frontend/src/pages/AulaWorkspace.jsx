@@ -84,7 +84,7 @@ export default function AulaWorkspace() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="flex items-center gap-6">
           <button 
-            onClick={() => navigate('/app/mi-aula')}
+            onClick={() => navigate('/mi-aula')}
             className="p-3 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/5 text-gray-400 hover:text-white transition-all"
           >
             <ChevronLeft size={20} />
@@ -103,7 +103,7 @@ export default function AulaWorkspace() {
 
         <div className="flex gap-3">
            <button 
-             onClick={() => navigate('/app/planificador')}
+             onClick={() => navigate('/planificador')}
              className="px-6 py-3 bg-primary-600 hover:bg-primary-500 text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-primary-900/20 flex items-center gap-2"
            >
              <Plus size={16} /> Nueva Planificación
@@ -180,7 +180,7 @@ export default function AulaWorkspace() {
                          <Copy size={16} />
                        </button>
                        <button 
-                         onClick={() => navigate(`/app/planificador?edit=${plan.id}`)}
+                         onClick={() => navigate(`/planificador?edit=${plan.id}`)}
                          className="p-3 bg-white/[0.03] hover:bg-white/10 text-gray-500 hover:text-white rounded-xl transition-all border border-white/5"
                          title="Editar"
                        >

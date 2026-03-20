@@ -10,16 +10,16 @@ import {
   GraduationCap,
   ChevronRight,
   User,
-  Archive
+  History // Usando History en lugar de Archive por si acaso
 } from 'lucide-react'
 import NotificationToast from '../Notifications/NotificationToast'
 
 const navItems = [
-  { to: 'dashboard',    icon: LayoutDashboard, label: 'Dashboard' },
-  { to: 'mi-aula',      icon: BookOpen,        label: 'Mi Aula' },
-  { to: 'planificador', icon: ClipboardList,   label: 'Planificador' },
-  { to: 'agenda',       icon: CalendarDays,    label: 'Calendario' },
-  { to: 'historial',    icon: Archive,         label: 'Historial' },
+  { to: '/dashboard',    icon: LayoutDashboard, label: 'Dashboard' },
+  { to: '/mi-aula',      icon: BookOpen,        label: 'Mi Aula' },
+  { to: '/planificador', icon: ClipboardList,   label: 'Planificador' },
+  { to: '/agenda',       icon: CalendarDays,    label: 'Calendario' },
+  { to: '/historial',    icon: History,         label: 'Historial' },
 ]
 
 export default function Layout() {
@@ -56,7 +56,7 @@ export default function Layout() {
               }
             >
               <div className="flex items-center gap-4">
-                <Icon size={20} className="transition-transform group-hover:scale-110" />
+                {Icon && <Icon size={20} className="transition-transform group-hover:scale-110" />}
                 <span className="text-xs font-black uppercase tracking-widest">{label}</span>
               </div>
               <ChevronRight size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -88,10 +88,8 @@ export default function Layout() {
 
       {/* ── Main Content Area ── */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
-        {/* Animated Background Blob */}
         <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-primary-600/5 blur-[120px] rounded-full -z-10" />
         
-        {/* Header Glassmorphism */}
         <header className="h-20 flex items-center justify-between px-10 border-b border-white/5 bg-black/40 backdrop-blur-md flex-shrink-0 z-10">
           <div className="flex items-center gap-4">
              <div className="w-1.5 h-1.5 rounded-full bg-primary-500 animate-pulse" />
@@ -113,7 +111,6 @@ export default function Layout() {
           </div>
         </header>
 
-        {/* Dynamic Page Container */}
         <main className="flex-1 overflow-y-auto p-10 custom-scrollbar">
           <div className="max-w-7xl mx-auto h-full">
             <Outlet />
