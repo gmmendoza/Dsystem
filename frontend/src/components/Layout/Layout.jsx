@@ -21,7 +21,8 @@ import {
   Search,
   Zap,
   Sun,
-  Moon
+  Moon,
+  Users
 } from 'lucide-react'
 import { useTheme } from '../../context/ThemeContext'
 import NotificationToast from '../Notifications/NotificationToast'

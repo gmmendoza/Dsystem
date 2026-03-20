@@ -12,7 +12,8 @@ import {
   MessageCircle,
   MoreHorizontal,
   ThumbsUp,
-  RotateCcw
+  RotateCcw,
+  Plus
 } from 'lucide-react'
 import { mockDataService } from '../../services/mockDataService'
 
