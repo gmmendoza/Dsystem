@@ -16,11 +16,9 @@ function ProtectedRoute({ children }) {
 export default function App() {
   return (
     <Routes>
-      {/* Ruta Principal de Introducción */}
+      {/* Ruta Principal de Introducción y Login */}
       <Route path="/" element={<LandingPage />} />
-      <Route path="/Dsystem" element={<Navigate to="/" replace />} />
-      
-      <Route path="/login" element={<LoginPage />} />
+      <Route path="/login" element={<Navigate to="/" replace />} />
 
       {/* Rutas Protegidas (Dashboard) */}
       <Route
