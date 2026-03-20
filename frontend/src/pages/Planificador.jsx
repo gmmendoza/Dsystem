@@ -14,6 +14,7 @@ import ActivityList from '../components/Editor/ActivityList'
 import SuggestionBox from '../components/Editor/SuggestionBox'
 import { MultimediaBlock } from '../components/Editor/EditorBlocks'
 import { Toast } from '../components/Common/Toast'
+import { ConfirmModal } from '../components/Common/ConfirmModal'
 
 // Datos de ejemplo para el sistema
 const examplePlanning = {
@@ -35,6 +36,22 @@ export default function Planificador() {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
   const editId = searchParams.get('edit')
+  
+  const [toast, setToast] = useState(null)
+  const [confirm, setConfirm] = useState({ open: false, onConfirm: null, title: '', message: '' })
+
+  const handleBack = () => {
+    if (title || activities.length > 0) {
+      setConfirm({
+        open: true,
+        title: '¿Salir sin guardar?',
+        message: 'Tienes cambios sin guardar. Si sales ahora, se perderán.',
+        onConfirm: () => navigate(-1),
+      })
+    } else {
+      navigate(-1)
+    }
+  }
   
   // Estados de Configuración
   const [level, setLevel] = useState('Primaria') // Primaria | Inicial
@@ -159,7 +176,6 @@ export default function Planificador() {
     setResources([...resources, newRes])
   }
 
-  const [toast, setToast] = useState(null)
 
   const handleSave = async () => {
     if (!title) {
