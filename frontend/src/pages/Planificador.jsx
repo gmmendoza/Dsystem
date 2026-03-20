@@ -1,610 +1,424 @@
-import { useState, useEffect, useRef } from 'react'
-import { 
-  Save, Eye, FileUp, Sparkles, Layout, 
-  ChevronRight, Calendar, BookOpen, Clock, 
-  Trash2, Plus, GripVertical, Settings, 
-  Type, Video, Image as ImageIcon, Link2,
-  CheckCircle, Globe, Zap, History, Loader2,
-  X, ChevronLeft, Layers
-} from 'lucide-react'
+import { useState, useEffect } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
+import { motion, AnimatePresence } from 'framer-motion'
+import { 
+  Save, 
+  ArrowLeft, 
+  Plus, 
+  Trash2, 
+  Sparkles, 
+  FileText, 
+  Calendar, 
+  BookOpen,
+  CheckCircle2,
+  Clock,
+  Layers,
+  Zap,
+  Bot,
+  Wand2,
+  Eye,
+  Download,
+  Share2,
+  Check,
+  BrainCircuit,
+  Lightbulb,
+  Search,
+  ChevronRight,
+  ChevronDown
+} from 'lucide-react'
 import { planificacionAPI, cursoAPI } from '../services/api'
-import PreviewModal from '../components/Modals/PreviewModal'
-import ActivityList from '../components/Editor/ActivityList'
-import SuggestionBox from '../components/Editor/SuggestionBox'
-import { MultimediaBlock } from '../components/Editor/EditorBlocks'
 import { Toast } from '../components/Common/Toast'
-import { ConfirmModal } from '../components/Common/ConfirmModal'
-
-// Datos de ejemplo para el sistema
-const examplePlanning = {
-  title: "Funciones lineales",
-  subject: "Matemática",
-  level: "Primaria",
-  type: "Diaria",
-  objectives: ["Comprender el concepto de pendiente", "Interpretar gráficos"],
-  activities: ["Explicación teórica inicial", "Resolución de ejercicios en el pizarrón", "Trabajo grupal de refuerzo"],
-  resources: [
-    { type: "image", url: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?q=80&w=800", title: "Gráfico de Funciones" },
-    { type: "video", url: "https://www.youtube.com/watch?v=kYbe_2xVezM", title: "Explicación Pendiente" }
-  ],
-  evaluation: "Resolución de problemas prácticos y revisión de carpetas.",
-  date: "2026-03-20"
-};
 
 export default function Planificador() {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
-  const editId = searchParams.get('edit')
-  
-  const [toast, setToast] = useState(null)
-  const [confirm, setConfirm] = useState({ open: false, onConfirm: null, title: '', message: '' })
-
-  const handleBack = () => {
-    if (title || activities.length > 0) {
-      setConfirm({
-        open: true,
-        title: '¿Salir sin guardar?',
-        message: 'Tienes cambios sin guardar. Si sales ahora, se perderán.',
-        onConfirm: () => navigate(-1),
-      })
-    } else {
-      navigate(-1)
-    }
-  }
-  
-  // Estados de Configuración
-  const [level, setLevel] = useState('Primaria') // Primaria | Inicial
-  const [type, setType] = useState('Diaria') // Diaria | Semanal
-  
-  // Estados de Contenido
-  const [title, setTitle] = useState('')
-  const [subject, setSubject] = useState('')
-  const [cursoId, setCursoId] = useState('')
-  const [fechaInicio, setFechaInicio] = useState(new Date().toISOString().split('T')[0])
-  const [fechaFin, setFechaFin] = useState('')
-  const [objectives, setObjectives] = useState([])
-  const [activities, setActivities] = useState([])
-  const [weeklyActivities, setWeeklyActivities] = useState({
-    Lunes: [], Martes: [], Miércoles: [], Jueves: [], Viernes: []
-  })
-  const [resources, setResources] = useState([])
-  const [evaluation, setEvaluation] = useState('')
-  
-  // UI States
-  const [isPreviewOpen, setIsPreviewOpen] = useState(false)
-  const [isHistoryOpen, setIsHistoryOpen] = useState(false)
-  const [cursos, setCursos] = useState([])
   const [loading, setLoading] = useState(false)
-  const [autoSaving, setAutoSaving] = useState(false)
-  const [historicalPlans, setHistoricalPlans] = useState([])
-  const [aulaRecursos, setAulaRecursos] = useState([])
+  const [isSmartFilling, setIsSmartFilling] = useState(false)
+  const [toast, setToast] = useState(null)
+  const [cursos, setCursos] = useState([])
+  
+  const [formData, setFormData] = useState({
+    titulo: '',
+    materia: '',
+    cursoId: '',
+    nivel: 'Primaria',
+    tipo: 'Diaria',
+    fechaInicio: new Date().toISOString().split('T')[0],
+    fechaFin: new Date().toISOString().split('T')[0],
+    objetivos: [''],
+    actividades: [''],
+    recursos: [],
+    evaluacion: '',
+    estado: 'En progreso'
+  })
 
   useEffect(() => {
-    const cid = searchParams.get('cursoId')
-    const suggested = searchParams.get('suggested')
     fetchCursos()
-    fetchHistory()
-    
-    if (editId) {
-       loadPlan(editId)
-    } else if (suggested === 'refuerzo-geometria') {
-       setTitle('Refuerzo: Geometría del Espacio')
-       setSubject('Matemática')
-       setObjectives(['Visualizar cuerpos en el espacio', 'Calcular volúmenes básicos'])
-       setActivities(['Exploración con cuerpos físicos', 'Dibujo técnico'])
-       if (cid) setCursoId(cid)
-       setToast({ message: 'Plan de refuerzo pre-cargado por DocenTico', type: 'info' })
-    } else if (cid) {
-       setCursoId(cid)
-       const c = cursos.find(curr => curr.id === Number(cid))
-       if (c) setLevel(c.nivel)
-    } else {
-       loadExample()
-    }
-  }, [editId, searchParams, cursos.length])
+    const editId = searchParams.get('edit')
+    const cursoIdParam = searchParams.get('cursoId')
+    const suggested = searchParams.get('suggested')
 
-  // Simulación de auto-guardado
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (title || activities.length > 0) {
-        setAutoSaving(true)
-        setTimeout(() => setAutoSaving(false), 2000)
-      }
-    }, 5000)
-    return () => clearTimeout(timer)
-  }, [title, activities, objectives, resources, evaluation])
+    if (editId) loadPlan(editId)
+    if (cursoIdParam) setFormData(prev => ({ ...prev, cursoId: cursoIdParam }))
+    
+    // AI Suggestion handling
+    if (suggested === 'refuerzo-geometria') {
+       handleSmartFill('geometría')
+    }
+  }, [searchParams])
 
   const fetchCursos = async () => {
     const res = await cursoAPI.getAll()
     setCursos(res.data)
-    
-    // Si tenemos cursoId, cargar sus recursos
-    const cid = searchParams.get('cursoId') || cursoId
-    if (cid) {
-       const c = res.data.find(curr => curr.id === Number(cid))
-       if (c) setAulaRecursos(c.recursos || [])
-    }
-  }
-
-  const fetchHistory = async () => {
-    const res = await planificacionAPI.getAll()
-    setHistoricalPlans(res.data.slice(0, 5)) // Solo los últimos 5
-  }
-
-  const loadExample = () => {
-    setTitle(examplePlanning.title)
-    setSubject(examplePlanning.subject)
-    setLevel(examplePlanning.level)
-    setType(examplePlanning.type)
-    setObjectives(examplePlanning.objectives)
-    setActivities(examplePlanning.activities)
-    setResources(examplePlanning.resources)
-    setEvaluation(examplePlanning.evaluation)
   }
 
   const loadPlan = async (id) => {
-    setLoading(true)
-    setIsHistoryOpen(false)
     try {
       const res = await planificacionAPI.getById(id)
-      if (!res.data) {
-        setToast({ message: 'No se encontró la planificación', type: 'error' })
-        return
-      }
-      const p = res.data
-      setTitle(p.titulo || '')
-      setCursoId(p.cursoId || '')
-      setFechaInicio(p.fechaInicio || new Date().toISOString().split('T')[0])
-      setFechaFin(p.fechaFin || '')
-      setSubject(p.materia || '')
-      setLevel(p.nivel || 'Primaria')
-      setType(p.tipo || 'Diaria')
-      setObjectives(p.objetivos || [])
-      setActivities(p.actividades || [])
-      setResources(p.recursos || [])
-      setEvaluation(p.evaluacion || '')
-      if (p.semanal) setWeeklyActivities(p.semanal)
-      
-      // Actualizar la URL sin recargar
-      navigate(`/planificador?edit=${id}`, { replace: true })
-      
-      setToast({ message: 'Plan cargado correctamente', type: 'success' })
+      setFormData(res.data)
     } catch (err) {
-      setToast({ message: 'Error al cargar el plan', type: 'error' })
-    } finally {
-      setLoading(false)
+      setToast({ message: 'Error al cargar planificación', type: 'error' })
     }
   }
 
-  const handleDuplicate = async (plan) => {
-    try {
-      // Si el plan ya tiene ID, podemos usar el API
-      if (plan.id) {
-        const res = await planificacionAPI.duplicate(plan.id)
-        loadPlan(res.data.id)
-        setToast({ message: 'Planificación duplicada', type: 'success' })
-      } else {
-        // Si no (ej: carga manual), duplicamos localmente
-        setTitle(`${plan.titulo} (Copia)`)
-        setSubject(plan.materia || '')
-        setObjectives(plan.objetivos || [])
-        setActivities(plan.actividades || [])
-        setResources(plan.recursos || [])
-        setEvaluation(plan.evaluacion || '')
-        setToast({ message: 'Plan duplicado en el editor', type: 'success' })
-      }
-      setIsHistoryOpen(false)
-    } catch (err) {
-      setToast({ message: 'Error al duplicar', type: 'error' })
+  const handleSmartFill = async (topic = 'general') => {
+    setIsSmartFilling(true)
+    setToast({ message: 'DocenTico está redactando tu propuesta...', type: 'info' })
+    
+    await new Promise(r => setTimeout(r, 2500))
+    
+    const aiProposal = {
+        titulo: topic === 'geometría' ? "Refuerzo: Geometría del Espacio y Cuerpos" : "Nueva Unidad: " + (formData.materia || "Contenido Curricular"),
+        objetivos: [
+            "Identificar propiedades de cuerpos geométricos",
+            "Relacionar figuras planas con volúmenes",
+            "Resolver situaciones problemáticas espaciales"
+        ],
+        actividades: [
+            "Reconocimiento de figuras en el entorno real",
+            "Construcción de poliedros con materiales reciclados",
+            "Uso de simulador 3D para rotación de cuerpos"
+        ],
+        evaluacion: "Rúbrica de observación directa y resolución de cuestionario visual.",
+        materia: formData.materia || "Matemática"
     }
+
+    setFormData(prev => ({
+        ...prev,
+        ...aiProposal
+    }))
+    
+    setIsSmartFilling(false)
+    setToast({ message: '¡Planificación generada con éxito!', type: 'success' })
   }
 
-  const addResource = (resType) => {
-    const newRes = { 
-      id: Date.now(), 
-      type: resType, 
-      url: '', 
-      title: resType === 'video' ? 'Nuevo Video' : 'Nueva Imagen' 
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    if (!formData.titulo || !formData.materia || !formData.cursoId) {
+      setToast({ message: 'Completa los campos obligatorios (*)', type: 'error' })
+      return
     }
-    setResources([...resources, newRes])
-  }
 
-
-  const handleSave = async () => {
-    if (!title) {
-        setToast({ message: 'Por favor ingresa un título', type: 'error' })
-        return
-    }
     setLoading(true)
-    const payload = {
-      titulo: title,
-      materia: subject,
-      cursoId: parseInt(cursoId),
-      nivel: level,
-      tipo: type,
-      fechaInicio,
-      fechaFin,
-      objetivos: objectives,
-      actividades: activities,
-      recursos: resources,
-      evaluacion: evaluation,
-      semanal: type === 'Semanal' ? weeklyActivities : null,
-      lastModified: new Date().toISOString()
-    }
-
     try {
-      if (editId) await planificacionAPI.update(editId, payload)
-      else await planificacionAPI.create(payload)
-      setToast({ message: '¡Planificación guardada con éxito!', type: 'success' })
-      setTimeout(() => navigate('/historial'), 1500)
+      await planificacionAPI.save(formData)
+      setToast({ message: 'Planificación guardada con éxito', type: 'success' })
+      setTimeout(() => navigate(`/aula/${formData.cursoId}`), 1000)
     } catch (err) {
-      // Para propósitos de DEMO en GitHub Pages, simulamos el éxito si el error es de conexión
-      if (window.location.hostname !== 'localhost') {
-         setToast({ message: '¡Planificación guardada (Modo Demo)!', type: 'success' })
-         setTimeout(() => navigate('/historial'), 1500)
-      } else {
-         setToast({ message: 'Error al guardar', type: 'error' })
-      }
+      setToast({ message: 'Error al guardar', type: 'error' })
     } finally {
       setLoading(false)
     }
   }
 
-  if (loading && !title) return <div className="flex items-center justify-center min-h-[400px]"><Loader2 className="animate-spin text-primary-500" size={40} /></div>
+  const addItem = (field) => {
+    setFormData({ ...formData, [field]: [...formData[field], ''] })
+  }
+
+  const removeItem = (field, index) => {
+    const list = [...formData[field]]
+    list.splice(index, 1)
+    setFormData({ ...formData, [field]: list })
+  }
+
+  const updateItem = (field, index, value) => {
+    const list = [...formData[field]]
+    list[index] = value
+    setFormData({ ...formData, [field]: list })
+  }
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-700 pb-20">
+    <div className="flex flex-col xl:flex-row gap-10 animate-in fade-in duration-700 pb-20 max-w-7xl mx-auto">
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
-      
-      {/* ── HEADER DE ACCIÓN ── */}
-      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 sticky top-0 z-30 py-4 bg-[#050505]/80 backdrop-blur-xl border-b border-white/5">
-        <div className="flex items-center gap-4">
-          <button 
-            onClick={handleBack}
-            className="p-3 bg-white/5 hover:bg-white/10 rounded-xl border border-white/5 text-gray-400 hover:text-white transition-all mr-2"
-          >
-            <ChevronLeft size={20} />
-          </button>
-          <div className="w-12 h-12 bg-primary-600 rounded-2xl flex items-center justify-center shadow-lg shadow-primary-900/20 rotate-3">
-            <Sparkles className="text-white" size={24} />
-          </div>
-          <div>
-            <h2 className="text-3xl font-black uppercase italic tracking-tighter text-white">Planificador <span className="text-primary-500">Pro</span></h2>
-            <div className="flex items-center gap-3">
-              <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full transition-all ${autoSaving ? 'bg-green-500/10 text-green-500' : 'bg-white/5 text-gray-600'}`}>
-                {autoSaving ? '✔ Guardado automáticamente' : 'Autoguardado activo'}
-              </span>
-            </div>
-          </div>
-        </div>
 
-        <div className="flex items-center gap-3">
-          <button 
-            onClick={() => setIsHistoryOpen(true)}
-            className="px-6 py-3 bg-white/5 hover:bg-white/10 text-white text-[10px] font-black uppercase tracking-widest rounded-xl border border-white/5 transition-all flex items-center gap-2"
-          >
-            <History size={16} /> Historial
-          </button>
-          <button 
-            onClick={() => setIsPreviewOpen(true)}
-            className="px-6 py-3 bg-white/5 hover:bg-white/10 text-white text-[10px] font-black uppercase tracking-widest rounded-xl border border-white/5 transition-all flex items-center gap-2"
-          >
-            <Eye size={16} /> Vista Previa
-          </button>
-          <button 
-            onClick={() => {
-              setLoading(true);
-              setTimeout(() => {
-                setLoading(false);
-                setToast({ message: 'IA: Se detectó que el tema "Funciones" suele requerir refuerzo visual. Sugerimos añadir el mapa mental de GeoGebra.', type: 'info' });
-              }, 2000);
-            }}
-            className="px-6 py-3 bg-indigo-600/20 hover:bg-indigo-600 text-indigo-400 hover:text-white text-[10px] font-black uppercase tracking-widest rounded-xl border border-indigo-500/30 transition-all flex items-center gap-2"
-          >
-            <Sparkles size={16} /> Analizar con IA
-          </button>
-          <button 
-            onClick={handleSave}
-            className="px-8 py-3 bg-primary-600 hover:bg-primary-500 text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-primary-900/40 flex items-center gap-2"
-          >
-            {loading ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
-            Guardar Plan
-          </button>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 xl:grid-cols-12 gap-10">
-        
-        {/* ── CANVAS CENTRAL ── */}
-        <div className="xl:col-span-8 space-y-10 min-w-0">
-          
-          {/* SELECTORES DE MODO */}
-          <div className="flex flex-col md:flex-row gap-4">
-             <div className="flex-1 bg-black border border-white/5 p-2 rounded-2xl flex gap-2">
+      {/* ── Editor Form ── */}
+      <div className="flex-1 space-y-10">
+        <div className="flex items-center justify-between">
+            <div className="flex items-center gap-6">
                 <button 
-                  onClick={() => setLevel('Primaria')}
-                  className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${level === 'Primaria' ? 'bg-primary-600 text-white' : 'text-gray-600 hover:text-gray-300'}`}
+                  onClick={() => navigate(-1)} 
+                  className="p-3 bg-surface-subtle hover:bg-surface-muted rounded-2xl border border-white/5 text-gray-400 hover:text-white transition-all flex-shrink-0 group"
                 >
-                  Nivel Primario
+                  <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
                 </button>
-                <button 
-                  onClick={() => setLevel('Inicial')}
-                  className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${level === 'Inicial' ? 'bg-indigo-600 text-white' : 'text-gray-600 hover:text-gray-300'}`}
-                >
-                  Nivel Inicial
-                </button>
-             </div>
-             <div className="flex-1 bg-black border border-white/5 p-2 rounded-2xl flex gap-2">
-                <button 
-                  onClick={() => setType('Diaria')}
-                  className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${type === 'Diaria' ? 'bg-white/10 text-white' : 'text-gray-600 hover:text-gray-300'}`}
-                >
-                  Plan Diario
-                </button>
-                <button 
-                  onClick={() => setType('Semanal')}
-                  className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${type === 'Semanal' ? 'bg-white/10 text-white' : 'text-gray-600 hover:text-gray-300'}`}
-                >
-                  Plan Semanal
-                </button>
-             </div>
-          </div>
-
-          {/* CARD: INFORMACIÓN GENERAL */}
-          <section className="bg-black/40 border border-white/5 rounded-[2.5rem] p-10 space-y-8">
-            <div className="flex items-center gap-4 text-primary-500 mb-2">
-               <BookOpen size={20} />
-               <h3 className="text-[10px] font-black uppercase tracking-[0.4em]">Información General</h3>
-            </div>
-            
-            <div className="space-y-6">
-              <input 
-                type="text"
-                placeholder="TÍTULO DE LA PLANIFICACIÓN..."
-                className="w-full bg-transparent text-4xl font-black uppercase italic tracking-tighter text-white outline-none border-b-2 border-white/5 focus:border-primary-500 transition-all pb-4 placeholder:text-gray-900"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-              />
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="space-y-3">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-gray-600 px-1">Materia / Área</label>
-                  <input 
-                    type="text"
-                    placeholder="Ej: Matemática, Plástica..."
-                    className="w-full bg-white/[0.02] border border-white/10 rounded-2xl p-4 text-sm font-bold text-white outline-none focus:border-primary-500 transition-all"
-                    value={subject}
-                    onChange={(e) => setSubject(e.target.value)}
-                  />
-                </div>
-                <div className="space-y-3">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-gray-600 px-1">Aula / Curso</label>
-                  <select 
-                    value={cursoId}
-                    onChange={(e) => setCursoId(e.target.value)}
-                    className="w-full bg-[#0F0F0F] border border-white/10 rounded-2xl p-4 text-sm font-bold text-gray-300 outline-none focus:border-primary-500 transition-all cursor-pointer"
-                  >
-                    <option value="" className="bg-[#0F0F0F] text-gray-400">Seleccionar el Aula...</option>
-                    {cursos.map(c => <option key={c.id} value={c.id} className="bg-[#0F0F0F] text-white">{c.nombre}</option>)}
-                  </select>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* CARD: OBJETIVOS */}
-          <section className="bg-black/40 border border-white/5 rounded-[2.5rem] p-10 space-y-8">
-            <div className="flex items-center gap-4 text-indigo-500 mb-2">
-               <Zap size={20} />
-               <h3 className="text-[10px] font-black uppercase tracking-[0.4em]">{level === 'Inicial' ? 'Propósitos Docentes' : 'Objetivos de Aprendizaje'}</h3>
-            </div>
-            <ActivityList 
-              activities={objectives} 
-              onChange={setObjectives} 
-              label={level === 'Inicial' ? "Propósitos" : "Objetivos específicos"} 
-            />
-          </section>
-
-          {/* CARD: ACTIVIDADES */}
-          {type === 'Diaria' ? (
-            <section className="bg-black/40 border border-white/5 rounded-[2.5rem] p-10 space-y-8 animate-in zoom-in-95 duration-500">
-              <div className="flex items-center gap-4 text-orange-500 mb-2">
-                 <Layers size={20} />
-                 <h3 className="text-[10px] font-black uppercase tracking-[0.4em]">{level === 'Inicial' ? 'Actividades Lúdicas' : 'Secuencia Didáctica'}</h3>
-              </div>
-              <ActivityList activities={activities} onChange={setActivities} />
-            </section>
-          ) : (
-            /* MODO SEMANAL */
-            <section className="bg-black/40 border border-white/5 rounded-[2.5rem] p-10 space-y-10 animate-in zoom-in-95 duration-500">
-               <div className="flex items-center gap-4 text-orange-500 mb-2">
-                 <Calendar size={20} />
-                 <h3 className="text-[10px] font-black uppercase tracking-[0.4em]">Cronograma Semanal</h3>
-              </div>
-              <div className="space-y-8">
-                {Object.keys(weeklyActivities).map(day => (
-                  <div key={day} className="space-y-4">
-                    <div className="flex items-center gap-4">
-                       <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-500">{day}</h4>
-                       <div className="h-[1px] flex-1 bg-white/5" />
-                    </div>
-                    <ActivityList 
-                      activities={weeklyActivities[day]} 
-                      onChange={(newActs) => setWeeklyActivities({...weeklyActivities, [day]: newActs})} 
-                    />
-                  </div>
-                ))}
-              </div>
-            </section>
-          )}
-
-          {/* CARD: RECURSOS MULTIMEDIA */}
-          <section className="bg-black/40 border border-white/5 rounded-[2.5rem] p-10 space-y-8">
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center gap-4 text-violet-500">
-                 <Video size={20} />
-                 <h3 className="text-[10px] font-black uppercase tracking-[0.4em]">Recursos Multimedia</h3>
-              </div>
-              <div className="flex gap-2">
-                <button 
-                  onClick={() => addResource('image')}
-                  className="flex items-center gap-2 px-3 py-1.5 bg-white/5 hover:bg-white/10 rounded-lg text-[9px] font-black uppercase tracking-widest text-gray-400 transition-all border border-white/5"
-                >
-                  <ImageIcon size={14} /> + Imagen
-                </button>
-                <button 
-                  onClick={() => addResource('video')}
-                  className="flex items-center gap-2 px-3 py-1.5 bg-white/5 hover:bg-white/10 rounded-lg text-[9px] font-black uppercase tracking-widest text-gray-400 transition-all border border-white/5"
-                >
-                  <Video size={14} /> + Video
-                </button>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 gap-6">
-              {resources.map(res => (
-                <MultimediaBlock 
-                  key={res.id}
-                  id={res.id}
-                  value={res}
-                  onChange={(id, newVal) => setResources(prev => prev.map(r => r.id === id ? {...r, ...newVal} : r))}
-                  onRemove={(id) => setResources(prev => prev.filter(r => r.id !== id))}
-                />
-              ))}
-              {resources.length === 0 && (
-                <div className="py-12 text-center border-2 border-dashed border-white/5 rounded-3xl">
-                   <p className="text-[9px] font-black uppercase tracking-widest text-gray-700">No hay recursos agregados aún</p>
-                </div>
-              )}
-            </div>
-          </section>
-
-          {/* CARD: EVALUACIÓN */}
-          <section className="bg-black/40 border border-white/5 rounded-[2.5rem] p-10 space-y-6">
-            <div className="flex items-center gap-4 text-green-500 mb-2">
-               <CheckCircle size={20} />
-               <h3 className="text-[10px] font-black uppercase tracking-[0.4em]">Evaluación / Cierre</h3>
-            </div>
-            <textarea 
-               value={evaluation}
-               onChange={(e) => setEvaluation(e.target.value)}
-               placeholder="Describa cómo evaluará los conocimientos adquiridos..."
-               className="w-full bg-white/[0.02] border border-white/10 rounded-2xl p-6 text-sm font-medium text-gray-300 outline-none focus:border-green-500 transition-all min-h-[150px] resize-none"
-            />
-          </section>
-
-        </div>
-
-        {/* ── SIDEBAR DE SOPORTE ── */}
-        <aside className="xl:col-span-4 space-y-10 group/sidebar">
-          
-          {/* AI SUGGESTIONS */}
-          <SuggestionBox subject={subject} level={level} />
-
-          {/* BANCO DE RECURSOS DEL AULA */}
-          {aulaRecursos.length > 0 && (
-            <div className="card bg-[#0A0A0A] border-white/5 p-8 space-y-6 rounded-[2rem]">
-               <div className="flex items-center gap-3 mb-2">
-                  <Globe size={18} className="text-primary-500" />
-                  <h4 className="text-[10px] font-black uppercase tracking-widest text-white">Banco del Aula</h4>
-               </div>
-               <div className="grid grid-cols-2 gap-3">
-                  {aulaRecursos.map(rec => (
-                    <div 
-                      key={rec.id} 
-                      onClick={() => setResources([...resources, { type: rec.tipo || 'image', url: rec.url, title: rec.titulo }])}
-                      className="aspect-square bg-white/5 rounded-xl border border-white/5 hover:border-primary-500/50 transition-all cursor-pointer overflow-hidden group relative"
-                    >
-                       <img src={rec.url} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all" />
-                       <div className="absolute inset-0 bg-primary-600/20 opacity-0 group-hover:opacity-100 flex items-center justify-center">
-                          <Plus size={20} className="text-white" />
-                       </div>
-                    </div>
-                  ))}
-               </div>
-               <p className="text-[8px] font-bold text-gray-700 uppercase tracking-widest text-center">Haz clic para añadir a la planificación</p>
-            </div>
-          )}
-
-          {/* ACCIONES DE CONFIGURACIÓN */}
-          <div className="card bg-[#0A0A0A] border-white/5 p-8 space-y-6 rounded-[2rem] animate-in slide-in-from-right duration-700">
-             <div className="flex items-center gap-3">
-                <Settings size={18} className="text-gray-500" />
-                <h4 className="text-[10px] font-black uppercase tracking-widest text-white">Configuración del Documento</h4>
-             </div>
-             <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                   <span className="text-[10px] font-bold text-gray-600 uppercase tracking-widest">Habilitar comentarios</span>
-                   <div className="w-10 h-5 bg-white/5 rounded-full relative"><div className="absolute left-1 top-1 w-3 h-3 bg-gray-700 rounded-full" /></div>
-                </div>
-                <div className="flex items-center justify-between">
-                   <span className="text-[10px] font-bold text-gray-600 uppercase tracking-widest">Compartir con directivos</span>
-                   <div className="w-10 h-5 bg-primary-600/20 rounded-full relative"><div className="absolute right-1 top-1 w-3 h-3 bg-primary-500 rounded-full" /></div>
-                </div>
-             </div>
-          </div>
-        </aside>
-      </div>
-
-      {/* DRAWER DE HISTORIAL */}
-      {isHistoryOpen && (
-        <div className="fixed inset-0 z-50 flex justify-end">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setIsHistoryOpen(false)} />
-          <aside className="relative w-full max-w-md bg-[#080808] border-l border-white/10 p-10 shadow-2xl animate-in slide-in-from-right duration-500">
-            <div className="flex items-center justify-between mb-10">
-               <h3 className="text-2xl font-black italic uppercase tracking-tighter text-white">Planificaciones <span className="text-primary-500">Anteriores</span></h3>
-               <button onClick={() => setIsHistoryOpen(false)} className="p-2 hover:bg-white/5 rounded-lg text-gray-500"><X size={20} /></button>
-            </div>
-            
-            <div className="space-y-4">
-              {historicalPlans.map(plan => (
-                <div key={plan.id} className="group bg-white/[0.02] border border-white/5 p-6 rounded-2xl hover:border-primary-500/30 transition-all">
-                   <h4 className="text-sm font-black uppercase text-white mb-1">{plan.titulo}</h4>
-                   <p className="text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-4">{new Date(plan.fechaInicio).toLocaleDateString()}</p>
-                   <div className="flex gap-2">
-                     <button 
-                       onClick={() => loadPlan(plan.id)}
-                       className="flex-1 py-3 bg-white/5 hover:bg-white/10 rounded-xl text-[9px] font-black uppercase tracking-widest text-gray-400 hover:text-white transition-all"
-                     >
-                       Ver Detalles
-                     </button>
-                     <button 
-                       onClick={() => handleDuplicate(plan)}
-                       className="px-4 py-3 bg-primary-600/10 hover:bg-primary-600 text-primary-500 hover:text-white rounded-xl text-[9px] font-black uppercase tracking-widest transition-all"
-                     >
-                        Duplicar
-                     </button>
+                <div className="space-y-1">
+                   <div className="flex items-center gap-2">
+                      <span className="text-[9px] font-black uppercase tracking-[0.3em] text-primary-500">Planificador Editor</span>
+                      <div className="w-1 h-1 rounded-full bg-gray-800" />
+                      <span className="text-[9px] font-black uppercase tracking-[0.3em] text-gray-600">v2.0 Beta</span>
                    </div>
+                   <h2 className="text-4xl font-black uppercase italic tracking-tighter text-white">
+                     {searchParams.get('edit') ? 'Editar' : 'Nuevo'} <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-indigo-500">Documento</span>
+                   </h2>
                 </div>
-              ))}
             </div>
-          </aside>
-        </div>
-      )}
 
-      {/* ── MODAL DE VISTA PREVIA ── */}
-      <PreviewModal 
-         isOpen={isPreviewOpen} 
-         onClose={() => setIsPreviewOpen(false)} 
-         data={{ 
-           titulo: title, 
-           materia: subject,
-           nivel: level,
-           tipo: type,
-           objetivos: objectives,
-           actividades: activities,
-           semanal: weeklyActivities,
-           recursos: resources,
-           evaluacion: evaluation
-         }}
-         cursoName={cursos.find(c => c.id == cursoId)?.nombre || 'Curso no seleccionado'}
-      />
-      <ConfirmModal 
-        isOpen={confirm.open} 
-        {...confirm} 
-        onCancel={() => setConfirm({ ...confirm, open: false })} 
-      />
+            <button 
+              onClick={() => handleSmartFill()}
+              disabled={isSmartFilling}
+              className={`p-4 rounded-2xl border flex items-center gap-3 font-black uppercase tracking-widest text-[10px] transition-all shadow-xl ${
+                isSmartFilling 
+                ? 'bg-primary-600 animate-pulse text-white border-primary-500' 
+                : 'bg-primary-600/10 hover:bg-primary-600 text-primary-400 hover:text-white border-primary-500/30'
+              }`}
+            >
+              {isSmartFilling ? <BrainCircuit size={18} /> : <Wand2 size={18} />}
+              {isSmartFilling ? 'DocenTico escribe...' : 'Smart Fill IA'}
+            </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-10">
+          {/* Main Info Card */}
+          <div className="card bg-surface-subtle/50 border-white/5 space-y-8 p-10 rounded-[3rem]">
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+               <div className="space-y-3">
+                 <label className="label">Título de la Secuencia *</label>
+                 <input 
+                   className="input-field" 
+                   value={formData.titulo}
+                   onChange={e => setFormData({...formData, titulo: e.target.value})}
+                   placeholder="Ej: Exploración Geométrica"
+                 />
+               </div>
+               <div className="space-y-3">
+                 <label className="label">Materia / Área *</label>
+                 <input 
+                   className="input-field" 
+                   value={formData.materia}
+                   onChange={e => setFormData({...formData, materia: e.target.value})}
+                   placeholder="Ej: Matemática"
+                 />
+               </div>
+             </div>
+
+             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+               <div className="space-y-3">
+                 <label className="label">Clase / Workspace *</label>
+                 <select 
+                   className="input-field"
+                   value={formData.cursoId}
+                   onChange={e => setFormData({...formData, cursoId: e.target.value})}
+                 >
+                   <option value="">Seleccionar Aula</option>
+                   {cursos.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
+                 </select>
+               </div>
+               <div className="space-y-3">
+                 <label className="label">Periodicidad</label>
+                 <select 
+                   className="input-field"
+                   value={formData.tipo}
+                   onChange={e => setFormData({...formData, tipo: e.target.value})}
+                 >
+                   <option>Diaria</option>
+                   <option>Semanal</option>
+                   <option>Mensual</option>
+                 </select>
+               </div>
+               <div className="space-y-3">
+                 <label className="label">Estado del Plan</label>
+                 <div className="flex gap-2">
+                    {['En progreso', 'Activa', 'Finalizada'].map(st => (
+                      <button
+                        key={st}
+                        type="button"
+                        onClick={() => setFormData({...formData, estado: st})}
+                        className={`flex-1 py-3 px-1 rounded-xl text-[8px] font-black uppercase tracking-widest border transition-all ${
+                          formData.estado === st 
+                          ? 'bg-primary-600/20 text-primary-400 border-primary-500/40' 
+                          : 'bg-white/5 text-gray-600 border-transparent hover:border-white/5'
+                        }`}
+                      >
+                        {st}
+                      </button>
+                    ))}
+                 </div>
+               </div>
+             </div>
+          </div>
+
+          {/* Dinamic Lists (Objetivos & Actividades) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+             <div className="card bg-surface-subtle/30 border-white/5 p-10 rounded-[3rem] space-y-6">
+                <div className="flex items-center justify-between mb-4">
+                   <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-primary-500 flex items-center gap-3">
+                      <Target className="w-4 h-4 text-primary-400" /> Objetivos
+                   </h3>
+                   <button type="button" onClick={() => addItem('objetivos')} className="p-2 bg-primary-600/10 hover:bg-primary-600 text-primary-400 hover:text-white rounded-lg transition-all border border-primary-500/20">
+                      <Plus size={16} />
+                   </button>
+                </div>
+                <div className="space-y-4">
+                  {formData.objetivos.map((obj, i) => (
+                    <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} key={i} className="flex gap-3 group">
+                       <input 
+                         className="flex-1 bg-white/[0.03] border border-white/5 rounded-xl px-4 py-3 text-xs text-gray-300 outline-none focus:border-primary-500/40 transition-all"
+                         value={obj}
+                         onChange={e => updateItem('objetivos', i, e.target.value)}
+                         placeholder={`Objetivo ${i+1}`}
+                       />
+                       <button type="button" onClick={() => removeItem('objetivos', i)} className="p-3 text-gray-800 hover:text-red-500 transition-colors">
+                          <Trash2 size={16} />
+                       </button>
+                    </motion.div>
+                  ))}
+                </div>
+             </div>
+
+             <div className="card bg-surface-subtle/30 border-white/5 p-10 rounded-[3rem] space-y-6">
+                <div className="flex items-center justify-between mb-4">
+                   <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-violet-500 flex items-center gap-3">
+                      <Layers className="w-4 h-4 text-violet-400" /> Secuencia Didáctica
+                   </h3>
+                   <button type="button" onClick={() => addItem('actividades')} className="p-2 bg-violet-600/10 hover:bg-violet-600 text-violet-400 hover:text-white rounded-lg transition-all border border-violet-500/20">
+                      <Plus size={16} />
+                   </button>
+                </div>
+                <div className="space-y-4">
+                  {formData.actividades.map((act, i) => (
+                    <motion.div initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} key={i} className="flex gap-3 group">
+                       <input 
+                         className="flex-1 bg-white/[0.03] border border-white/5 rounded-xl px-4 py-3 text-xs text-gray-300 outline-none focus:border-violet-500/40 transition-all"
+                         value={act}
+                         onChange={e => updateItem('actividades', i, e.target.value)}
+                         placeholder={`Actividad ${i+1}`}
+                       />
+                       <button type="button" onClick={() => removeItem('actividades', i)} className="p-3 text-gray-800 hover:text-red-500 transition-colors">
+                          <Trash2 size={16} />
+                       </button>
+                    </motion.div>
+                  ))}
+                </div>
+             </div>
+          </div>
+
+          <div className="card bg-surface-subtle/50 border-white/5 p-10 rounded-[3rem] space-y-6">
+             <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-gray-500">Evaluación y Criterios</h3>
+             <textarea 
+               className="input-field min-h-[120px] resize-none"
+               value={formData.evaluacion}
+               onChange={e => setFormData({...formData, evaluacion: e.target.value})}
+               placeholder="Describe cómo se evaluará el aprendizaje..."
+             />
+          </div>
+
+          <div className="flex justify-end gap-6 pt-10 border-t border-white/5">
+             <button 
+                type="button" 
+                onClick={() => navigate(-1)}
+                className="btn-secondary"
+             >
+                Descartar Cambios
+             </button>
+             <button 
+                type="submit" 
+                disabled={loading}
+                className="btn-primary flex items-center gap-3 min-w-[200px] justify-center"
+             >
+                {loading ? <Clock className="animate-spin" size={20} /> : <Save size={20} />}
+                {loading ? 'Sincronizando...' : 'Guardar Plan Final'}
+             </button>
+          </div>
+        </form>
+      </div>
+
+      {/* ── Document Preview (Lateral) ── */}
+      <div className="hidden xl:block w-96 space-y-8">
+         <div className="sticky top-10 space-y-8">
+            <div className="card bg-primary-600/5 border border-primary-500/10 p-8 rounded-[2.5rem] relative overflow-hidden group">
+               <div className="absolute -right-6 -bottom-6 text-primary-500/10 group-hover:scale-125 transition-transform duration-1000">
+                  <Bot size={150} />
+               </div>
+               <div className="relative z-10 space-y-4">
+                  <div className="flex items-center gap-3 text-primary-400">
+                     <Lightbulb size={20} />
+                     <h4 className="text-[10px] font-black uppercase tracking-widest">Tip de DocenTico</h4>
+                  </div>
+                  <p className="text-xs text-gray-400 leading-relaxed font-medium italic">
+                    "Las planificaciones con más de 3 actividades prácticas tienen un 25% más de compromiso estudiantil."
+                  </p>
+               </div>
+            </div>
+
+            <div className="bg-surface-subtle/80 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] p-1 shadow-2xl overflow-hidden min-h-[600px] flex flex-col">
+               <div className="p-8 border-b border-white/5 space-y-4 bg-white/[0.02]">
+                  <div className="flex justify-between items-center mb-6">
+                     <span className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-600">Document Preview</span>
+                     <div className="flex gap-2">
+                        <div className="w-2.5 h-2.5 rounded-full bg-red-500/20 border border-red-500/40" />
+                        <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/20 border border-yellow-500/40" />
+                        <div className="w-2.5 h-2.5 rounded-full bg-green-500/20 border border-green-500/40" />
+                     </div>
+                  </div>
+                  <h3 className="text-2xl font-black uppercase italic tracking-tighter text-white truncate">{formData.titulo || 'Sin Título'}</h3>
+                  <div className="flex flex-wrap gap-2">
+                     <span className="px-2 py-1 bg-white/5 rounded text-[8px] font-black uppercase tracking-widest text-gray-500 border border-white/5">{formData.materia || 'Materia'}</span>
+                     <span className="px-2 py-1 bg-white/5 rounded text-[8px] font-black uppercase tracking-widest text-gray-500 border border-white/5">{formData.tipo}</span>
+                  </div>
+               </div>
+               
+               <div className="p-8 flex-1 overflow-y-auto custom-scrollbar space-y-8">
+                  <div className="space-y-4">
+                     <h5 className="text-[9px] font-black uppercase tracking-widest text-primary-500 flex items-center gap-2">
+                        <Zap size={12} /> Objetivos del Curso
+                     </h5>
+                     <div className="space-y-3">
+                        {formData.objetivos.map((obj, i) => obj && (
+                          <div key={i} className="flex gap-3 text-xs text-gray-400 group">
+                             <span className="text-primary-600 font-black shrink-0">0{i+1}</span>
+                             <p className="leading-relaxed">{obj}</p>
+                          </div>
+                        ))}
+                     </div>
+                  </div>
+
+                  <div className="space-y-4">
+                     <h5 className="text-[9px] font-black uppercase tracking-widest text-violet-500 flex items-center gap-2">
+                        <Layers size={12} /> Hoja de Ruta
+                     </h5>
+                     <div className="space-y-3">
+                        {formData.actividades.map((act, i) => act && (
+                          <div key={i} className="flex gap-3 text-xs text-gray-400 border-l-2 border-white/5 pl-4 hover:border-violet-500/30 transition-all">
+                             <p className="leading-relaxed">{act}</p>
+                          </div>
+                        ))}
+                     </div>
+                  </div>
+               </div>
+
+               <div className="p-6 bg-black/40 border-t border-white/5 flex gap-3">
+                   <button onClick={() => setToast({ message: 'Exportando PDF...', type: 'info' })} className="flex-1 flex items-center justify-center gap-2 py-3 bg-white/5 hover:bg-white/10 text-[9px] font-black uppercase tracking-widest text-gray-400 hover:text-white rounded-xl transition-all border border-white/5">
+                      <Download size={14} /> PDF
+                   </button>
+                   <button onClick={() => setToast({ message: 'Preparando link compartido...', type: 'info' })} className="flex-1 flex items-center justify-center gap-2 py-3 bg-white/5 hover:bg-white/10 text-[9px] font-black uppercase tracking-widest text-gray-400 hover:text-white rounded-xl transition-all border border-white/5">
+                      <Share2 size={14} /> Link
+                   </button>
+               </div>
+            </div>
+         </div>
+      </div>
     </div>
   )
 }
+
+function Target({ className }) { return <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>; }
