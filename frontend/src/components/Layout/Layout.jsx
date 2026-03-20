@@ -17,6 +17,7 @@ import {
   X
 } from 'lucide-react'
 import NotificationToast from '../Notifications/NotificationToast'
+import AIChat from '../AI/AIChat'
 
 const navItems = [
   { to: '/dashboard',    icon: LayoutDashboard, label: 'Panel' },
@@ -171,6 +172,9 @@ export default function Layout() {
             <Outlet />
           </div>
         </main>
+        
+        {/* AI Assistant Chat */}
+        <AIChat />
       </div>
     </div>
   )

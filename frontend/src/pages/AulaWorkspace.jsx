@@ -48,6 +48,8 @@ export default function AulaWorkspace() {
   const [reportLoading, setReportLoading] = useState(false)
   const [reportStep, setReportStep] = useState(0)
   const [showReport, setShowReport] = useState(false)
+  const [showAISuggestion, setShowAISuggestion] = useState(true)
+  const [recursoFilter, setRecursoFilter] = useState('todos')
 
   const steps = [
     { title: "Analizando actividades recientes", icon: Sparkles },
@@ -143,6 +145,32 @@ export default function AulaWorkspace() {
         case 'Activa': return 'text-primary-500 bg-primary-500/10 border-primary-500/20'
         default: return 'text-orange-500 bg-orange-500/10 border-orange-500/20'
     }
+  }
+
+  const handleVerRecursos = () => {
+    setActiveTab('recursos')
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  const handleAddSuggestedActivity = () => {
+    setToast({ message: 'Actividad sugerida añadida a tu planificación actual', type: 'success' })
+    setShowAISuggestion(false)
+  }
+
+  const handleIgnoreSuggestion = () => {
+    setShowAISuggestion(false)
+    setToast({ message: 'Sugerencia descartada', type: 'info' })
+  }
+
+  const handleDetailedReport = () => {
+    setToast({ message: 'Generando PDF del reporte detallado...', type: 'info' })
+    setTimeout(() => {
+        setToast({ message: 'Reporte descargado con éxito', type: 'success' })
+    }, 2000)
+  }
+
+  const handleUseResource = (titulo) => {
+    setToast({ message: `"${titulo}" vinculado a la planificación seleccionada`, type: 'success' })
   }
 
   if (loading) return <div className="p-10"><CardSkeleton /></div>
@@ -326,37 +354,59 @@ export default function AulaWorkspace() {
         )}
 
         {activeTab === 'recursos' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-             <div 
-               onClick={handleUploadRecurso}
-               className="group border-2 border-dashed border-white/5 rounded-2xl p-6 flex flex-col items-center justify-center text-center gap-3 hover:border-primary-500/30 hover:bg-primary-500/[0.02] transition-all cursor-pointer min-h-[200px]"
-             >
-                <Plus size={24} className="text-gray-700 group-hover:text-primary-500 transition-colors" />
-                <p className="text-[9px] font-black uppercase tracking-widest text-gray-600">Nuevo Recurso</p>
+          <div className="space-y-8">
+             <div className="flex items-center justify-between gap-4">
+                <div className="flex gap-2 p-1 bg-white/5 rounded-xl border border-white/5">
+                   {['todos', 'image', 'video'].map(f => (
+                     <button
+                       key={f}
+                       onClick={() => setRecursoFilter(f)}
+                       className={`px-4 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${
+                         recursoFilter === f ? 'bg-primary-600 text-white shadow-lg shadow-primary-900/20' : 'text-gray-500 hover:text-gray-300'
+                       }`}
+                     >
+                       {f === 'todos' ? 'Todos' : f === 'image' ? 'Imágenes' : 'Videos'}
+                     </button>
+                   ))}
+                </div>
+                <div className="h-[1px] flex-1 bg-white/5" />
              </div>
 
-             {curso.recursos?.map(recurso => (
-               <div key={recurso.id} className="group bg-[#0A0A0A] border border-white/5 rounded-2xl overflow-hidden hover:border-white/10 transition-all shadow-xl">
-                 <div className="aspect-video bg-black flex items-center justify-center relative">
-                    {recurso.tipo === 'video' ? (
-                       <div className="w-12 h-12 bg-primary-600 rounded-full flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform cursor-pointer">
-                          <Play size={20} fill="currentColor" />
+             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div 
+                  onClick={handleUploadRecurso}
+                  className="group border-2 border-dashed border-white/5 rounded-2xl p-6 flex flex-col items-center justify-center text-center gap-3 hover:border-primary-500/30 hover:bg-primary-500/[0.02] transition-all cursor-pointer min-h-[200px]"
+                >
+                   <Plus size={24} className="text-gray-700 group-hover:text-primary-500 transition-colors" />
+                   <p className="text-[9px] font-black uppercase tracking-widest text-gray-600">Nuevo Recurso</p>
+                </div>
+
+                {curso.recursos?.filter(r => recursoFilter === 'todos' || r.tipo === recursoFilter).map(recurso => (
+                  <div key={recurso.id} className="group bg-[#0A0A0A] border border-white/5 rounded-2xl overflow-hidden hover:border-primary-500/30 transition-all shadow-xl hover:shadow-primary-900/10">
+                    <div className="aspect-video bg-black flex items-center justify-center relative overflow-hidden">
+                       {recurso.tipo === 'video' ? (
+                          <div className="w-12 h-12 bg-primary-600 rounded-full flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform cursor-pointer">
+                             <Play size={20} fill="currentColor" />
+                          </div>
+                       ) : (
+                          <img src={recurso.url} alt={recurso.titulo} className="w-full h-full object-cover opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500" />
+                       )}
+                       <div className="absolute top-3 left-3 px-2 py-1 bg-black/60 backdrop-blur-md rounded-lg border border-white/10">
+                          {recurso.tipo === 'video' ? <Play size={10} className="text-red-500" /> : <ImageIcon size={10} className="text-blue-500" />}
                        </div>
-                    ) : (
-                       <img src={recurso.url} alt={recurso.titulo} className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity" />
-                    )}
-                    <div className="absolute top-3 left-3 px-2 py-1 bg-black/60 backdrop-blur-md rounded-lg border border-white/10">
-                       {recurso.tipo === 'video' ? <Play size={10} className="text-red-500" /> : <ImageIcon size={10} className="text-blue-500" />}
                     </div>
-                 </div>
-                 <div className="p-4 flex justify-between items-center">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-white truncate">{recurso.titulo}</p>
-                    <button className="text-gray-700 hover:text-primary-500 transition-colors">
-                       <Copy size={16} title="Usar en Plan" />
-                    </button>
-                 </div>
-               </div>
-             ))}
+                    <div className="p-4 flex justify-between items-center bg-gradient-to-b from-transparent to-black/50">
+                       <p className="text-[10px] font-black uppercase tracking-widest text-white truncate">{recurso.titulo}</p>
+                       <button 
+                         onClick={() => handleUseResource(recurso.titulo)}
+                         className="p-2 bg-white/5 hover:bg-primary-500/20 text-gray-500 hover:text-primary-500 rounded-lg transition-all border border-white/5"
+                       >
+                          <Copy size={16} title="Usar en Plan" />
+                       </button>
+                    </div>
+                  </div>
+                ))}
+             </div>
           </div>
         )}
 
@@ -420,47 +470,64 @@ export default function AulaWorkspace() {
              {/* AI and Report Section */}
              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {/* AI Suggestions Card */}
-                <div className="card bg-[#080808] border-white/5 p-8 flex flex-col gap-8 hover:border-primary-500/20 transition-colors group relative overflow-hidden">
-                   <div className="absolute top-0 right-0 p-8 text-primary-500/10 -rotate-12 group-hover:scale-110 transition-transform">
-                      <Bot size={120} />
-                   </div>
-                   
-                   <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-primary-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-primary-900/30">
-                        <Bot size={24} />
+                   {showAISuggestion && (
+                   <div className="card bg-[#080808] border-white/5 p-8 flex flex-col gap-8 hover:border-primary-500/20 transition-all group relative overflow-hidden animate-in fade-in slide-in-from-left duration-700">
+                      <div className="absolute top-0 right-0 p-8 text-primary-500/10 -rotate-12 group-hover:scale-110 transition-transform">
+                         <Bot size={120} />
                       </div>
-                      <div className="space-y-1">
-                        <h4 className="text-sm font-black uppercase italic text-white">Sugerencia de la IA</h4>
-                        <p className="text-[9px] font-bold text-gray-600 uppercase tracking-widest italic">Basado en las últimas actividades y resultados...</p>
-                      </div>
-                   </div>
-
-                   <div className="space-y-4 relative z-10">
-                      <p className="text-sm font-bold text-gray-300 leading-relaxed">
-                        Detectamos que algunos estudiantes están teniendo dificultades con la <span className="text-primary-400">tabla del 4</span>. 
-                      </p>
                       
-                      <div className="space-y-3">
-                         <p className="text-[10px] font-black uppercase tracking-widest text-gray-500 flex items-center gap-2">
-                            <Lightbulb size={12} className="text-yellow-500" /> Te recomendamos:
+                      <div className="flex items-center gap-4">
+                         <div className="w-12 h-12 bg-primary-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-primary-900/30">
+                           <Bot size={24} />
+                         </div>
+                         <div className="space-y-1">
+                           <h4 className="text-sm font-black uppercase italic text-white">Sugerencia de la IA</h4>
+                           <p className="text-[9px] font-bold text-gray-600 uppercase tracking-widest italic">Basado en las últimas actividades y resultados...</p>
+                         </div>
+                      </div>
+
+                      <div className="space-y-4 relative z-10">
+                         <p className="text-sm font-bold text-gray-300 leading-relaxed">
+                           Detectamos que algunos estudiantes están teniendo dificultades con la <span className="text-primary-400">tabla del 4</span>. 
                          </p>
-                         <ul className="space-y-2">
-                            {['Usar tarjetas visuales digitales', 'Incorporar juegos de repetición rítmica', 'Trabajar en grupos pequeños dirigidos'].map((rec, i) => (
-                              <li key={i} className="flex items-center gap-3 text-xs text-gray-400">
-                                 <div className="w-1.5 h-1.5 rounded-full bg-primary-500/50" />
-                                 {rec}
-                              </li>
-                            ))}
-                         </ul>
+                         
+                         <div className="space-y-3">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-gray-500 flex items-center gap-2">
+                               <Lightbulb size={12} className="text-yellow-500" /> Te recomendamos:
+                            </p>
+                            <ul className="space-y-2">
+                               {['Usar tarjetas visuales digitales', 'Incorporar juegos de repetición rítmica', 'Trabajar en grupos pequeños dirigidos'].map((rec, i) => (
+                                 <li key={i} className="flex items-center gap-3 text-xs text-gray-400">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-primary-500/50" />
+                                    {rec}
+                                 </li>
+                               ))}
+                            </ul>
+                         </div>
+                      </div>
+
+                      <div className="flex flex-wrap gap-3 mt-auto">
+                         <button 
+                           onClick={handleVerRecursos}
+                           className="px-4 py-2 bg-primary-600 hover:bg-primary-500 text-white text-[9px] font-black uppercase tracking-widest rounded-lg transition-all"
+                         >
+                           Ver Recursos
+                         </button>
+                         <button 
+                           onClick={handleAddSuggestedActivity}
+                           className="px-4 py-2 bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white text-[9px] font-black uppercase tracking-widest rounded-lg transition-all border border-white/5"
+                         >
+                           Añadir Actividad
+                         </button>
+                         <button 
+                           onClick={handleIgnoreSuggestion}
+                           className="px-4 py-2 text-gray-600 hover:text-red-400 text-[9px] font-black uppercase tracking-widest transition-all"
+                         >
+                           Ignorar
+                         </button>
                       </div>
                    </div>
-
-                   <div className="flex flex-wrap gap-3 mt-auto">
-                      <button className="px-4 py-2 bg-primary-600 hover:bg-primary-500 text-white text-[9px] font-black uppercase tracking-widest rounded-lg transition-all">Ver Recursos</button>
-                      <button className="px-4 py-2 bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white text-[9px] font-black uppercase tracking-widest rounded-lg transition-all border border-white/5">Añadir Actividad</button>
-                      <button className="px-4 py-2 text-gray-600 hover:text-red-400 text-[9px] font-black uppercase tracking-widest transition-all">Ignorar</button>
-                   </div>
-                </div>
+                   )}
 
                 {/* Weekly Report Card */}
                 <div className="card bg-[#080808] border-white/5 p-8 flex flex-col gap-8 relative overflow-hidden">
@@ -530,8 +597,16 @@ export default function AulaWorkspace() {
                          </div>
 
                          <div className="flex gap-3 mt-auto">
-                            <button className="flex-1 py-3 bg-violet-600 hover:bg-violet-500 text-white text-[9px] font-black uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-violet-900/20">Ver Reporte Detallado</button>
-                            <button className="px-4 py-3 bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white rounded-xl border border-white/5 transition-all">
+                            <button 
+                              onClick={handleDetailedReport}
+                              className="flex-1 py-3 bg-violet-600 hover:bg-violet-500 text-white text-[9px] font-black uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-violet-900/20"
+                            >
+                              Ver Reporte Detallado
+                            </button>
+                            <button 
+                              onClick={handleDetailedReport}
+                              className="px-4 py-3 bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white rounded-xl border border-white/5 transition-all"
+                            >
                                <FileText size={16} />
                             </button>
                          </div>
