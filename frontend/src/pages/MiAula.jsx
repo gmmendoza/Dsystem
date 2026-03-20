@@ -83,7 +83,7 @@ export default function MiAula() {
         className="grid grid-cols-1 md:grid-cols-3 gap-6"
       >
         {stats.map((stat, i) => (
-          <div key={i} className="card bg-surface-subtle/40 border-white/5 p-6 flex items-center justify-between group overflow-hidden relative">
+          <div key={i} className="card bg-surface-subtle/40 border-black/5 dark:border-white/5 p-6 flex items-center justify-between group overflow-hidden relative shadow-sm hover:shadow-md transition-all">
             <div className="absolute -right-4 -top-4 opacity-[0.03] group-hover:scale-110 transition-transform duration-700">
                <stat.icon size={120} />
             </div>
@@ -116,7 +116,7 @@ export default function MiAula() {
             <input 
               type="text" 
               placeholder="BUSCAR AULA O NIVEL..."
-              className="w-full bg-surface-subtle/50 border border-white/5 rounded-2xl py-4 pl-14 pr-6 outline-none focus:border-primary-500/50 transition-all text-[10px] font-black uppercase tracking-widest placeholder:text-gray-800"
+              className="w-full bg-surface-subtle/50 border border-black/5 dark:border-white/5 rounded-2xl py-4 pl-14 pr-6 outline-none focus:border-primary-500/50 transition-all text-[10px] font-black uppercase tracking-widest placeholder:text-gray-800"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -150,11 +150,11 @@ export default function MiAula() {
                 onClick={() => navigate(`/aula/${curso.id}`)}
                 className="group relative cursor-pointer"
               >
-                <div className="absolute -inset-1 bg-gradient-to-br from-primary-600/20 to-indigo-900/20 rounded-[2.5rem] blur-xl opacity-0 group-hover:opacity-100 transition-all duration-700" />
-                <div className="relative bg-surface-subtle/80 backdrop-blur-xl border border-white/5 rounded-[2.5rem] p-10 overflow-hidden hover:border-primary-500/40 transition-all shadow-2xl">
+                <div className="absolute -inset-1 bg-gradient-to-br from-primary-600/10 to-indigo-900/10 rounded-[2.5rem] blur-xl opacity-0 group-hover:opacity-100 transition-all duration-700" />
+                <div className="relative bg-surface-subtle/80 backdrop-blur-xl border border-black/5 dark:border-white/5 rounded-[2.5rem] p-10 overflow-hidden hover:border-primary-500/40 transition-all shadow-xl">
                   
                   <div className="flex justify-between items-start mb-12">
-                    <div className="w-16 h-16 bg-white/5 border border-white/5 rounded-[1.25rem] flex items-center justify-center text-primary-500 group-hover:rotate-6 transition-transform relative">
+                    <div className="w-16 h-16 bg-surface-subtle border border-black/5 dark:border-white/5 rounded-[1.25rem] flex items-center justify-center text-primary-500 group-hover:rotate-6 transition-transform relative">
                        <div className="absolute inset-0 bg-primary-500/10 blur-lg rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
                        {curso.nivel === 'Inicial' ? <Sparkles size={32} /> : <School size={32} />}
                     </div>
@@ -177,7 +177,7 @@ export default function MiAula() {
                     </p>
                   </div>
 
-                  <div className="mt-10 pt-8 border-t border-white/5 flex items-center justify-between">
+                  <div className="mt-10 pt-8 border-t border-black/5 dark:border-white/5 flex items-center justify-between">
                     <div className="flex items-center gap-6">
                       <div className="flex flex-col">
                         <span className="text-[8px] font-black text-gray-700 uppercase mb-1">Alumnado</span>
@@ -209,10 +209,10 @@ export default function MiAula() {
             ))}
 
             {/* Empty State / Add Card */}
-            <motion.div 
+               <motion.div 
               variants={itemVariants}
               onClick={() => setToast({ message: 'Iniciando asistente de creación...', type: 'info' })}
-              className="group border-2 border-dashed border-white/5 rounded-[2.5rem] p-10 flex flex-col items-center justify-center text-center gap-6 hover:border-primary-500/30 hover:bg-primary-500/[0.02] transition-all cursor-pointer min-h-[400px]"
+              className="group border-2 border-dashed border-black/5 dark:border-white/5 rounded-[2.5rem] p-10 flex flex-col items-center justify-center text-center gap-6 hover:border-primary-500/30 hover:bg-primary-500/[0.02] transition-all cursor-pointer min-h-[400px]"
             >
                <div className="w-20 h-20 bg-white/[0.03] rounded-3xl flex items-center justify-center text-gray-800 group-hover:text-primary-500 group-hover:bg-primary-500/10 transition-all">
                  <Plus size={40} />

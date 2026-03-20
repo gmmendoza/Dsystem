@@ -94,7 +94,7 @@ export default function Layout() {
         animate={isCollapsed ? 'collapsed' : 'expanded'}
         variants={sidebarVariants}
         className={`
-          fixed lg:static inset-y-0 left-0 bg-surface-subtle/50 backdrop-blur-xl flex flex-col border-r border-white/5 flex-shrink-0 z-[70] 
+          fixed lg:static inset-y-0 left-0 bg-surface-subtle/80 lg:bg-surface-subtle/40 backdrop-blur-xl flex flex-col border-r border-black/5 dark:border-white/5 flex-shrink-0 z-[70] 
           ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
           transition-transform lg:transition-none duration-300
         `}
@@ -199,7 +199,7 @@ export default function Layout() {
         <div className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] bg-primary-600/5 blur-[150px] rounded-full pointer-events-none" />
         <div className="absolute bottom-[-20%] left-[-10%] w-[400px] h-[400px] bg-indigo-600/5 blur-[120px] rounded-full pointer-events-none" />
         
-        <header className={`h-20 flex items-center justify-between px-6 md:px-10 border-b border-white/5 sticky top-0 transition-all duration-300 z-50 ${scrolled ? 'bg-surface/80 backdrop-blur-xl' : 'bg-transparent'}`}>
+        <header className={`h-20 flex items-center justify-between px-6 md:px-10 border-b border-black/5 dark:border-white/5 sticky top-0 transition-all duration-300 z-50 ${scrolled ? 'bg-surface/90 backdrop-blur-xl shadow-sm' : 'bg-transparent'}`}>
           <div className="flex items-center gap-6">
              <button 
                onClick={() => setSidebarOpen(true)}

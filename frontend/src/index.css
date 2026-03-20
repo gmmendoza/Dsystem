@@ -6,11 +6,11 @@
 
 :root {
   --color-surface: 255 255 255;
-  --color-surface-subtle: 241 245 249;
-  --color-surface-muted: 226 232 240;
+  --color-surface-subtle: 248 250 252; /* Slate 50 */
+  --color-surface-muted: 241 245 249;  /* Slate 100 */
   --color-primary: 14 165 233; /* Sky 500 */
-  --color-text: 15 23 42;
-  --color-border: 226 232 240;
+  --color-text: 15 23 42;      /* Slate 900 */
+  --color-border: 226 232 240; /* Slate 200 */
 }
 
 .dark {
@@ -43,7 +43,7 @@
     color: rgb(var(--color-text));
   }
   .card {
-    @apply bg-surface-subtle/40 backdrop-blur-md border border-white/5 rounded-[2rem] p-8 shadow-2xl;
+    @apply bg-surface-subtle/80 backdrop-blur-md border border-black/5 rounded-[2rem] p-8 shadow-xl transition-all duration-300;
   }
   .input-field {
     @apply w-full bg-surface-subtle border border-white/5 placeholder-gray-700
@@ -66,10 +66,10 @@
   
   /* Glass 2.0 Utilities */
   .glass-card {
-    @apply bg-surface/40 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)];
+    @apply bg-white/70 dark:bg-surface/40 backdrop-blur-xl border border-white/20 dark:border-white/10 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] dark:shadow-[0_8px_32px_0_rgba(0,0,0,0.37)];
   }
   
   .glass-border {
-    @apply border border-white/10;
+    @apply border border-black/5 dark:border-white/10;
   }
 }

@@ -233,7 +233,7 @@ export default function AulaWorkspace() {
   }
 
   if (loading) return <div className="p-10"><CardSkeleton /></div>
-  if (!curso) return <div className="text-white p-20 text-center font-black uppercase tracking-widest">Aula no encontrada</div>
+  if (!curso) return <div className="p-20 text-center font-black uppercase tracking-widest">Aula no encontrada</div>
 
   const tabItems = [
     { id: 'planes', label: 'Planes', icon: Calendar },
@@ -252,7 +252,7 @@ export default function AulaWorkspace() {
         <div className="flex items-center gap-6">
           <button 
             onClick={() => navigate('/mi-aula')}
-            className="p-3 bg-surface-subtle hover:bg-surface-muted rounded-2xl border border-white/5 text-gray-400 hover:text-white transition-all flex-shrink-0 group"
+            className="p-3 bg-surface-subtle hover:bg-surface-muted rounded-2xl border border-black/5 dark:border-white/5 text-gray-400 dark:text-gray-400 hover:text-primary-500 transition-all flex-shrink-0 group"
           >
             <ChevronLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
           </button>
@@ -262,7 +262,7 @@ export default function AulaWorkspace() {
                <div className="w-1 h-1 rounded-full bg-gray-800" />
                <span className="text-[9px] font-black uppercase tracking-[0.3em] text-gray-600">Nivel {curso.nivel}</span>
             </div>
-            <h2 className="text-3xl md:text-5xl font-black uppercase italic tracking-tighter text-white leading-none">
+            <h2 className="text-3xl md:text-5xl font-black uppercase italic tracking-tighter leading-none">
               {curso.nombre}
             </h2>
           </div>
@@ -287,7 +287,7 @@ export default function AulaWorkspace() {
             className={`flex items-center gap-3 px-6 py-3.5 text-[10px] font-black uppercase tracking-widest transition-all relative whitespace-nowrap rounded-xl ${
               activeTab === tab.id 
                 ? 'bg-primary-600 text-white shadow-lg shadow-primary-900/20' 
-                : 'text-gray-500 hover:text-gray-300 hover:bg-white/5'
+                : 'text-gray-500 hover:text-primary-500 hover:bg-primary-500/5'
             }`}
           >
             <tab.icon size={16} />
@@ -317,13 +317,13 @@ export default function AulaWorkspace() {
                     </div>
                     
                  {planes.length === 0 ? (
-                   <div className="py-24 text-center border-2 border-dashed border-white/5 rounded-[3rem] space-y-6 bg-surface-subtle/20 grayscale hover:grayscale-0 transition-all">
-                       <div className="w-20 h-20 bg-white/5 rounded-3xl flex items-center justify-center mx-auto text-gray-700">
+                   <div className="py-24 text-center border-2 border-dashed border-black/5 dark:border-white/5 rounded-[3rem] space-y-6 bg-surface-subtle/50 grayscale hover:grayscale-0 transition-all">
+                       <div className="w-20 h-20 bg-surface-muted rounded-3xl flex items-center justify-center mx-auto text-gray-500">
                          <FileText size={36} />
                        </div>
                        <div className="space-y-2">
-                         <p className="text-md font-black uppercase italic text-gray-400 tracking-tight">Comienza tu secuencia académica</p>
-                         <p className="text-[9px] font-bold text-gray-700 uppercase tracking-widest">Aún no hay planificaciones cargadas en este aula.</p>
+                         <p className="text-md font-black uppercase italic text-gray-600 tracking-tight">Comienza tu secuencia académica</p>
+                         <p className="text-[9px] font-bold text-gray-500 uppercase tracking-widest">Aún no hay planificaciones cargadas en este aula.</p>
                        </div>
                        <button 
                          onClick={() => navigate(`/planificador?cursoId=${id}`)}
@@ -339,13 +339,13 @@ export default function AulaWorkspace() {
                             <ArrowUpRight size={20} className="text-gray-700" />
                          </div>
                          
-                         <div className="w-14 h-14 bg-surface-muted rounded-2xl flex items-center justify-center text-primary-500 group-hover:scale-110 group-hover:bg-primary-500/10 transition-all border border-white/5">
+                         <div className="w-14 h-14 bg-surface-subtle rounded-2xl flex items-center justify-center text-primary-500 group-hover:scale-110 group-hover:bg-primary-500/10 transition-all border border-black/5 dark:border-white/5">
                            {plan.estado === 'Finalizada' ? <CheckCircle2 size={24} /> : <Zap size={24} className="animate-pulse" />}
                          </div>
                          
                          <div className="flex-1 min-w-0">
                             <div className="flex flex-wrap items-center gap-3 mb-2">
-                               <h4 className="text-lg font-black uppercase italic tracking-tighter group-hover:text-primary-300 transition-colors">
+                               <h4 className="text-lg font-black uppercase italic tracking-tighter group-hover:text-primary-500 transition-colors">
                                  {plan.titulo}
                                </h4>
                                <span className={`px-2 py-0.5 rounded-lg text-[8px] font-black uppercase tracking-widest border ${
@@ -398,7 +398,7 @@ export default function AulaWorkspace() {
                    </button>
                 </div>
 
-                <div className="card bg-surface-subtle/20 border-white/5 rounded-[2.5rem] overflow-hidden">
+                <div className="card bg-surface-subtle/40 border-black/5 dark:border-white/5 rounded-[2.5rem] overflow-hidden shadow-sm">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left">
                       <thead>

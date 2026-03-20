@@ -69,9 +69,9 @@ export default function Panel() {
   }, [])
 
   const statCards = [
-    { label: 'Impacto en Alumnos', value: stats.alumnos, icon: Users, color: 'text-blue-500', bg: 'bg-blue-500/10' },
-    { label: 'Proyectos Inicial', value: stats.inicial, icon: Star, color: 'text-amber-400', bg: 'bg-amber-400/10' },
-    { label: 'Proyectos Primaria', value: stats.primaria, icon: Target, color: 'text-primary-500', bg: 'bg-primary-500/10' },
+    { label: 'Impacto en Alumnos', value: stats.alumnos, icon: Users, color: 'text-primary-600', bg: 'bg-primary-500/10' },
+    { label: 'Proyectos Inicial', value: stats.inicial, icon: Star, color: 'text-amber-500', bg: 'bg-amber-500/10' },
+    { label: 'Proyectos Primaria', value: stats.primaria, icon: Target, color: 'text-indigo-500', bg: 'bg-indigo-500/10' },
   ]
 
   return (
@@ -120,26 +120,26 @@ export default function Panel() {
                </h3>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-               <div className="bg-surface-subtle border border-white/5 p-6 rounded-3xl space-y-4">
+               <div className="bg-surface-subtle border border-black/5 dark:border-white/5 p-6 rounded-3xl space-y-4 shadow-sm hover:shadow-md transition-shadow">
                   <div className="flex items-center gap-3 text-primary-500">
                      <BookOpen size={18} />
-                     <span className="text-[9px] font-black uppercase tracking-widest">Planificaciones</span>
+                     <span className="text-[9px] font-black uppercase tracking-widest text-primary-600/70">Planificaciones</span>
                   </div>
-                  <p className="text-3xl font-black italic">{stats.planificaciones} <span className="text-[10px] text-gray-600 not-italic">Creadas</span></p>
+                  <p className="text-3xl font-black italic">{stats.planificaciones} <span className="text-[10px] text-gray-500 not-italic uppercase tracking-widest">Creadas</span></p>
                </div>
-               <div className="bg-surface-subtle border border-white/5 p-6 rounded-3xl space-y-4">
+               <div className="bg-surface-subtle border border-black/5 dark:border-white/5 p-6 rounded-3xl space-y-4 shadow-sm hover:shadow-md transition-shadow">
                   <div className="flex items-center gap-3 text-amber-500">
                      <Calendar size={18} />
-                     <span className="text-[9px] font-black uppercase tracking-widest">Clases hoy</span>
+                     <span className="text-[9px] font-black uppercase tracking-widest text-amber-600/70">Clases hoy</span>
                   </div>
-                  <p className="text-3xl font-black italic">4 <span className="text-[10px] text-gray-600 not-italic">Programadas</span></p>
+                  <p className="text-3xl font-black italic">4 <span className="text-[10px] text-gray-500 not-italic uppercase tracking-widest">Programadas</span></p>
                </div>
-               <div className="bg-surface-subtle border border-white/5 p-6 rounded-3xl space-y-4">
+               <div className="bg-surface-subtle border border-black/5 dark:border-white/5 p-6 rounded-3xl space-y-4 shadow-sm hover:shadow-md transition-shadow">
                   <div className="flex items-center gap-3 text-red-500">
                      <Activity size={18} />
-                     <span className="text-[9px] font-black uppercase tracking-widest">Pendientes</span>
+                     <span className="text-[9px] font-black uppercase tracking-widest text-red-600/70">Pendientes</span>
                   </div>
-                  <p className="text-3xl font-black italic">1 <span className="text-[10px] text-gray-600 not-italic">Evaluación</span></p>
+                  <p className="text-3xl font-black italic">1 <span className="text-[10px] text-gray-500 not-italic uppercase tracking-widest">Evaluación</span></p>
                </div>
             </div>
           </section>
@@ -217,20 +217,20 @@ export default function Panel() {
                  <div 
                    key={plan.id}
                    onClick={() => navigate(`/planificador?edit=${plan.id}`)}
-                   className="group bg-black/40 border border-white/5 hover:border-white/10 p-6 rounded-3xl flex items-center gap-6 transition-all cursor-pointer"
+                   className="group bg-surface-subtle/40 dark:bg-black/40 border border-black/5 dark:border-white/5 hover:border-primary-500/20 p-6 rounded-3xl flex items-center gap-6 transition-all cursor-pointer shadow-sm hover:shadow-md"
                  >
-                    <div className="w-12 h-12 bg-black border border-white/5 rounded-2xl flex items-center justify-center text-gray-700 group-hover:text-amber-500 transition-colors">
+                    <div className="w-12 h-12 bg-surface-subtle border border-white/5 rounded-2xl flex items-center justify-center text-gray-700 group-hover:text-amber-500 transition-colors">
                        <BookOpen size={20} />
                     </div>
                     <div className="flex-1 min-w-0">
-                       <h4 className="text-sm font-black uppercase italic tracking-tighter text-white truncate">{plan.titulo}</h4>
+                       <h4 className="text-sm font-black uppercase italic tracking-tighter truncate">{plan.titulo}</h4>
                        <div className="flex items-center gap-3 mt-1">
                           <span className="text-[9px] font-bold uppercase tracking-widest text-gray-600">{plan.materia}</span>
                           <div className="w-1 h-1 rounded-full bg-gray-900" />
                           <span className="text-[9px] font-bold uppercase tracking-widest text-gray-800">Sincronizado {new Date(plan.lastModified).toLocaleDateString()}</span>
                        </div>
                     </div>
-                    <ChevronRight size={18} className="text-gray-800 group-hover:text-white transition-all transform group-hover:translate-x-1" />
+                    <ChevronRight size={18} className="text-gray-800 transition-all transform group-hover:translate-x-1" />
                  </div>
                ))}
             </div>
@@ -242,14 +242,14 @@ export default function Panel() {
         <div className="xl:col-span-4 space-y-10">
           
           {/* TARJETA DE PROGRESO MAESTRO */}
-          <div className="bg-gradient-to-br from-[#0A0A0A] to-black border border-white/5 p-10 rounded-[3rem] space-y-8 relative overflow-hidden">
+          <div className="bg-gradient-to-br from-surface to-surface-muted dark:from-[#0A0A0A] dark:to-black border border-black/5 dark:border-white/5 p-10 rounded-[3rem] space-y-8 relative overflow-hidden shadow-2xl">
              <div className="absolute top-0 right-0 p-6 opacity-[0.02]">
                 <Trophy size={100} />
              </div>
              
              <div className="space-y-2">
                 <p className="text-[10px] font-black uppercase tracking-widest text-primary-500">Progreso Maestro</p>
-                <h3 className="text-3xl font-black uppercase italic tracking-tighter text-white leading-none">Módulo de <span className="text-primary-500">Avance</span></h3>
+                <h3 className="text-3xl font-black uppercase italic tracking-tighter leading-none">Módulo de <span className="text-primary-500">Avance</span></h3>
              </div>
 
              <div className="space-y-6">
@@ -281,11 +281,11 @@ export default function Panel() {
           </div>
 
           {/* ALUMNOS EN RIESGO (SIMULADO) */}
-          <div className="bg-black/40 border border-red-900/20 p-8 rounded-[2rem] space-y-6">
+          <div className="bg-red-500/5 border border-red-500/10 p-8 rounded-[2rem] space-y-6 shadow-sm">
              <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                    <Activity size={18} className="text-red-500" />
-                   <h4 className="text-[10px] font-black uppercase tracking-widest text-white">Alumnos en Riesgo (IA)</h4>
+                   <h4 className="text-[10px] font-black uppercase tracking-widest">Alumnos en Riesgo (IA)</h4>
                 </div>
                 <span className="px-2 py-0.5 bg-red-500/10 text-red-500 text-[8px] font-black uppercase tracking-widest rounded-full border border-red-500/20">2 Alertas</span>
              </div>
@@ -294,21 +294,21 @@ export default function Panel() {
                    <div className="flex items-center gap-3">
                       <div className="w-8 h-8 bg-red-500/10 rounded-lg flex items-center justify-center text-red-500 font-black text-[10px]">PR</div>
                       <div>
-                         <p className="text-[11px] font-black text-white uppercase tracking-tighter">Pedro Rodríguez</p>
-                         <p className="text-[8px] font-bold text-gray-600 uppercase">Promedio: 5.8</p>
+                         <p className="text-[11px] font-black uppercase tracking-tighter">Pedro Rodríguez</p>
+                         <p className="text-[8px] font-bold text-gray-500 uppercase">Promedio: 5.8</p>
                       </div>
                    </div>
-                   <button className="p-2 hover:bg-white/5 rounded-lg text-gray-600 hover:text-white transition-all"><ArrowRight size={14} /></button>
+                   <button className="p-2 hover:bg-white/5 rounded-lg text-gray-600 transition-all"><ArrowRight size={14} /></button>
                 </div>
                 <div className="flex items-center justify-between p-3 bg-red-500/5 border border-red-500/10 rounded-xl">
                    <div className="flex items-center gap-3">
                       <div className="w-8 h-8 bg-red-500/10 rounded-lg flex items-center justify-center text-red-500 font-black text-[10px]">LS</div>
                       <div>
-                         <p className="text-[11px] font-black text-white uppercase tracking-tighter">Lucas Sánchez</p>
-                         <p className="text-[8px] font-bold text-gray-600 uppercase">Promedio: 5.2</p>
+                         <p className="text-[11px] font-black uppercase tracking-tighter">Lucas Sánchez</p>
+                         <p className="text-[8px] font-bold text-gray-500 uppercase">Promedio: 5.2</p>
                       </div>
                    </div>
-                   <button className="p-2 hover:bg-white/5 rounded-lg text-gray-600 hover:text-white transition-all"><ArrowRight size={14} /></button>
+                   <button className="p-2 hover:bg-white/5 rounded-lg text-gray-600 transition-all"><ArrowRight size={14} /></button>
                 </div>
              </div>
           </div>
@@ -317,9 +317,9 @@ export default function Panel() {
           <div className="bg-primary-600/5 border border-primary-500/10 p-8 rounded-[2rem] space-y-6">
              <div className="flex items-center gap-3">
                 <Zap size={18} className="text-primary-500" />
-                <h4 className="text-[10px] font-black uppercase tracking-widest text-white">Tip Pedagógico</h4>
+                <h4 className="text-[10px] font-black uppercase tracking-widest">Tip Pedagógico</h4>
              </div>
-             <p className="text-[11px] font-bold text-gray-400 leading-relaxed uppercase tracking-tight">
+             <p className="text-[11px] font-bold text-gray-600 leading-relaxed uppercase tracking-tight">
                 El Nivel Inicial responde mejor a la repetición rítmica. Prueba usar la misma canción de cierre durante toda la semana.
              </p>
           </div>

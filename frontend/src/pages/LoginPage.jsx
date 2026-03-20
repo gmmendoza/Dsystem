@@ -40,7 +40,7 @@ export default function LoginPage() {
         </div>
 
         {/* Login Card */}
-        <div className="bg-surface-subtle border border-white/10 rounded-2xl p-8 shadow-2xl transition-colors duration-300">
+        <div className="bg-surface-subtle border border-black/5 dark:border-white/10 rounded-2xl p-8 shadow-2xl transition-colors duration-300">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label className="label">Usuario</label>
@@ -73,7 +73,7 @@ export default function LoginPage() {
             </div>
 
             {error && (
-              <div className="p-3 bg-red-900/30 border border-red-800 rounded-lg text-red-400 text-sm">
+              <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-600 dark:text-red-400 text-sm">
                 {error}
               </div>
             )}
@@ -87,7 +87,7 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <div className="mt-8 pt-6 border-t border-white/5 text-center">
+          <div className="mt-8 pt-6 border-t border-black/5 dark:border-white/5 text-center">
             <p className="text-xs text-gray-500">
               Demo: usa <b>admin</b> / <b>admin</b> para entrar.
             </p>
