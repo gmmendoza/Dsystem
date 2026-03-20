@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Users, Search, Filter, ArrowUpRight, GraduationCap, AlertTriangle, TrendingUp, CheckCircle2 } from 'lucide-react'
+import { Users, Search, ArrowUpRight, GraduationCap, AlertTriangle, TrendingUp } from 'lucide-react'
 import { alumnoAPI, cursoAPI } from '../services/api'
 import { CardSkeleton } from '../components/Common/LoadingSkeleton'
 

@@ -468,7 +468,7 @@ export default function Planificador() {
                         <h4 className="text-[10px] font-black uppercase tracking-widest text-primary-600 dark:text-primary-400">DocenTico Insight</h4>
                      </div>
                      <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed italic font-medium">
-                        "Notamos que las secuencias didácticas con una duración de 10-15 días obtienen mejores tasas de cierre completo en {formData.materia || 'esta materia'}."
+                        &quot;Notamos que las secuencias didácticas con una duración de 10-15 días obtienen mejores tasas de cierre completo en {formData.materia || 'esta materia'}.&quot;
                      </p>
                      <div className="pt-2">
                         <button onClick={() => setFormData({...formData, tipo: 'Quincenal'})} className="text-[9px] font-black uppercase tracking-widest text-primary-600 hover:text-primary-400 transition-colors underline underline-offset-4 decoration-primary-500/30">

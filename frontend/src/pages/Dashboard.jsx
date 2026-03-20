@@ -5,7 +5,6 @@ import {
   Users, 
   BookOpen, 
   Calendar, 
-  ArrowUpRight, 
   Clock, 
   CheckCircle2,
   TrendingUp,
@@ -19,8 +18,7 @@ import {
   Plus,
   ArrowRight,
   Layers,
-  LayoutDashboard,
-  X
+  LayoutDashboard
 } from 'lucide-react'
 import { CardSkeleton } from '../components/Common/LoadingSkeleton'
 import { AIService } from '../services/AIService'

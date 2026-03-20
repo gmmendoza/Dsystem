@@ -6,6 +6,7 @@ import PlanningTimeline from '../components/Aula/PlanningTimeline'
 import Asistencia from '../components/Aula/Asistencia'
 import { AlumnoModal } from '../components/Aula/AlumnoModal'
 import { 
+  X,
   ChevronLeft, 
   Calendar, 
   Users, 
@@ -492,7 +493,7 @@ export default function AulaWorkspace() {
                     <div className="space-y-3 flex-1 relative z-10">
                        <h3 className="text-2xl font-black uppercase italic flex items-center gap-3 tracking-tighter">Sugerencia IA de Hoy</h3>
                        <p className="text-sm text-gray-400 max-w-2xl leading-relaxed">
-                         Basado en tu planificación de <span className="text-primary-400 font-bold uppercase tracking-widest">"Célula Animal"</span>, hemos encontrado una visualización 3D interactiva que mejorará la retención visual en un 40%.
+                         Basado en tu planificación de <span className="text-primary-400 font-bold uppercase tracking-widest">&quot;Célula Animal&quot;</span>, hemos encontrado una visualización 3D interactiva que mejorará la retención visual en un 40%.
                        </p>
                     </div>
                     <div className="flex gap-4 shrink-0 relative z-10">
