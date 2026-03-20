@@ -4,9 +4,33 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --color-surface: 255 255 255;
+  --color-surface-subtle: 241 245 249;
+  --color-surface-muted: 226 232 240;
+  --color-primary: 14 165 233; /* Sky 500 */
+  --color-text: 15 23 42;
+  --color-border: 226 232 240;
+}
+
+.dark {
+  --color-surface: 9 9 11;
+  --color-surface-subtle: 24 24 27;
+  --color-surface-muted: 39 39 42;
+  --color-primary: 139 92 246; /* Violet 500 */
+  --color-text: 241 245 249;
+  --color-border: 63 63 70;
+}
+
 @layer base {
   body {
-    @apply bg-surface text-gray-100 font-sans antialiased selection:bg-primary-500/30;
+    background-color: rgb(var(--color-surface));
+    color: rgb(var(--color-text));
+    @apply font-sans antialiased selection:bg-primary-500/30 transition-colors duration-300;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply transition-colors duration-300;
+    color: rgb(var(--color-text));
   }
 }
 
@@ -15,20 +39,22 @@
     @apply bg-primary-600 hover:bg-primary-500 text-white font-black uppercase tracking-widest py-3 px-6 rounded-xl transition-all duration-300 shadow-lg shadow-primary-900/20 active:scale-95 disabled:opacity-50;
   }
   .btn-secondary {
-    @apply bg-surface-muted hover:bg-surface-muted/80 text-white font-black uppercase tracking-widest py-3 px-6 rounded-xl transition-all duration-300 border border-white/5;
+    @apply bg-surface-muted hover:bg-surface-muted/80 font-black uppercase tracking-widest py-3 px-6 rounded-xl transition-all duration-300 border border-white/5;
+    color: rgb(var(--color-text));
   }
   .card {
     @apply bg-surface-subtle/40 backdrop-blur-md border border-white/5 rounded-[2rem] p-8 shadow-2xl;
   }
   .input-field {
-    @apply w-full bg-surface-subtle border border-white/5 text-gray-100 placeholder-gray-700
+    @apply w-full bg-surface-subtle border border-white/5 placeholder-gray-700
            rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-transparent transition-all duration-300;
+    color: rgb(var(--color-text));
   }
   .label {
     @apply block text-[10px] font-black uppercase tracking-widest text-gray-500 mb-2 ml-1;
   }
   .nav-link {
-    @apply flex items-center gap-3 px-4 py-3 rounded-xl text-gray-500 hover:bg-white/5 hover:text-white
+    @apply flex items-center gap-3 px-4 py-3 rounded-xl text-gray-500 hover:bg-primary-500/10 hover:text-primary-500
            transition-all duration-300 cursor-pointer text-[11px] font-black uppercase tracking-widest;
   }
   .nav-link.active {

@@ -89,7 +89,7 @@ export default function Panel() {
                 <span className="text-[9px] font-bold text-gray-800 uppercase tracking-widest leading-none">Centro de Control Académico</span>
              </div>
           </div>
-          <h2 className="text-4xl md:text-6xl font-black uppercase italic tracking-tighter text-white leading-tight">
+          <h2 className="text-4xl md:text-6xl font-black uppercase italic tracking-tighter leading-tight">
              Panel del <br className="hidden md:block" /> <span className="text-primary-500">Docente</span>.
           </h2>
           <p className="text-gray-500 text-xs md:text-sm font-bold uppercase tracking-widest max-w-xl">
@@ -120,26 +120,26 @@ export default function Panel() {
                </h3>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-               <div className="bg-[#0A0A0A] border border-white/5 p-6 rounded-3xl space-y-4">
+               <div className="bg-surface-subtle border border-white/5 p-6 rounded-3xl space-y-4">
                   <div className="flex items-center gap-3 text-primary-500">
                      <BookOpen size={18} />
                      <span className="text-[9px] font-black uppercase tracking-widest">Planificaciones</span>
                   </div>
-                  <p className="text-3xl font-black italic text-white">{stats.planificaciones} <span className="text-[10px] text-gray-600 not-italic">Creadas</span></p>
+                  <p className="text-3xl font-black italic">{stats.planificaciones} <span className="text-[10px] text-gray-600 not-italic">Creadas</span></p>
                </div>
-               <div className="bg-[#0A0A0A] border border-white/5 p-6 rounded-3xl space-y-4">
+               <div className="bg-surface-subtle border border-white/5 p-6 rounded-3xl space-y-4">
                   <div className="flex items-center gap-3 text-amber-500">
                      <Calendar size={18} />
                      <span className="text-[9px] font-black uppercase tracking-widest">Clases hoy</span>
                   </div>
-                  <p className="text-3xl font-black italic text-white">4 <span className="text-[10px] text-gray-600 not-italic">Programadas</span></p>
+                  <p className="text-3xl font-black italic">4 <span className="text-[10px] text-gray-600 not-italic">Programadas</span></p>
                </div>
-               <div className="bg-[#0A0A0A] border border-white/5 p-6 rounded-3xl space-y-4">
+               <div className="bg-surface-subtle border border-white/5 p-6 rounded-3xl space-y-4">
                   <div className="flex items-center gap-3 text-red-500">
                      <Activity size={18} />
                      <span className="text-[9px] font-black uppercase tracking-widest">Pendientes</span>
                   </div>
-                  <p className="text-3xl font-black italic text-white">1 <span className="text-[10px] text-gray-600 not-italic">Evaluación</span></p>
+                  <p className="text-3xl font-black italic">1 <span className="text-[10px] text-gray-600 not-italic">Evaluación</span></p>
                </div>
             </div>
           </section>
@@ -150,7 +150,7 @@ export default function Panel() {
               [...Array(3)].map((_, i) => <CardSkeleton key={i} />)
             ) : (
               statCards.map((card, i) => (
-                <div key={i} className="group relative bg-black/40 border border-white/5 p-6 rounded-3xl overflow-hidden hover:border-white/10 transition-all hover:bg-black/60">
+                <div key={i} className="group relative bg-surface-subtle border border-white/5 p-6 rounded-3xl overflow-hidden hover:border-white/10 transition-all hover:bg-surface-muted/50">
                     <div className="flex justify-between items-start mb-8">
                       <div className={`p-4 rounded-xl ${card.bg} border border-white/5`}>
                         <card.icon className={card.color} size={24} />
@@ -158,7 +158,7 @@ export default function Panel() {
                     </div>
                     <div>
                       <p className="text-[9px] font-black uppercase tracking-[0.3em] text-gray-700 mb-1">{card.label}</p>
-                      <p className="text-4xl font-black italic tracking-tighter text-white">{card.value}</p>
+                      <p className="text-4xl font-black italic tracking-tighter">{card.value}</p>
                     </div>
                 </div>
               ))
@@ -182,7 +182,7 @@ export default function Panel() {
                    <div 
                      key={curso.id} 
                      onClick={() => navigate(`/aula/${curso.id}`)}
-                     className="group cursor-pointer bg-[#0A0A0A] border border-white/5 hover:border-primary-500/20 p-8 rounded-[2.5rem] transition-all relative overflow-hidden active:scale-95 hover:bg-primary-950/5"
+                     className="group cursor-pointer bg-surface-subtle border border-white/5 hover:border-primary-500/20 p-8 rounded-[2.5rem] transition-all relative overflow-hidden active:scale-95 hover:bg-primary-950/5"
                    >
                      <div className="relative z-10 space-y-4">
                         <div className="flex items-center gap-2">
@@ -190,7 +190,7 @@ export default function Panel() {
                            <div className="h-[1px] w-4 bg-gray-800" />
                            <span className="text-[8px] font-bold text-gray-700 uppercase tracking-widest">{curso.alumnos?.length || 0} Alumnos</span>
                         </div>
-                        <h4 className="text-2xl font-black uppercase italic tracking-tighter text-white group-hover:text-primary-500 transition-colors">{curso.nombre}</h4>
+                        <h4 className="text-2xl font-black uppercase italic tracking-tighter group-hover:text-primary-500 transition-colors">{curso.nombre}</h4>
                         <div className="flex items-center gap-2 text-primary-600 text-[10px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all translate-x-[-10px] group-hover:translate-x-0">
                            Entrar al Aula <ArrowRight size={14} />
                         </div>

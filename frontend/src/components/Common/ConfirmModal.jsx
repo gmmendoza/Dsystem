@@ -14,7 +14,7 @@ export const ConfirmModal = ({ isOpen, title, message, onConfirm, onCancel, conf
     <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onCancel} />
       
-      <div className="relative bg-[#0A0A0A] border border-white/10 w-full max-w-md rounded-[2.5rem] p-10 overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
+      <div className="relative bg-surface border border-white/10 w-full max-w-md rounded-[2.5rem] p-10 overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 transition-colors duration-300">
         <div className="absolute top-0 right-0 p-6">
            <button onClick={onCancel} className="text-gray-600 hover:text-white transition-colors">
               <X size={20} />
@@ -27,7 +27,7 @@ export const ConfirmModal = ({ isOpen, title, message, onConfirm, onCancel, conf
            </div>
            
            <div className="space-y-2">
-              <h3 className="text-2xl font-black uppercase italic tracking-tighter text-white">{title}</h3>
+              <h3 className="text-2xl font-black uppercase italic tracking-tighter">{title}</h3>
               <p className="text-gray-500 text-[11px] font-bold uppercase tracking-widest leading-relaxed">
                 {message}
               </p>
@@ -36,7 +36,7 @@ export const ConfirmModal = ({ isOpen, title, message, onConfirm, onCancel, conf
            <div className="flex gap-4 pt-4">
               <button 
                 onClick={onCancel}
-                className="flex-1 py-4 bg-white/5 hover:bg-white/10 text-[10px] font-black uppercase tracking-widest text-gray-400 rounded-xl border border-white/5 transition-all"
+                className="flex-1 py-4 bg-surface-subtle hover:bg-surface-muted text-[10px] font-black uppercase tracking-widest text-gray-500 rounded-xl border border-white/5 transition-all text-center"
               >
                 Cancelar
               </button>

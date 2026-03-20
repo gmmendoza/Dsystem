@@ -98,7 +98,7 @@ export default function AIChat() {
             initial={{ opacity: 0, scale: 0.9, y: 20, filter: 'blur(10px)' }}
             animate={{ opacity: 1, scale: 1, y: 0, filter: 'blur(0px)' }}
             exit={{ opacity: 0, scale: 0.9, y: 20, filter: 'blur(10px)' }}
-            className="absolute bottom-20 right-0 w-[400px] h-[600px] bg-surface-subtle/80 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex flex-col overflow-hidden"
+            className="absolute bottom-20 right-0 w-[400px] h-[600px] bg-surface-subtle/95 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] shadow-2xl flex flex-col overflow-hidden transition-colors duration-300"
           >
             {/* AI Header */}
             <div className="p-6 bg-gradient-to-r from-primary-600/20 to-indigo-600/20 border-b border-white/5 flex items-center justify-between">
@@ -110,7 +110,7 @@ export default function AIChat() {
                     <div className="absolute -top-1 -right-1 w-4 h-4 bg-accent-emerald rounded-full border-4 border-surface-subtle" />
                 </div>
                 <div>
-                   <h3 className="text-sm font-black uppercase tracking-widest text-white flex items-center gap-2">
+                   <h3 className="text-sm font-black uppercase tracking-widest flex items-center gap-2">
                      DocenTico <Sparkles size={14} className="text-primary-400" />
                    </h3>
                    <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Inteligencia Pedagógica</p>
@@ -132,13 +132,13 @@ export default function AIChat() {
                 >
                   <div className={`max-w-[85%] p-4 rounded-2xl text-[11px] leading-relaxed relative ${
                     msg.role === 'user' 
-                      ? 'bg-primary-600 text-white font-bold rounded-tr-none' 
-                      : 'bg-white/5 text-gray-300 border border-white/5 rounded-tl-none'
-                  }`}>
+                      ? 'bg-primary-600 text-white font-bold rounded-tr-none shadow-lg' 
+                      : 'bg-surface border border-white/5 rounded-tl-none'
+                  }`} style={msg.role !== 'user' ? { color: 'rgb(var(--color-text))' } : {}}>
                     {msg.role === 'assistant' && (
                         <div className="absolute -top-4 -left-1 text-[8px] font-black uppercase tracking-widest text-primary-500 bg-surface px-2 py-0.5 rounded border border-white/5">AI Response</div>
                     )}
-                    <p dangerouslySetInnerHTML={{ __html: msg.content.replace(/\*\*(.*?)\*\*/g, '<b class="text-white">$1</b>') }} />
+                    <p dangerouslySetInnerHTML={{ __html: msg.content.replace(/\*\*(.*?)\*\*/g, '<b style="color: rgb(var(--color-primary))">$1</b>') }} />
                     
                     {msg.role === 'assistant' && msg.canCopy && (
                         <div className="mt-4 pt-3 border-t border-white/5 flex gap-2">
@@ -169,7 +169,7 @@ export default function AIChat() {
             </div>
 
             {/* Suggestions & Input */}
-            <div className="p-6 space-y-4 bg-black/20 border-t border-white/5">
+            <div className="p-6 space-y-4 bg-surface-muted/30 border-t border-white/5">
               {!messages.some(m => m.role === 'user') && (
                  <div className="flex flex-wrap gap-2">
                     {SUGGESTIONS.map((s, i) => (
@@ -188,7 +188,8 @@ export default function AIChat() {
                 <input
                   type="text"
                   placeholder="ESCRIBE TU CONSULTA AQUÍ..."
-                  className="w-full bg-surface-subtle border border-white/10 rounded-2xl py-4 pl-6 pr-14 text-[10px] font-black uppercase tracking-widest text-white outline-none focus:border-primary-500/50 transition-all placeholder:text-gray-800"
+                  className="w-full bg-surface border border-white/10 rounded-2xl py-4 pl-6 pr-14 text-[10px] font-black uppercase tracking-widest outline-none focus:border-primary-500/50 transition-all placeholder:text-gray-800"
+                  style={{ color: 'rgb(var(--color-text))' }}
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                 />

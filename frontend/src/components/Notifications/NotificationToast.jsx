@@ -19,9 +19,9 @@ export default function NotificationToast() {
           key={n.id}
           className={`flex items-start gap-3 p-4 rounded-xl shadow-2xl border text-sm animate-in slide-in-from-right
             ${n.tipo === 'warning'
-              ? 'bg-yellow-900/90 border-yellow-700 text-yellow-100'
-              : 'bg-gray-900/95 border-gray-700 text-gray-100'
-            }`}
+              ? 'bg-amber-600/90 border-amber-700 text-white'
+              : 'bg-surface-subtle/95 border-white/10 transition-colors duration-300'
+            }`} style={n.tipo !== 'warning' ? { color: 'rgb(var(--color-text))' } : {}}
         >
           <Bell className="w-4 h-4 mt-0.5 flex-shrink-0 text-blue-600" />
           <div className="flex-1">

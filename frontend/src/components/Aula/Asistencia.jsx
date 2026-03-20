@@ -67,13 +67,13 @@ export default function Asistencia({ cursoId, alumnos }) {
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
       
       {/* ── HEADER ASISTENCIA ── */}
-      <div className="flex flex-col md:flex-row justify-between items-center bg-black/40 border border-white/5 p-8 rounded-[2rem] gap-6">
+      <div className="flex flex-col md:flex-row justify-between items-center bg-surface-subtle/40 border border-white/5 p-8 rounded-[2rem] gap-6 transition-colors duration-300">
         <div className="flex items-center gap-4">
            <div className="w-12 h-12 bg-primary-600 rounded-2xl flex items-center justify-center text-white shadow-lg">
               <Users size={24} />
            </div>
            <div>
-              <h3 className="text-xl font-black uppercase italic tracking-tighter text-white">Registro de Asistencia</h3>
+              <h3 className="text-xl font-black uppercase italic tracking-tighter">Registro de Asistencia</h3>
               <p className="text-[10px] font-bold text-gray-600 uppercase tracking-widest">Gestiona el presente de tus alumnos</p>
            </div>
         </div>
@@ -86,7 +86,8 @@ export default function Asistencia({ cursoId, alumnos }) {
                 type="date" 
                 value={fecha}
                 onChange={(e) => setFecha(e.target.value)}
-                className="bg-transparent text-[10px] font-black uppercase tracking-widest text-white outline-none border-none cursor-pointer"
+                className="bg-transparent text-[10px] font-black uppercase tracking-widest outline-none border-none cursor-pointer"
+                style={{ color: 'rgb(var(--color-text))' }}
               />
            </div>
            <button onClick={() => changeDate(1)} className="p-2 hover:bg-white/10 rounded-xl text-gray-500 transition-all"><ChevronRight size={20} /></button>
@@ -103,7 +104,7 @@ export default function Asistencia({ cursoId, alumnos }) {
       </div>
 
       {/* ── LISTA DE ALUMNOS ── */}
-      <div className="card bg-black/20 border-white/5 overflow-hidden">
+      <div className="card bg-surface-subtle/20 border-white/5 overflow-hidden transition-colors duration-300">
         {loading ? (
           <div className="py-20 flex flex-col items-center justify-center gap-4">
              <Loader2 size={40} className="animate-spin text-primary-500" />
@@ -128,7 +129,7 @@ export default function Asistencia({ cursoId, alumnos }) {
                                 {a.nombre.charAt(0)}{a.apellido.charAt(0)}
                              </div>
                              <div>
-                                <p className="text-sm font-black uppercase italic text-white tracking-tight">{a.nombre} {a.apellido}</p>
+                                <p className="text-sm font-black uppercase italic tracking-tight" style={{ color: 'rgb(var(--color-text))' }}>{a.nombre} {a.apellido}</p>
                                 <p className="text-[9px] font-bold text-gray-700 uppercase tracking-widest">DNI: {a.dni}</p>
                              </div>
                           </div>

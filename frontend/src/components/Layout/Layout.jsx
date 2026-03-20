@@ -19,8 +19,11 @@ import {
   ChevronLeft,
   Sparkles,
   Search,
-  Zap
+  Zap,
+  Sun,
+  Moon
 } from 'lucide-react'
+import { useTheme } from '../../context/ThemeContext'
 import NotificationToast from '../Notifications/NotificationToast'
 import AIChat from '../AI/AIChat'
 
@@ -34,6 +37,7 @@ const navItems = [
 
 export default function Layout() {
   const { user, logout } = useAuth()
+  const { theme, toggleTheme } = useTheme()
   const location = useLocation()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [isCollapsed, setIsCollapsed] = useState(false)
@@ -70,7 +74,7 @@ export default function Layout() {
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-surface text-gray-200 font-sans selection:bg-primary-500/30">
+    <div className="flex h-screen overflow-hidden bg-surface font-sans selection:bg-primary-500/30 transition-colors duration-300">
       {/* Backdrop for mobile */}
       <AnimatePresence>
         {sidebarOpen && (
@@ -107,7 +111,7 @@ export default function Layout() {
                 animate={{ opacity: 1, x: 0 }}
                 className="whitespace-nowrap"
               >
-                <h2 className="text-xl font-black italic uppercase tracking-tighter text-white">DSystem<span className="text-primary-500">.</span></h2>
+                <h2 className="text-xl font-black italic uppercase tracking-tighter">DSystem<span className="text-primary-500">.</span></h2>
                 <p className="text-[8px] font-black uppercase tracking-[0.2em] text-gray-500">Education SaaS</p>
               </motion.div>
             )}
@@ -132,7 +136,7 @@ export default function Layout() {
                   `flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all group relative ${
                     isActive 
                       ? 'bg-primary-600/10 text-primary-400 border border-primary-500/20' 
-                      : 'text-gray-500 hover:text-gray-200 hover:bg-white/5 border border-transparent'
+                      : 'text-gray-500 hover:text-primary-500 hover:bg-white/5 border border-transparent'
                   }`
                 }
               >
@@ -166,7 +170,7 @@ export default function Layout() {
                    <User size={20} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-[10px] font-black uppercase tracking-tighter text-white truncate">{user?.username || 'Docente Pro'}</p>
+                  <p className="text-[10px] font-black uppercase tracking-tighter truncate">{user?.username || 'Docente Pro'}</p>
                   <div className="flex items-center gap-1">
                     <div className="w-1 h-1 bg-green-500 rounded-full" />
                     <p className="text-[8px] font-bold uppercase tracking-widest text-gray-600 truncate">{user?.rol || 'Premium Plan'}</p>
@@ -210,7 +214,8 @@ export default function Layout() {
                 <input 
                   type="text" 
                   placeholder="Buscar recursos, aulas..." 
-                  className="bg-transparent border-none outline-none text-[11px] font-bold uppercase tracking-widest text-gray-300 placeholder:text-gray-700 w-full"
+                  className="bg-transparent border-none outline-none text-[11px] font-bold uppercase tracking-widest placeholder:text-gray-700 w-full"
+                  style={{ color: 'rgb(var(--color-text))' }}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyDown={handleSearch}
@@ -237,16 +242,17 @@ export default function Layout() {
             </button>
             
             <button 
-              onClick={() => handleHeaderAction('settings')}
-              className="hidden sm:flex w-11 h-11 items-center justify-center text-gray-500 hover:text-white hover:bg-white/5 rounded-xl border border-transparent hover:border-white/10 transition-all"
+              onClick={toggleTheme}
+              className="w-11 h-11 flex items-center justify-center text-gray-500 hover:text-primary-500 hover:bg-white/5 rounded-xl border border-transparent hover:border-white/10 transition-all"
+              title={theme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
             >
-               <Settings size={20} />
+              {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
             </button>
             
             <div className="h-8 w-[1px] bg-white/5 mx-1" />
             
             <div 
-              onClick={() => handleHeaderAction('zap')}
+              onClick={() => window.dispatchEvent(new CustomEvent('toggle-ai-chat'))}
               className="w-10 h-10 rounded-xl bg-surface-subtle border border-white/10 flex items-center justify-center text-primary-400 shadow-lg cursor-pointer hover:border-primary-500 transition-all active:scale-95"
             >
                <Zap size={20} />

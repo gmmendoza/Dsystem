@@ -89,7 +89,7 @@ export default function MiAula() {
             </div>
             <div className="space-y-1">
               <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">{stat.label}</p>
-              <h3 className="text-3xl font-black italic text-white flex items-baseline gap-2">
+              <h3 className="text-3xl font-black italic flex items-baseline gap-2">
                  {loading ? '--' : stat.value}
                  <span className="text-[10px] text-green-500 font-black">+12%</span>
               </h3>
@@ -106,7 +106,7 @@ export default function MiAula() {
         <div className="space-y-4">
           <div className="flex items-center gap-3">
              <div className="w-1.5 h-1.5 rounded-full bg-primary-500 animate-pulse" />
-             <h2 className="text-4xl font-black uppercase italic tracking-tighter text-white">
+             <h2 className="text-4xl font-black uppercase italic tracking-tighter">
                Mis <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-indigo-500">Workspaces</span>
              </h2>
           </div>
@@ -169,7 +169,7 @@ export default function MiAula() {
                   </div>
 
                   <div className="space-y-3">
-                    <h3 className="text-3xl font-black uppercase italic tracking-tighter text-white group-hover:text-primary-300 transition-colors leading-none">
+                    <h3 className="text-3xl font-black uppercase italic tracking-tighter group-hover:text-primary-300 transition-colors leading-none">
                       {curso.nombre}
                     </h3>
                     <p className="text-[10px] font-bold text-gray-600 uppercase tracking-widest leading-relaxed line-clamp-2 italic">

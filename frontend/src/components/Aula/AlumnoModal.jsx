@@ -55,7 +55,7 @@ export function AlumnoModal({ isOpen, onClose, onSave, alumno = null }) {
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="relative w-full max-w-lg bg-[#0c0c14] border border-white/5 rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col"
+            className="relative w-full max-w-lg bg-surface border border-white/5 rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col transition-colors duration-300"
           >
             {/* Header */}
             <div className="p-8 border-b border-white/5 flex items-center justify-between bg-gradient-to-r from-primary-600/10 to-transparent">
@@ -64,7 +64,7 @@ export function AlumnoModal({ isOpen, onClose, onSave, alumno = null }) {
                   <User size={24} />
                 </div>
                 <div>
-                   <h3 className="text-sm font-black uppercase tracking-[0.2em] text-white">
+                   <h3 className="text-sm font-black uppercase tracking-[0.2em]">
                      {alumno ? 'Editar Estudiante' : 'Nuevo Estudiante'}
                    </h3>
                    <p className="text-[10px] font-bold text-gray-600 uppercase tracking-widest italic">Expediente Académico Pro</p>
@@ -84,10 +84,11 @@ export function AlumnoModal({ isOpen, onClose, onSave, alumno = null }) {
                 <div className="space-y-2">
                   <label className="text-[9px] font-black uppercase tracking-widest text-gray-500 ml-1">Nombre</label>
                   <div className="relative">
-                    <input
+                     <input
                       required
                       type="text"
-                      className="w-full bg-white/5 border border-white/5 rounded-xl py-3 pl-10 pr-4 text-[11px] font-bold text-white outline-none focus:border-primary-500/50 transition-all"
+                      className="w-full bg-surface-subtle border border-white/5 rounded-xl py-3 pl-10 pr-4 text-[11px] font-bold outline-none focus:border-primary-500/50 transition-all"
+                      style={{ color: 'rgb(var(--color-text))' }}
                       placeholder="Ej: Juan"
                       value={formData.nombre}
                       onChange={e => setFormData({...formData, nombre: e.target.value})}
@@ -100,7 +101,8 @@ export function AlumnoModal({ isOpen, onClose, onSave, alumno = null }) {
                   <input
                     required
                     type="text"
-                    className="w-full bg-white/5 border border-white/5 rounded-xl py-3 px-4 text-[11px] font-bold text-white outline-none focus:border-primary-500/50 transition-all"
+                    className="w-full bg-surface-subtle border border-white/5 rounded-xl py-3 px-4 text-[11px] font-bold outline-none focus:border-primary-500/50 transition-all"
+                    style={{ color: 'rgb(var(--color-text))' }}
                     placeholder="Ej: Pérez"
                     value={formData.apellido}
                     onChange={e => setFormData({...formData, apellido: e.target.value})}
@@ -111,10 +113,11 @@ export function AlumnoModal({ isOpen, onClose, onSave, alumno = null }) {
               <div className="space-y-2">
                 <label className="text-[9px] font-black uppercase tracking-widest text-gray-500 ml-1">DNI / Documento</label>
                 <div className="relative">
-                  <input
+                   <input
                     required
                     type="text"
-                    className="w-full bg-white/5 border border-white/5 rounded-xl py-3 pl-10 pr-4 text-[11px] font-bold text-white outline-none focus:border-primary-500/50 transition-all"
+                    className="w-full bg-surface-subtle border border-white/5 rounded-xl py-3 pl-10 pr-4 text-[11px] font-bold outline-none focus:border-primary-500/50 transition-all"
+                    style={{ color: 'rgb(var(--color-text))' }}
                     placeholder="Número de documento..."
                     value={formData.dni}
                     onChange={e => setFormData({...formData, dni: e.target.value})}
@@ -127,9 +130,10 @@ export function AlumnoModal({ isOpen, onClose, onSave, alumno = null }) {
                 <div className="space-y-2">
                   <label className="text-[9px] font-black uppercase tracking-widest text-gray-500 ml-1">E-mail</label>
                   <div className="relative">
-                    <input
+                     <input
                       type="email"
-                      className="w-full bg-white/5 border border-white/5 rounded-xl py-3 pl-10 pr-4 text-[11px] font-bold text-white outline-none focus:border-primary-500/50 transition-all"
+                      className="w-full bg-surface-subtle border border-white/5 rounded-xl py-3 pl-10 pr-4 text-[11px] font-bold outline-none focus:border-primary-500/50 transition-all"
+                      style={{ color: 'rgb(var(--color-text))' }}
                       placeholder="correo@ejemplo.com"
                       value={formData.email}
                       onChange={e => setFormData({...formData, email: e.target.value})}
@@ -140,9 +144,10 @@ export function AlumnoModal({ isOpen, onClose, onSave, alumno = null }) {
                 <div className="space-y-2">
                   <label className="text-[9px] font-black uppercase tracking-widest text-gray-500 ml-1">Teléfono</label>
                   <div className="relative">
-                    <input
+                     <input
                       type="tel"
-                      className="w-full bg-white/5 border border-white/5 rounded-xl py-3 pl-10 pr-4 text-[11px] font-bold text-white outline-none focus:border-primary-500/50 transition-all"
+                      className="w-full bg-surface-subtle border border-white/5 rounded-xl py-3 pl-10 pr-4 text-[11px] font-bold outline-none focus:border-primary-500/50 transition-all"
+                      style={{ color: 'rgb(var(--color-text))' }}
                       placeholder="+54 9..."
                       value={formData.telefono}
                       onChange={e => setFormData({...formData, telefono: e.target.value})}
@@ -154,8 +159,9 @@ export function AlumnoModal({ isOpen, onClose, onSave, alumno = null }) {
 
               <div className="space-y-2">
                 <label className="text-[9px] font-black uppercase tracking-widest text-gray-500 ml-1">Observaciones</label>
-                <textarea
-                  className="w-full bg-white/5 border border-white/5 rounded-xl py-4 px-4 text-[11px] font-bold text-white outline-none focus:border-primary-500/50 transition-all min-h-[100px] resize-none"
+                 <textarea
+                  className="w-full bg-surface-subtle border border-white/5 rounded-xl py-4 px-4 text-[11px] font-bold outline-none focus:border-primary-500/50 transition-all min-h-[100px] resize-none"
+                  style={{ color: 'rgb(var(--color-text))' }}
                   placeholder="Datos relevantes, diagnósticos, historial..."
                   value={formData.notas}
                   onChange={e => setFormData({...formData, notas: e.target.value})}

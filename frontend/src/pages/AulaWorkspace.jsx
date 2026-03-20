@@ -345,7 +345,7 @@ export default function AulaWorkspace() {
                          
                          <div className="flex-1 min-w-0">
                             <div className="flex flex-wrap items-center gap-3 mb-2">
-                               <h4 className="text-lg font-black uppercase italic tracking-tighter text-white group-hover:text-primary-300 transition-colors">
+                               <h4 className="text-lg font-black uppercase italic tracking-tighter group-hover:text-primary-300 transition-colors">
                                  {plan.titulo}
                                </h4>
                                <span className={`px-2 py-0.5 rounded-lg text-[8px] font-black uppercase tracking-widest border ${
@@ -417,7 +417,7 @@ export default function AulaWorkspace() {
                                 <Users size={20} />
                               </div>
                               <div>
-                                <p className="text-md font-black uppercase italic text-white tracking-tight leading-none mb-1">{a.nombre} {a.apellido}</p>
+                                <p className="text-md font-black uppercase italic tracking-tight leading-none mb-1">{a.nombre} {a.apellido}</p>
                                 <p className="text-[9px] text-gray-600 font-bold uppercase tracking-widest">{a.dni}</p>
                               </div>
                             </td>
@@ -490,7 +490,7 @@ export default function AulaWorkspace() {
                        <BrainCircuit size={40} />
                     </div>
                     <div className="space-y-3 flex-1 relative z-10">
-                       <h3 className="text-2xl font-black uppercase italic text-white flex items-center gap-3 tracking-tighter">Sugerencia IA de Hoy</h3>
+                       <h3 className="text-2xl font-black uppercase italic flex items-center gap-3 tracking-tighter">Sugerencia IA de Hoy</h3>
                        <p className="text-sm text-gray-400 max-w-2xl leading-relaxed">
                          Basado en tu planificación de <span className="text-primary-400 font-bold uppercase tracking-widest">"Célula Animal"</span>, hemos encontrado una visualización 3D interactiva que mejorará la retención visual en un 40%.
                        </p>
@@ -562,7 +562,7 @@ export default function AulaWorkspace() {
                         
                         <div className="p-8 space-y-6 flex-1 flex flex-col">
                            <div className="space-y-1">
-                              <h4 className="text-lg font-black uppercase italic text-white truncate leading-tight tracking-tight">{recurso.titulo}</h4>
+                              <h4 className="text-lg font-black uppercase italic truncate leading-tight tracking-tight">{recurso.titulo}</h4>
                               <p className="text-[10px] text-gray-600 font-bold uppercase tracking-[0.2em]">{recurso.tipo} • Nivel {recurso.nivel}</p>
                            </div>
                            
@@ -601,7 +601,7 @@ export default function AulaWorkspace() {
                           </div>
                        </div>
                        <div className="space-y-6 max-w-md">
-                          <h3 className="text-xl font-black uppercase italic tracking-tighter text-white">IA: Procesando Insights de Rendimiento</h3>
+                          <h3 className="text-xl font-black uppercase italic tracking-tighter">IA: Procesando Insights de Rendimiento</h3>
                           <div className="flex flex-col gap-4">
                              {steps.map((s, i) => (
                                 <div key={i} className={`flex items-center gap-4 transition-all duration-700 ${i > reportStep ? 'opacity-20' : 'opacity-100'}`}>
@@ -623,7 +623,7 @@ export default function AulaWorkspace() {
                               <Sparkles size={32} />
                            </div>
                            <div>
-                              <h3 className="text-3xl font-black uppercase italic tracking-tighter text-white">Análisis de Inteligencia <span className="text-primary-500">Pro</span></h3>
+                               <h3 className="text-3xl font-black uppercase italic tracking-tighter">Análisis de Inteligencia <span className="text-primary-500">Pro</span></h3>
                               <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-600">Predicción de éxito grupal e individual • Última actualización: Hoy</p>
                            </div>
                        </div>
