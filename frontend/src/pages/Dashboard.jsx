@@ -78,7 +78,7 @@ export default function Panel() {
     <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-1000 pb-20">
       
       {/* ── HEADER PANEL ── */}
-      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-10">
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 lg:gap-10">
         <div className="space-y-4">
           <div className="flex items-center gap-3">
              <div className="w-10 h-10 bg-primary-600 rounded-xl flex items-center justify-center text-white shadow-xl shadow-primary-900/20 rotate-3">
@@ -89,20 +89,20 @@ export default function Panel() {
                 <span className="text-[9px] font-bold text-gray-800 uppercase tracking-widest leading-none">Centro de Control Académico</span>
              </div>
           </div>
-          <h2 className="text-6xl font-black uppercase italic tracking-tighter text-white leading-tight">
-             Panel del <br /> <span className="text-primary-500">Docente</span>.
+          <h2 className="text-4xl md:text-6xl font-black uppercase italic tracking-tighter text-white leading-tight">
+             Panel del <br className="hidden md:block" /> <span className="text-primary-500">Docente</span>.
           </h2>
-          <p className="text-gray-500 text-sm font-bold uppercase tracking-widest max-w-xl">
+          <p className="text-gray-500 text-xs md:text-sm font-bold uppercase tracking-widest max-w-xl">
              Bienvenido, Prof. Mendoza. Aquí tienes el resumen de tu ciclo lectivo 2026.
           </p>
         </div>
         
-        <div className="flex gap-4">
+        <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
           <button 
             onClick={() => navigate('/planificador')}
-            className="group px-8 py-4 bg-primary-600 hover:bg-primary-500 text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-2xl transition-all shadow-2xl shadow-primary-900/40 flex items-center gap-3 hover:-translate-y-1"
+            className="group w-full sm:w-auto px-8 py-4 bg-primary-600 hover:bg-primary-500 text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-2xl transition-all shadow-2xl shadow-primary-900/40 flex items-center justify-center gap-3 hover:-translate-y-1"
           >
-            + Nueva Planificación
+            <Plus size={16} /> Nueva Planificación
           </button>
         </div>
       </div>

@@ -20,7 +20,7 @@ export default function App() {
     <Routes>
       {/* Rutas Públicas */}
       <Route path="/" element={<LandingPage />} />
-      <Route path="/login" element={<Navigate to="/" replace />} />
+      <Route path="/login" element={<LoginPage />} />
 
       {/* Rutas Privadas (Sin prefijo /app para mayor simplicidad) */}
       <Route

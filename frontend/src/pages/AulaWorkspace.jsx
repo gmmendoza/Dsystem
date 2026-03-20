@@ -119,21 +119,21 @@ export default function AulaWorkspace() {
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
       {/* Workspace Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="flex items-center gap-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 px-2 md:px-0">
+        <div className="flex items-center gap-4 md:gap-6">
           <button 
             onClick={() => navigate('/mi-aula')}
-            className="p-3 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/5 text-gray-400 hover:text-white transition-all"
+            className="p-3 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/5 text-gray-400 hover:text-white transition-all flex-shrink-0"
           >
             <ChevronLeft size={20} />
           </button>
-          <div className="space-y-1">
+          <div className="space-y-1 min-w-0">
             <div className="flex items-center gap-2">
-               <span className="text-[9px] font-black uppercase tracking-[0.2em] text-primary-500">{curso.nivel}</span>
+               <span className="text-[8px] md:text-[9px] font-black uppercase tracking-[0.2em] text-primary-500">Nivel {curso.nivel}</span>
                <div className="w-1 h-1 rounded-full bg-gray-800" />
-               <span className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-600">ID: {curso.id}</span>
+               <span className="hidden sm:inline text-[9px] font-black uppercase tracking-[0.2em] text-gray-600">ID: {curso.id}</span>
             </div>
-            <h2 className="text-4xl font-black uppercase italic tracking-tighter text-white">
+            <h2 className="text-2xl md:text-4xl font-black uppercase italic tracking-tighter text-white truncate">
               {curso.nombre}
             </h2>
           </div>
@@ -150,23 +150,24 @@ export default function AulaWorkspace() {
       </div>
 
       {/* Tabs Layout */}
-      <div className="border-b border-white/5 flex gap-8">
+      <div className="border-b border-white/5 flex gap-4 md:gap-8 overflow-x-auto no-scrollbar pb-[1px]">
         {[
-          { id: 'planes', label: 'Planificaciones', icon: Calendar },
+          { id: 'planes', label: 'Planes', icon: Calendar },
           { id: 'alumnos', label: 'Alumnos', icon: Users },
           { id: 'asistencia', label: 'Asistencia', icon: UserCheck },
-          { id: 'recursos', label: 'Banco de Recursos', icon: FolderOpen },
-          { id: 'progreso', label: 'Análisis de Progreso', icon: BarChart3 }
+          { id: 'recursos', label: 'Recursos', icon: FolderOpen },
+          { id: 'progreso', label: 'Análisis', icon: BarChart3 }
         ].map(tab => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`flex items-center gap-2 pb-4 text-[10px] font-black uppercase tracking-widest transition-all relative ${
+            className={`flex items-center gap-2 pb-4 text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all relative whitespace-nowrap ${
               activeTab === tab.id ? 'text-primary-500' : 'text-gray-600 hover:text-gray-400'
             }`}
           >
             <tab.icon size={14} />
-            {tab.label}
+            <span className="hidden sm:inline">{tab.label}</span>
+            <span className="sm:hidden">{tab.label.split(' ')[0]}</span>
             {activeTab === tab.id && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]" />}
           </button>
         ))}
@@ -200,55 +201,48 @@ export default function AulaWorkspace() {
                   </button>
                </div>
              ) : (
-               planes.map(plan => (
-                 <div key={plan.id} className="group flex items-center gap-6 bg-[#080808] border border-white/5 hover:border-white/10 p-6 rounded-[1.5rem] transition-all">
-                    <div className="w-12 h-12 bg-black border border-white/5 rounded-xl flex items-center justify-center text-primary-500 group-hover:scale-110 transition-transform">
-                      {plan.estado === 'Finalizada' ? <CheckCircle2 size={24} /> : <Clock size={24} />}
-                    </div>
-                    
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-3 mb-1">
-                         <h4 className="text-base font-black uppercase italic tracking-tighter text-white truncate">
-                           {plan.titulo}
-                         </h4>
-                         <span className={`px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest border ${getStatusColor(plan.estado)}`}>
-                           {plan.estado}
-                         </span>
-                      </div>
-                      <div className="flex items-center gap-4 text-[10px] font-bold text-gray-600 uppercase tracking-widest">
-                         <span>{new Date(plan.fechaInicio).toLocaleDateString('es')} — {new Date(plan.fechaFin).toLocaleDateString('es')}</span>
-                         <div className="w-1 h-1 rounded-full bg-gray-800" />
-                         <span>Ult. Modif: {new Date(plan.lastModified).toLocaleTimeString('es', { hour: '2-digit', minute: '2-digit' })}</span>
-                      </div>
+                planes.map(plan => (
+                  <div key={plan.id} className="group flex flex-col sm:flex-row sm:items-center gap-4 md:gap-6 bg-[#080808] border border-white/5 hover:border-white/10 p-4 md:p-6 rounded-2xl md:rounded-[1.5rem] transition-all relative">
+                     <div className="w-10 h-10 md:w-12 md:h-12 bg-black border border-white/5 rounded-xl flex items-center justify-center text-primary-500 group-hover:scale-110 transition-transform">
+                       {plan.estado === 'Finalizada' ? <CheckCircle2 size={20} className="md:w-6 md:h-6" /> : <Clock size={20} className="md:w-6 md:h-6" />}
+                     </div>
+                     
+                     <div className="flex-1 min-w-0">
+                       <div className="flex flex-wrap items-center gap-2 md:gap-3 mb-1">
+                          <h4 className="text-sm md:text-base font-black uppercase italic tracking-tighter text-white truncate">
+                            {plan.titulo}
+                          </h4>
+                          <span className={`px-2 py-0.5 rounded-full text-[7px] md:text-[8px] font-black uppercase tracking-widest border ${getStatusColor(plan.estado)}`}>
+                            {plan.estado}
+                          </span>
+                       </div>
+                       <div className="flex flex-wrap items-center gap-y-1 gap-x-3 md:gap-x-4 text-[8px] md:text-[10px] font-bold text-gray-600 uppercase tracking-widest">
+                          <span className="flex items-center gap-1"><Calendar size={10} className="md:w-3 md:h-3" /> {new Date(plan.fechaInicio).toLocaleDateString('es')}</span>
+                          <div className="hidden md:block w-1 h-1 rounded-full bg-gray-800" />
+                          <span className="flex items-center gap-1"><Clock size={10} className="md:w-3 md:h-3" /> {new Date(plan.lastModified).toLocaleTimeString('es', { hour: '2-digit', minute: '2-digit' })}</span>
+                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 self-end sm:self-center mt-2 sm:mt-0">
                        <button 
                          onClick={() => handleDuplicate(plan.id)}
-                         className="p-3 bg-white/[0.03] hover:bg-white/10 text-gray-500 hover:text-primary-500 rounded-xl transition-all border border-white/5"
+                         className="p-2 md:p-3 bg-white/[0.03] hover:bg-white/10 text-gray-500 hover:text-primary-500 rounded-xl transition-all border border-white/5"
                          title="Duplicar"
                        >
-                         <Copy size={16} />
+                         <Copy size={14} className="md:w-4 md:h-4" />
                        </button>
                        <button 
                          onClick={() => navigate(`/planificador?edit=${plan.id}`)}
-                         className="p-3 bg-white/[0.03] hover:bg-white/10 text-gray-500 hover:text-white rounded-xl transition-all border border-white/5"
+                         className="p-2 md:p-3 bg-white/[0.03] hover:bg-white/10 text-gray-500 hover:text-white rounded-xl transition-all border border-white/5"
                          title="Editar"
                        >
-                         <MoreVertical size={16} />
-                       </button>
-                       <button 
-                         onClick={() => handleDeletePlan(plan.id)}
-                         className="p-3 bg-white/[0.03] hover:bg-red-500/10 text-gray-500 hover:text-red-500 rounded-xl transition-all border border-white/5"
-                         title="Eliminar"
-                       >
-                         <Trash2 size={16} />
+                         <MoreVertical size={14} className="md:w-4 md:h-4" />
                        </button>
                     </div>
-                 </div>
-               ))
+                  </div>
+                ))
              )}
-            </div>
+             </div>
           </div>
         )}
 
@@ -311,11 +305,11 @@ export default function AulaWorkspace() {
                <div key={recurso.id} className="group bg-[#0A0A0A] border border-white/5 rounded-2xl overflow-hidden hover:border-white/10 transition-all shadow-xl">
                  <div className="aspect-video bg-black flex items-center justify-center relative">
                     {recurso.tipo === 'video' ? (
-                      <div className="w-12 h-12 bg-primary-600 rounded-full flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform cursor-pointer">
-                         <Play size={20} fill="currentColor" />
-                      </div>
+                       <div className="w-12 h-12 bg-primary-600 rounded-full flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform cursor-pointer">
+                          <Play size={20} fill="currentColor" />
+                       </div>
                     ) : (
-                      <img src={recurso.url} alt={recurso.titulo} className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity" />
+                       <img src={recurso.url} alt={recurso.titulo} className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity" />
                     )}
                     <div className="absolute top-3 left-3 px-2 py-1 bg-black/60 backdrop-blur-md rounded-lg border border-white/10">
                        {recurso.tipo === 'video' ? <Play size={10} className="text-red-500" /> : <ImageIcon size={10} className="text-blue-500" />}

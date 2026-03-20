@@ -82,6 +82,11 @@ export const planificacionAPI = {
     const list = getLS('dsystem_planificaciones', initialPlanificaciones);
     return { data: list.sort((a, b) => new Date(b.lastModified) - new Date(a.lastModified)) };
   },
+  getById: async (id) => {
+    await new Promise(r => setTimeout(r, 400));
+    const list = getLS('dsystem_planificaciones', initialPlanificaciones);
+    return { data: list.find(p => p.id === Number(id)) };
+  },
   getByCursoId: async (cursoId) => {
     await new Promise(r => setTimeout(r, 600));
     const list = getLS('dsystem_planificaciones', initialPlanificaciones);

@@ -63,7 +63,7 @@ const LandingPage = () => {
           </h1>
           <p className="max-w-2xl mx-auto text-xl text-gray-400 font-medium">La herramienta interactiva para docentes.</p>
           <div className="flex gap-6 mt-8 justify-center">
-             <button onClick={scrollToLogin} className="px-10 py-5 bg-primary-600 hover:bg-primary-500 text-white font-black uppercase tracking-widest rounded-xl transition-all shadow-xl shadow-primary-900/40">Entrar al Aula</button>
+             <button onClick={() => navigate('/login')} className="px-10 py-5 bg-primary-600 hover:bg-primary-500 text-white font-black uppercase tracking-widest rounded-xl transition-all shadow-xl shadow-primary-900/40">Entrar al Aula Pro</button>
           </div>
         </div>
       </section>

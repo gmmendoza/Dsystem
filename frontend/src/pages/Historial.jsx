@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { 
   Folder, FolderOpen, ChevronRight, Search, 
   Calendar, FileText, Filter, MoreHorizontal,
-  Clock, Download, ExternalLink
+  Clock, Download, ExternalLink, CheckCircle2, Loader2
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { planificacionAPI } from '../services/api'
@@ -13,6 +13,7 @@ export default function Historial() {
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [expandedYears, setExpandedYears] = useState(['2026'])
+  const [toast, setToast] = useState(null)
 
   useEffect(() => {
     fetchHistory()
@@ -45,11 +46,28 @@ export default function Historial() {
     )
   }
 
+  const handleDownload = (plan) => {
+    setToast({ message: `Generando PDF: ${plan.titulo}...`, type: 'info' })
+    setTimeout(() => {
+      setToast({ message: 'Descarga completada con éxito', type: 'success' })
+    }, 2000)
+  }
+
   return (
-    <div className="max-w-6xl mx-auto space-y-10 animate-in fade-in duration-700">
+    <div className="max-w-6xl mx-auto space-y-10 animate-in fade-in duration-700 pb-20">
+      {toast && (
+        <div className="fixed top-24 right-4 z-[100] animate-in slide-in-from-right">
+           <div className={`px-6 py-4 rounded-2xl border shadow-2xl backdrop-blur-xl flex items-center gap-4 ${
+             toast.type === 'success' ? 'bg-green-500/10 border-green-500/20 text-green-500' : 'bg-primary-500/10 border-primary-500/20 text-primary-500'
+           }`}>
+             {toast.type === 'success' ? <CheckCircle2 size={18} /> : <Loader2 size={18} className="animate-spin" />}
+             <span className="text-[10px] font-black uppercase tracking-widest">{toast.message}</span>
+           </div>
+        </div>
+      )}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-2">
-           <h2 className="text-4xl font-black uppercase italic tracking-tighter text-white">Archivo <span className="text-primary-500">Histórico</span></h2>
+           <h2 className="text-4xl md:text-5xl font-black uppercase italic tracking-tighter text-white">Archivo <span className="text-primary-500">Histórico</span></h2>
            <p className="text-[10px] font-black uppercase tracking-widest text-gray-600">Repositorio central de planificaciones por ciclo lectivo</p>
         </div>
 
@@ -120,9 +138,20 @@ export default function Historial() {
                                   <span>{plan.estado}</span>
                                </div>
                             </div>
-                            <button className="p-2 opacity-0 group-hover:opacity-100 transition-opacity bg-white/5 rounded-lg text-gray-500 hover:text-primary-500">
-                               <Download size={14} />
-                            </button>
+                            <div className="flex items-center gap-2">
+                                <button
+                                  onClick={(e) => { e.stopPropagation(); handleDownload(plan); }}
+                                  className="p-2 lg:opacity-0 group-hover:opacity-100 transition-opacity bg-white/5 rounded-lg text-gray-400 hover:text-primary-500"
+                                >
+                                   <Download size={14} />
+                                </button>
+                                <button
+                                  onClick={(e) => { e.stopPropagation(); navigate(`/planificador?edit=${plan.id}`); }}
+                                  className="p-2 lg:opacity-0 group-hover:opacity-100 transition-opacity bg-white/5 rounded-lg text-gray-400 hover:text-white"
+                                >
+                                   <ChevronRight size={14} />
+                                </button>
+                            </div>
                          </div>
                        ))}
                     </div>

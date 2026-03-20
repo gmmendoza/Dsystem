@@ -137,13 +137,18 @@ export default function Planificador() {
 
   const loadPlan = async (id) => {
     setLoading(true)
+    setIsHistoryOpen(false)
     try {
       const res = await planificacionAPI.getById(id)
+      if (!res.data) {
+        setToast({ message: 'No se encontró la planificación', type: 'error' })
+        return
+      }
       const p = res.data
-      setTitle(p.titulo)
-      setCursoId(p.cursoId)
-      setFechaInicio(p.fechaInicio)
-      setFechaFin(p.fechaFin)
+      setTitle(p.titulo || '')
+      setCursoId(p.cursoId || '')
+      setFechaInicio(p.fechaInicio || new Date().toISOString().split('T')[0])
+      setFechaFin(p.fechaFin || '')
       setSubject(p.materia || '')
       setLevel(p.nivel || 'Primaria')
       setType(p.tipo || 'Diaria')
@@ -152,18 +157,39 @@ export default function Planificador() {
       setResources(p.recursos || [])
       setEvaluation(p.evaluacion || '')
       if (p.semanal) setWeeklyActivities(p.semanal)
+      
+      // Actualizar la URL sin recargar
+      navigate(`/planificador?edit=${id}`, { replace: true })
+      
+      setToast({ message: 'Plan cargado correctamente', type: 'success' })
+    } catch (err) {
+      setToast({ message: 'Error al cargar el plan', type: 'error' })
     } finally {
       setLoading(false)
     }
   }
 
-  const handleDuplicate = (plan) => {
-    setTitle(`${plan.titulo} (Copia)`)
-    setSubject(plan.materia || '')
-    setObjectives(plan.objetivos || [])
-    setActivities(plan.actividades || [])
-    setResources(plan.recursos || [])
-    setIsHistoryOpen(false)
+  const handleDuplicate = async (plan) => {
+    try {
+      // Si el plan ya tiene ID, podemos usar el API
+      if (plan.id) {
+        const res = await planificacionAPI.duplicate(plan.id)
+        loadPlan(res.data.id)
+        setToast({ message: 'Planificación duplicada', type: 'success' })
+      } else {
+        // Si no (ej: carga manual), duplicamos localmente
+        setTitle(`${plan.titulo} (Copia)`)
+        setSubject(plan.materia || '')
+        setObjectives(plan.objetivos || [])
+        setActivities(plan.actividades || [])
+        setResources(plan.recursos || [])
+        setEvaluation(plan.evaluacion || '')
+        setToast({ message: 'Plan duplicado en el editor', type: 'success' })
+      }
+      setIsHistoryOpen(false)
+    } catch (err) {
+      setToast({ message: 'Error al duplicar', type: 'error' })
+    }
   }
 
   const addResource = (resType) => {
@@ -271,7 +297,7 @@ export default function Planificador() {
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-10">
         
         {/* ── CANVAS CENTRAL ── */}
-        <div className="xl:col-span-8 space-y-10">
+        <div className="xl:col-span-8 space-y-10 min-w-0">
           
           {/* SELECTORES DE MODO */}
           <div className="flex flex-col md:flex-row gap-4">
@@ -451,7 +477,7 @@ export default function Planificador() {
         </div>
 
         {/* ── SIDEBAR DE SOPORTE ── */}
-        <aside className="xl:col-span-4 space-y-10">
+        <aside className="xl:col-span-4 space-y-10 group/sidebar">
           
           {/* AI SUGGESTIONS */}
           <SuggestionBox subject={subject} level={level} />
@@ -482,7 +508,7 @@ export default function Planificador() {
           )}
 
           {/* ACCIONES DE CONFIGURACIÓN */}
-          <div className="card bg-[#0A0A0A] border-white/5 p-8 space-y-6 rounded-[2rem]">
+          <div className="card bg-[#0A0A0A] border-white/5 p-8 space-y-6 rounded-[2rem] animate-in slide-in-from-right duration-700">
              <div className="flex items-center gap-3">
                 <Settings size={18} className="text-gray-500" />
                 <h4 className="text-[10px] font-black uppercase tracking-widest text-white">Configuración del Documento</h4>
