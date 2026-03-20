@@ -112,24 +112,32 @@ export const cursoAPI = {
 
 // ─── Planificaciones ─────────────────────────────────
 export const planificacionAPI = {
-  getAll: async () => ({ data: getLS('dsystem_planificaciones', initialPlanificaciones) }),
+  getAll: async () => {
+    await new Promise(r => setTimeout(r, 600));
+    const list = getLS('dsystem_planificaciones', initialPlanificaciones);
+    return { data: list.sort((a, b) => new Date(b.lastModified) - new Date(a.lastModified)) };
+  },
   getByDocente: async (docenteId) => {
+    await new Promise(r => setTimeout(r, 600));
     const list = getLS('dsystem_planificaciones', initialPlanificaciones);
     return { data: list.filter(p => p.docenteId === Number(docenteId)) };
   },
   create: async (data) => {
+    await new Promise(r => setTimeout(r, 1000));
     const list = getLS('dsystem_planificaciones', initialPlanificaciones);
-    const newItem = { ...data, id: Date.now() };
-    setLS('dsystem_planificaciones', [...list, newItem]);
+    const newItem = { ...data, id: Date.now(), lastModified: new Date().toISOString() };
+    setLS('dsystem_planificaciones', [newItem, ...list]);
     return { data: newItem };
   },
   update: async (id, data) => {
+    await new Promise(r => setTimeout(r, 800));
     const list = getLS('dsystem_planificaciones', initialPlanificaciones);
-    const updated = list.map(p => p.id === Number(id) ? { ...p, ...data } : p);
+    const updated = list.map(p => p.id === Number(id) ? { ...p, ...data, lastModified: new Date().toISOString() } : p);
     setLS('dsystem_planificaciones', updated);
     return { data: updated.find(p => p.id === Number(id)) };
   },
   delete: async (id) => {
+    await new Promise(r => setTimeout(r, 1000));
     const list = getLS('dsystem_planificaciones', initialPlanificaciones);
     setLS('dsystem_planificaciones', list.filter(p => p.id !== Number(id)));
     return { data: null };
