@@ -60,6 +60,13 @@ export const planificacionAPI = {
     await new Promise(r => setTimeout(r, 600));
     return { data: mockDataService.savePlanificacion({ ...data, id }) };
   },
+  save: async (data) => {
+    if (data.id) {
+       return await planificacionAPI.update(data.id, data);
+    } else {
+       return await planificacionAPI.create(data);
+    }
+  },
   duplicate: async (id) => {
     const plans = mockDataService.getPlanificaciones();
     const original = plans.find(p => p.id === Number(id));
