@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://gmmen.github.io/DSystem",
+  "homepage": "https://gmmendoza.github.io/Dsystem",
   "scripts": {
     "dev": "vite",
     "build": "vite build --base=./",
