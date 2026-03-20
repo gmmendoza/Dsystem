@@ -3,7 +3,7 @@ import { useAuth } from './context/AuthContext'
 import LandingPage from './pages/LandingPage'
 import LoginPage from './pages/LoginPage'
 import Layout from './components/Layout/Layout'
-import Dashboard from './pages/Dashboard'
+import Panel from './pages/Dashboard'
 import MiAula from './pages/MiAula'
 import Agenda from './pages/Agenda'
 import Planificador from './pages/Planificador'
@@ -30,7 +30,7 @@ export default function App() {
           </ProtectedRoute>
         }
       >
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/dashboard" element={<Panel />} />
         <Route path="/mi-aula" element={<MiAula />} />
         <Route path="/aula/:id" element={<AulaWorkspace />} />
         <Route path="/agenda" element={<Agenda />} />

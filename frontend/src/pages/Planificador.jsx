@@ -60,17 +60,23 @@ export default function Planificador() {
   const [loading, setLoading] = useState(false)
   const [autoSaving, setAutoSaving] = useState(false)
   const [historicalPlans, setHistoricalPlans] = useState([])
+  const [aulaRecursos, setAulaRecursos] = useState([])
 
   useEffect(() => {
+    const cid = searchParams.get('cursoId')
     fetchCursos()
     fetchHistory()
     if (editId) {
        loadPlan(editId)
+    } else if (cid) {
+       setCursoId(cid)
+       // Buscamos el curso para setear el nivel automáticamente
+       const c = cursos.find(curr => curr.id === Number(cid))
+       if (c) setLevel(c.nivel)
     } else {
-       // Cargar ejemplo por defecto si es nuevo
        loadExample()
     }
-  }, [editId])
+  }, [editId, searchParams, cursos.length])
 
   // Simulación de auto-guardado
   useEffect(() => {
@@ -86,6 +92,13 @@ export default function Planificador() {
   const fetchCursos = async () => {
     const res = await cursoAPI.getAll()
     setCursos(res.data)
+    
+    // Si tenemos cursoId, cargar sus recursos
+    const cid = searchParams.get('cursoId') || cursoId
+    if (cid) {
+       const c = res.data.find(curr => curr.id === Number(cid))
+       if (c) setAulaRecursos(c.recursos || [])
+    }
   }
 
   const fetchHistory = async () => {
@@ -408,22 +421,30 @@ export default function Planificador() {
           {/* AI SUGGESTIONS */}
           <SuggestionBox subject={subject} level={level} />
 
-          {/* BANCO DE RECURSOS (Simulado rápido) */}
-          <div className="card bg-[#0A0A0A] border-white/5 p-8 space-y-6 rounded-[2rem]">
-             <div className="flex items-center gap-3 mb-2">
-                <Globe size={18} className="text-primary-500" />
-                <h4 className="text-[10px] font-black uppercase tracking-widest text-white">Banco de Recursos Aula</h4>
-             </div>
-             <p className="text-[9px] font-bold text-gray-600 uppercase leading-relaxed">Arrastra elementos desde tu repositorio central (próximamente).</p>
-             <div className="grid grid-cols-2 gap-3">
-                <div className="aspect-square bg-white/5 rounded-xl border border-white/5 hover:border-primary-500/30 transition-all cursor-pointer overflow-hidden group">
-                   <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=400" className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all" />
-                </div>
-                <div className="aspect-square bg-white/5 rounded-xl border border-white/5 hover:border-primary-500/30 transition-all cursor-pointer overflow-hidden group">
-                   <img src="https://images.unsplash.com/photo-1454165833767-027508492213?q=80&w=400" className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all" />
-                </div>
-             </div>
-          </div>
+          {/* BANCO DE RECURSOS DEL AULA */}
+          {aulaRecursos.length > 0 && (
+            <div className="card bg-[#0A0A0A] border-white/5 p-8 space-y-6 rounded-[2rem]">
+               <div className="flex items-center gap-3 mb-2">
+                  <Globe size={18} className="text-primary-500" />
+                  <h4 className="text-[10px] font-black uppercase tracking-widest text-white">Banco del Aula</h4>
+               </div>
+               <div className="grid grid-cols-2 gap-3">
+                  {aulaRecursos.map(rec => (
+                    <div 
+                      key={rec.id} 
+                      onClick={() => setResources([...resources, { type: rec.tipo || 'image', url: rec.url, title: rec.titulo }])}
+                      className="aspect-square bg-white/5 rounded-xl border border-white/5 hover:border-primary-500/50 transition-all cursor-pointer overflow-hidden group relative"
+                    >
+                       <img src={rec.url} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all" />
+                       <div className="absolute inset-0 bg-primary-600/20 opacity-0 group-hover:opacity-100 flex items-center justify-center">
+                          <Plus size={20} className="text-white" />
+                       </div>
+                    </div>
+                  ))}
+               </div>
+               <p className="text-[8px] font-bold text-gray-700 uppercase tracking-widest text-center">Haz clic para añadir a la planificación</p>
+            </div>
+          )}
 
           {/* ACCIONES DE CONFIGURACIÓN */}
           <div className="card bg-[#0A0A0A] border-white/5 p-8 space-y-6 rounded-[2rem]">

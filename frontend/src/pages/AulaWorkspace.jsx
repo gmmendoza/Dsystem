@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { cursoAPI, planificacionAPI, alumnoAPI } from '../services/api'
 import PlanningTimeline from '../components/Aula/PlanningTimeline'
+import Asistencia from '../components/Aula/Asistencia'
 import { 
   ChevronLeft, 
   Calendar, 
@@ -18,7 +19,8 @@ import {
   CheckCircle2,
   Clock,
   AlertCircle,
-  FileText
+  FileText,
+  UserCheck
 } from 'lucide-react'
 import { CardSkeleton, TableSkeleton } from '../components/Common/LoadingSkeleton'
 import { Toast } from '../components/Common/Toast'
@@ -103,7 +105,7 @@ export default function AulaWorkspace() {
 
         <div className="flex gap-3">
            <button 
-             onClick={() => navigate('/planificador')}
+             onClick={() => navigate(`/planificador?cursoId=${id}`)}
              className="px-6 py-3 bg-primary-600 hover:bg-primary-500 text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-primary-900/20 flex items-center gap-2"
            >
              <Plus size={16} /> Nueva Planificación
@@ -116,6 +118,7 @@ export default function AulaWorkspace() {
         {[
           { id: 'planes', label: 'Planificaciones', icon: Calendar },
           { id: 'alumnos', label: 'Alumnos', icon: Users },
+          { id: 'asistencia', label: 'Asistencia', icon: UserCheck },
           { id: 'recursos', label: 'Banco de Recursos', icon: FolderOpen },
           { id: 'progreso', label: 'Análisis de Progreso', icon: BarChart3 }
         ].map(tab => (
@@ -233,6 +236,10 @@ export default function AulaWorkspace() {
                 </table>
               </div>
           </div>
+        )}
+
+        {activeTab === 'asistencia' && (
+          <Asistencia cursoId={id} alumnos={alumnos} />
         )}
 
         {activeTab === 'recursos' && (

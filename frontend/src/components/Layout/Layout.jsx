@@ -15,10 +15,10 @@ import {
 import NotificationToast from '../Notifications/NotificationToast'
 
 const navItems = [
-  { to: '/dashboard',    icon: LayoutDashboard, label: 'Dashboard' },
-  { to: '/mi-aula',      icon: BookOpen,        label: 'Mi Aula' },
+  { to: '/dashboard',    icon: LayoutDashboard, label: 'Panel' },
+  { to: '/mi-aula',      icon: BookOpen,        label: 'Mis Aulas' },
   { to: '/planificador', icon: ClipboardList,   label: 'Planificador' },
-  { to: '/agenda',       icon: CalendarDays,    label: 'Calendario' },
+  { to: '/agenda',       icon: CalendarDays,    label: 'Calendario Semanal' },
   { to: '/historial',    icon: History,         label: 'Historial' },
 ]
 

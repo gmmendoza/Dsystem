@@ -121,3 +121,18 @@ export const planificacionAPI = {
     return { data: null };
   }
 };
+
+export const asistenciaAPI = {
+  get: async (cursoId, fecha) => {
+    await new Promise(r => setTimeout(r, 400));
+    const all = getLS('dsystem_asistencia', {});
+    return { data: all[`${cursoId}_${fecha}`] || {} };
+  },
+  save: async (cursoId, fecha, data) => {
+    await new Promise(r => setTimeout(r, 600));
+    const all = getLS('dsystem_asistencia', {});
+    all[`${cursoId}_${fecha}`] = data;
+    setLS('dsystem_asistencia', all);
+    return { data };
+  }
+};
