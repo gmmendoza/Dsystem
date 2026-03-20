@@ -376,8 +376,18 @@ export default function AulaWorkspace() {
                    <p className="text-xs text-gray-400 max-w-2xl">Hemos analizado tu última planificación de <span className="text-primary-400 font-bold">"Funciones Lineales"</span>. Este recurso de nuestra biblioteca global tiene un 95% de coincidencia con tus objetivos actuales:</p>
                 </div>
                 <div className="flex gap-3 shrink-0">
-                   <button className="px-5 py-2.5 bg-white text-black text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-gray-200 transition-all">Ver Recurso</button>
-                   <button className="px-5 py-2.5 bg-primary-600 text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-primary-500 transition-all shadow-lg shadow-primary-900/20">Agregar al Plan</button>
+                   <button 
+                     onClick={() => setToast({ message: 'Abriendo vista previa del recurso sugerido...', type: 'info' })}
+                     className="px-5 py-2.5 bg-white text-black text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-gray-200 transition-all"
+                   >
+                     Ver Recurso
+                   </button>
+                   <button 
+                     onClick={handleAddSuggestedActivity}
+                     className="px-5 py-2.5 bg-primary-600 text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-primary-500 transition-all shadow-lg shadow-primary-900/20"
+                   >
+                     Agregar al Plan
+                   </button>
                 </div>
              </div>
 
@@ -444,7 +454,10 @@ export default function AulaWorkspace() {
                   <div key={recurso.id} className="group bg-[#0A0A0A] border border-white/5 rounded-3xl overflow-hidden hover:border-primary-500/30 transition-all shadow-2xl hover:shadow-primary-900/10 flex flex-col">
                     <div className="aspect-video bg-black flex items-center justify-center relative overflow-hidden">
                        {recurso.tipo === 'video' ? (
-                          <div className="w-14 h-14 bg-primary-600 rounded-full flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform cursor-pointer relative z-10">
+                          <div 
+                            onClick={() => setToast({ message: `Reproduciendo: ${recurso.titulo}`, type: 'info' })}
+                            className="w-14 h-14 bg-primary-600 rounded-full flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform cursor-pointer relative z-10"
+                          >
                              <Play size={24} fill="currentColor" />
                           </div>
                        ) : (
@@ -476,8 +489,8 @@ export default function AulaWorkspace() {
                        <div className="flex items-center justify-between pt-4 border-t border-white/5 mt-auto">
                           <div className="flex gap-2">
                              <button onClick={() => handleUseResource(recurso.titulo)} title="Usar en Plan" className="p-2 bg-white/5 hover:bg-primary-500/20 text-gray-600 hover:text-primary-500 rounded-xl transition-all"><Copy size={14} /></button>
-                             <button title="Editar" className="p-2 bg-white/5 hover:bg-white/10 text-gray-600 hover:text-white rounded-xl transition-all"><FileText size={14} /></button>
-                             <button title="Eliminar" className="p-2 bg-white/5 hover:bg-red-500/20 text-gray-600 hover:text-red-500 rounded-xl transition-all"><Trash2 size={14} /></button>
+                             <button onClick={() => setToast({ message: `Editando: ${recurso.titulo}`, type: 'info' })} title="Editar" className="p-2 bg-white/5 hover:bg-white/10 text-gray-600 hover:text-white rounded-xl transition-all"><FileText size={14} /></button>
+                             <button onClick={() => setToast({ message: `"${recurso.titulo}" eliminado (Modo Demo)`, type: 'error' })} title="Eliminar" className="p-2 bg-white/5 hover:bg-red-500/20 text-gray-600 hover:text-red-500 rounded-xl transition-all"><Trash2 size={14} /></button>
                           </div>
                           <span className="text-[9px] font-black uppercase tracking-widest text-gray-700 flex items-center gap-1.5">
                              <Eye size={12} /> {recurso.usageCount} usos

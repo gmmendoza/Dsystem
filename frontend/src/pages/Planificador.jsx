@@ -82,13 +82,21 @@ export default function Planificador() {
 
   useEffect(() => {
     const cid = searchParams.get('cursoId')
+    const suggested = searchParams.get('suggested')
     fetchCursos()
     fetchHistory()
+    
     if (editId) {
        loadPlan(editId)
+    } else if (suggested === 'refuerzo-geometria') {
+       setTitle('Refuerzo: Geometría del Espacio')
+       setSubject('Matemática')
+       setObjectives(['Visualizar cuerpos en el espacio', 'Calcular volúmenes básicos'])
+       setActivities(['Exploración con cuerpos físicos', 'Dibujo técnico'])
+       if (cid) setCursoId(cid)
+       setToast({ message: 'Plan de refuerzo pre-cargado por DocenTico', type: 'info' })
     } else if (cid) {
        setCursoId(cid)
-       // Buscamos el curso para setear el nivel automáticamente
        const c = cursos.find(curr => curr.id === Number(cid))
        if (c) setLevel(c.nivel)
     } else {
