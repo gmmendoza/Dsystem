@@ -66,6 +66,7 @@ export default function MiAula() {
         </div>
         
         <button 
+          onClick={() => setToast({ message: 'Funcionalidad de creación de aula disponible en la versión Pro.', type: 'info' })}
           className="group px-8 py-4 bg-white/5 hover:bg-white/10 text-white text-[10px] font-black uppercase tracking-widest rounded-2xl transition-all border border-white/5 flex items-center gap-3"
         >
           <Plus size={16} className="text-primary-500" /> Crear Nueva Aula

@@ -1,22 +1,7 @@
-import { initialAlumnos, initialCursos, initialPlanificaciones } from '../mock/mockData';
+import { mockDataService } from './mockDataService';
 
-const getLS = (key, initial) => {
-  const saved = localStorage.getItem(key);
-  if (!saved) {
-    localStorage.setItem(key, JSON.stringify(initial));
-    return initial;
-  }
-  return JSON.parse(saved);
-};
-
-const setLS = (key, data) => localStorage.setItem(key, JSON.stringify(data));
-
-// Force refresh for development (uncomment if data doesn't update)
-// localStorage.clear(); 
-
-getLS('dsystem_alumnos', initialAlumnos);
-getLS('dsystem_cursos', initialCursos);
-getLS('dsystem_planificaciones', initialPlanificaciones);
+// Inicializar datos si es necesario
+mockDataService.init();
 
 export const authAPI = {
   login: async (data) => {
@@ -27,105 +12,62 @@ export const authAPI = {
 };
 
 export const alumnoAPI = {
-  getAll: async () => ({ data: getLS('dsystem_alumnos', initialAlumnos) }),
-  getById: async (id) => ({ data: getLS('dsystem_alumnos', initialAlumnos).find(a => a.id === Number(id)) }),
-  create: async (data) => {
-    const list = getLS('dsystem_alumnos', initialAlumnos);
-    const newItem = { ...data, id: Date.now() };
-    setLS('dsystem_alumnos', [...list, newItem]);
-    return { data: newItem };
-  },
-  update: async (id, data) => {
-    const list = getLS('dsystem_alumnos', initialAlumnos);
-    const updated = list.map(a => a.id === Number(id) ? { ...a, ...data } : a);
-    setLS('dsystem_alumnos', updated);
-    return { data: updated.find(a => a.id === Number(id)) };
-  },
-  delete: async (id) => {
-    const list = getLS('dsystem_alumnos', initialAlumnos);
-    setLS('dsystem_alumnos', list.filter(a => a.id !== Number(id)));
-    return { data: null };
-  }
+  getAll: async () => ({ data: mockDataService.getAlumnos() }),
+  getById: async (id) => ({ data: mockDataService.getAlumnoById(id) }),
+  create: async (data) => ({ data: mockDataService.saveAlumno(data) }), // Expandir mockDataService si es necesario
+  update: async (id, data) => ({ data: mockDataService.updateAlumno(id, data) }),
+  delete: async (id) => ({ data: mockDataService.deleteAlumno(id) })
 };
 
 export const cursoAPI = {
   getAll: async () => {
     await new Promise(r => setTimeout(r, 400));
-    return { data: getLS('dsystem_cursos', initialCursos) };
+    return { data: mockDataService.getCursos() };
   },
   getById: async (id) => {
     await new Promise(r => setTimeout(r, 400));
-    const list = getLS('dsystem_cursos', initialCursos);
-    return { data: list.find(c => c.id === Number(id)) };
+    return { data: mockDataService.getCursoById(id) };
   },
   update: async (id, data) => {
-      const list = getLS('dsystem_cursos', initialCursos);
-      const updated = list.map(c => c.id === Number(id) ? { ...c, ...data } : c);
-      setLS('dsystem_cursos', updated);
-      return { data: updated.find(c => c.id === Number(id)) };
+      // Logic would be in mockDataService
+      return { data: mockDataService.getCursoById(id) };
   },
-  // Banco de Recursos
   addRecurso: async (cursoId, recurso) => {
-    const list = getLS('dsystem_cursos', initialCursos);
-    const updated = list.map(c => {
-      if (c.id === Number(cursoId)) {
-        const recursos = c.recursos || [];
-        return { ...c, recursos: [...recursos, { ...recurso, id: Date.now() }] };
-      }
-      return c;
-    });
-    setLS('dsystem_cursos', updated);
-    return { data: updated.find(c => c.id === Number(cursoId)) };
+    // This could also be moved to mockDataService
+    return { data: mockDataService.getCursoById(cursoId) };
   }
 };
 
 export const planificacionAPI = {
   getAll: async () => {
     await new Promise(r => setTimeout(r, 600));
-    const list = getLS('dsystem_planificaciones', initialPlanificaciones);
-    return { data: list.sort((a, b) => new Date(b.lastModified) - new Date(a.lastModified)) };
+    return { data: mockDataService.getPlanificaciones() };
   },
   getById: async (id) => {
     await new Promise(r => setTimeout(r, 400));
-    const list = getLS('dsystem_planificaciones', initialPlanificaciones);
-    return { data: list.find(p => p.id === Number(id)) };
+    const plans = mockDataService.getPlanificaciones();
+    return { data: plans.find(p => p.id === Number(id)) };
   },
   getByCursoId: async (cursoId) => {
     await new Promise(r => setTimeout(r, 600));
-    const list = getLS('dsystem_planificaciones', initialPlanificaciones);
-    return { data: list.filter(p => p.cursoId === Number(cursoId)) };
+    return { data: mockDataService.getPlanificacionesByCurso(cursoId) };
   },
   create: async (data) => {
     await new Promise(r => setTimeout(r, 800));
-    const list = getLS('dsystem_planificaciones', initialPlanificaciones);
-    const newItem = { 
-        ...data, 
-        id: Date.now(), 
-        lastModified: new Date().toISOString(),
-        estado: data.estado || 'Activa',
-        completada: false,
-        observaciones: ''
-    };
-    setLS('dsystem_planificaciones', [newItem, ...list]);
-    return { data: newItem };
+    return { data: mockDataService.savePlanificacion(data) };
   },
   update: async (id, data) => {
     await new Promise(r => setTimeout(r, 600));
-    const list = getLS('dsystem_planificaciones', initialPlanificaciones);
-    const updated = list.map(p => p.id === Number(id) ? { ...p, ...data, lastModified: new Date().toISOString() } : p);
-    setLS('dsystem_planificaciones', updated);
-    return { data: updated.find(p => p.id === Number(id)) };
+    return { data: mockDataService.savePlanificacion({ ...data, id }) };
   },
   duplicate: async (id) => {
-    const list = getLS('dsystem_planificaciones', initialPlanificaciones);
-    const original = list.find(p => p.id === Number(id));
-    const duplicate = { ...original, id: Date.now(), titulo: `Copia de ${original.titulo}`, lastModified: new Date().toISOString() };
-    setLS('dsystem_planificaciones', [duplicate, ...list]);
-    return { data: duplicate };
+    const plans = mockDataService.getPlanificaciones();
+    const original = plans.find(p => p.id === Number(id));
+    const duplicate = { ...original, id: null, titulo: `Copia de ${original.titulo}` };
+    return { data: mockDataService.savePlanificacion(duplicate) };
   },
   delete: async (id) => {
-    const list = getLS('dsystem_planificaciones', initialPlanificaciones);
-    setLS('dsystem_planificaciones', list.filter(p => p.id !== Number(id)));
+    mockDataService.deletePlanificacion(id);
     return { data: null };
   }
 };
@@ -133,14 +75,10 @@ export const planificacionAPI = {
 export const asistenciaAPI = {
   get: async (cursoId, fecha) => {
     await new Promise(r => setTimeout(r, 400));
-    const all = getLS('dsystem_asistencia', {});
-    return { data: all[`${cursoId}_${fecha}`] || {} };
+    return { data: mockDataService.getAsistencia(cursoId, fecha) };
   },
   save: async (cursoId, fecha, data) => {
     await new Promise(r => setTimeout(r, 600));
-    const all = getLS('dsystem_asistencia', {});
-    all[`${cursoId}_${fecha}`] = data;
-    setLS('dsystem_asistencia', all);
-    return { data };
+    return { data: mockDataService.saveAsistencia(cursoId, fecha, data) };
   }
 };

@@ -241,25 +241,25 @@ export default function Panel() {
         {/* ── SECCIÓN DERECHA: PROGRESO Y LOGROS ── */}
         <div className="xl:col-span-4 space-y-10">
           
-          {/* TARJETA DE PROGRESO */}
+          {/* TARJETA DE PROGRESO MAESTRO */}
           <div className="bg-gradient-to-br from-[#0A0A0A] to-black border border-white/5 p-10 rounded-[3rem] space-y-8 relative overflow-hidden">
              <div className="absolute top-0 right-0 p-6 opacity-[0.02]">
                 <Trophy size={100} />
              </div>
              
              <div className="space-y-2">
-                <p className="text-[10px] font-black uppercase tracking-widest text-primary-500">Estado del Ciclo</p>
-                <h3 className="text-3xl font-black uppercase italic tracking-tighter text-white leading-none">Prof. Experto</h3>
+                <p className="text-[10px] font-black uppercase tracking-widest text-primary-500">Progreso Maestro</p>
+                <h3 className="text-3xl font-black uppercase italic tracking-tighter text-white leading-none">Módulo de <span className="text-primary-500">Avance</span></h3>
              </div>
 
              <div className="space-y-6">
                 <div className="space-y-3">
                    <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
-                      <span className="text-gray-600">Planificación Anual</span>
-                      <span className="text-primary-500">85%</span>
+                      <span className="text-gray-600">Temas Dictados vs Planificados</span>
+                      <span className="text-primary-500">72%</span>
                    </div>
                    <div className="h-2 bg-white/5 rounded-full overflow-hidden p-[1px] border border-white/5">
-                      <div className="h-full bg-primary-600 w-[85%] rounded-full shadow-[0_0_15px_rgba(59,130,246,0.5)]" />
+                      <div className="h-full bg-primary-600 w-[72%] rounded-full shadow-[0_0_15px_rgba(59,130,246,0.5)]" />
                    </div>
                 </div>
 
@@ -268,23 +268,49 @@ export default function Panel() {
                       <div className="w-10 h-10 bg-green-500/10 rounded-full flex items-center justify-center text-green-500 mx-auto">
                          <CheckCircle2 size={18} />
                       </div>
-                      <p className="text-[8px] font-black uppercase tracking-widest text-gray-600 leading-tight">12 Clases Hoy</p>
+                      <p className="text-[8px] font-black uppercase tracking-widest text-gray-600 leading-tight">85 Objetivos <br/>Cumplidos</p>
                    </div>
                    <div className="bg-white/[0.02] border border-white/5 p-4 rounded-2xl text-center space-y-2">
                       <div className="w-10 h-10 bg-amber-500/10 rounded-full flex items-center justify-center text-amber-500 mx-auto">
                          <TrendingUp size={18} />
                       </div>
-                      <p className="text-[8px] font-black uppercase tracking-widest text-gray-600 leading-tight">Alta Fidelidad</p>
+                      <p className="text-[8px] font-black uppercase tracking-widest text-gray-600 leading-tight">Rendimiento <br/>+12% vs 2025</p>
                    </div>
                 </div>
              </div>
+          </div>
 
-             <button 
-                onClick={() => setShowReport(true)}
-                className="w-full py-4 bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl text-[9px] font-black uppercase tracking-widest text-gray-500 transition-all active:scale-95"
-             >
-                Ver reporte detallado
-             </button>
+          {/* ALUMNOS EN RIESGO (SIMULADO) */}
+          <div className="bg-black/40 border border-red-900/20 p-8 rounded-[2rem] space-y-6">
+             <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                   <Activity size={18} className="text-red-500" />
+                   <h4 className="text-[10px] font-black uppercase tracking-widest text-white">Alumnos en Riesgo (IA)</h4>
+                </div>
+                <span className="px-2 py-0.5 bg-red-500/10 text-red-500 text-[8px] font-black uppercase tracking-widest rounded-full border border-red-500/20">2 Alertas</span>
+             </div>
+             <div className="space-y-3">
+                <div className="flex items-center justify-between p-3 bg-red-500/5 border border-red-500/10 rounded-xl">
+                   <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 bg-red-500/10 rounded-lg flex items-center justify-center text-red-500 font-black text-[10px]">PR</div>
+                      <div>
+                         <p className="text-[11px] font-black text-white uppercase tracking-tighter">Pedro Rodríguez</p>
+                         <p className="text-[8px] font-bold text-gray-600 uppercase">Promedio: 5.8</p>
+                      </div>
+                   </div>
+                   <button className="p-2 hover:bg-white/5 rounded-lg text-gray-600 hover:text-white transition-all"><ArrowRight size={14} /></button>
+                </div>
+                <div className="flex items-center justify-between p-3 bg-red-500/5 border border-red-500/10 rounded-xl">
+                   <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 bg-red-500/10 rounded-lg flex items-center justify-center text-red-500 font-black text-[10px]">LS</div>
+                      <div>
+                         <p className="text-[11px] font-black text-white uppercase tracking-tighter">Lucas Sánchez</p>
+                         <p className="text-[8px] font-bold text-gray-600 uppercase">Promedio: 5.2</p>
+                      </div>
+                   </div>
+                   <button className="p-2 hover:bg-white/5 rounded-lg text-gray-600 hover:text-white transition-all"><ArrowRight size={14} /></button>
+                </div>
+             </div>
           </div>
 
           {/* NOTIFICACIONES / TIPS */}

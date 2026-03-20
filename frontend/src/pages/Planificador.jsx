@@ -285,6 +285,18 @@ export default function Planificador() {
             <Eye size={16} /> Vista Previa
           </button>
           <button 
+            onClick={() => {
+              setLoading(true);
+              setTimeout(() => {
+                setLoading(false);
+                setToast({ message: 'IA: Se detectó que el tema "Funciones" suele requerir refuerzo visual. Sugerimos añadir el mapa mental de GeoGebra.', type: 'info' });
+              }, 2000);
+            }}
+            className="px-6 py-3 bg-indigo-600/20 hover:bg-indigo-600 text-indigo-400 hover:text-white text-[10px] font-black uppercase tracking-widest rounded-xl border border-indigo-500/30 transition-all flex items-center gap-2"
+          >
+            <Sparkles size={16} /> Analizar con IA
+          </button>
+          <button 
             onClick={handleSave}
             className="px-8 py-3 bg-primary-600 hover:bg-primary-500 text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-primary-900/40 flex items-center gap-2"
           >

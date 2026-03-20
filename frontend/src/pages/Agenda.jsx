@@ -1,74 +1,54 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import FullCalendar from '@fullcalendar/react';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import timeGridPlugin from '@fullcalendar/timegrid';
+import interactionPlugin from '@fullcalendar/interaction';
+import esLocale from '@fullcalendar/core/locales/es';
 import { planificacionAPI } from '../services/api';
 import { 
-  ChevronLeft, 
-  ChevronRight, 
   Calendar as CalendarIcon, 
-  Clock, 
-  BookOpen, 
   Plus, 
-  Search,
-  Filter,
-  ArrowUpRight,
-  Info
+  Info,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 
-export default function CalendarioSemanal() {
+export default function Agenda() {
   const navigate = useNavigate();
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const [planificaciones, setPlanificaciones] = useState([]);
+  const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchPlans();
+    fetchEvents();
   }, []);
 
-  const fetchPlans = async () => {
+  const fetchEvents = async () => {
     setLoading(true);
     try {
       const res = await planificacionAPI.getAll();
-      setPlanificaciones(res.data);
+      const formattedEvents = res.data.map(p => ({
+        id: p.id,
+        title: p.titulo,
+        start: p.fechaInicio,
+        end: p.fechaFin || p.fechaInicio,
+        extendedProps: { ...p },
+        backgroundColor: p.tipo === 'Semanal' ? '#4f46e5' : '#2563eb', // Indigo para semanal, Blue para diaria
+        borderColor: 'transparent'
+      }));
+      setEvents(formattedEvents);
     } finally {
       setLoading(false);
     }
   };
 
-  // Obtener los días de la semana actual (Lunes a Viernes)
-  const getWeekDays = (date) => {
-    const startOfWeek = new Date(date);
-    const day = startOfWeek.getDay();
-    const diff = startOfWeek.getDate() - day + (day === 0 ? -6 : 1); // Lunes
-    startOfWeek.setDate(diff);
-    
-    return Array.from({ length: 5 }, (_, i) => {
-      const d = new Date(startOfWeek);
-      d.setDate(d.getDate() + i);
-      return d;
-    });
+  const handleEventClick = (info) => {
+    const id = info.event.id;
+    navigate(`/planificador?edit=${id}`);
   };
 
-  const weekDays = getWeekDays(currentDate);
-
-  const getPlansForDay = (date) => {
-    const dateStr = date.toISOString().split('T')[0];
-    return planificaciones.filter(p => {
-       // Si es semanal, deberíamos chequear si el día cae en el rango
-       if (p.tipo === 'Semanal') {
-          return dateStr >= p.fechaInicio && dateStr <= p.fechaFin;
-       }
-       return p.fechaInicio === dateStr;
-    });
-  };
-
-  const changeWeek = (weeks) => {
-    const newDate = new Date(currentDate);
-    newDate.setDate(newDate.getDate() + weeks * 7);
-    setCurrentDate(newDate);
-  };
-
-  const formatMonth = (date) => {
-    return date.toLocaleDateString('es', { month: 'long', year: 'numeric' }).toUpperCase();
+  const handleDateClick = (info) => {
+    navigate(`/planificador?date=${info.dateStr}`);
   };
 
   return (
@@ -77,22 +57,13 @@ export default function CalendarioSemanal() {
       {/* ── HEADER CALENDARIO ── */}
       <div className="flex flex-col lg:flex-row justify-between items-center bg-black/40 border border-white/5 p-10 rounded-[3rem] gap-8">
         <div className="flex items-center gap-6">
-           <div className="w-16 h-16 bg-primary-600 rounded-[2rem] flex items-center justify-center text-white shadow-2xl shadow-primary-900/30 rotate-3">
+           <div className="w-16 h-16 bg-blue-600 rounded-[2rem] flex items-center justify-center text-white shadow-2xl shadow-blue-900/30 rotate-3">
               <CalendarIcon size={32} />
            </div>
            <div>
-              <h2 className="text-4xl font-black uppercase italic tracking-tighter text-white leading-none">Calendario <span className="text-primary-500">Semanal</span>.</h2>
-              <p className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-600 mt-2">Visualiza y organiza tus clases con precisión académica</p>
+              <h2 className="text-4xl font-black uppercase italic tracking-tighter text-white leading-none">Mi <span className="text-blue-500">Agenda</span>.</h2>
+              <p className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-600 mt-2">Sincronización profesional de planificaciones</p>
            </div>
-        </div>
-
-        <div className="flex items-center gap-6 bg-white/[0.02] p-2 rounded-3xl border border-white/5">
-           <button onClick={() => changeWeek(-1)} className="p-3 hover:bg-white/5 rounded-2xl text-gray-500 transition-all"><ChevronLeft size={24} /></button>
-           <div className="px-6 text-center min-w-[200px]">
-              <p className="text-[10px] font-black uppercase tracking-widest text-primary-500 mb-1">{formatMonth(currentDate)}</p>
-              <p className="text-sm font-black text-white uppercase tracking-tighter">Semana del {weekDays[0].getDate()} al {weekDays[4].getDate()}</p>
-           </div>
-           <button onClick={() => changeWeek(1)} className="p-3 hover:bg-white/5 rounded-2xl text-gray-500 transition-all"><ChevronRight size={24} /></button>
         </div>
 
         <button 
@@ -103,72 +74,47 @@ export default function CalendarioSemanal() {
         </button>
       </div>
 
-      {/* ── GRID SEMANAL ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 h-full">
-         {weekDays.map((day, idx) => {
-           const plans = getPlansForDay(day);
-           const isToday = day.toDateString() === new Date().toDateString();
-           
-           return (
-             <div key={idx} className={`flex flex-col min-h-[600px] bg-black/20 border border-white/5 rounded-[2.5rem] overflow-hidden transition-all ${isToday ? 'ring-2 ring-primary-600/50 bg-primary-950/5' : ''}`}>
-                
-                {/* Cabecera del Día */}
-                <div className={`p-6 text-center border-b border-white/5 ${isToday ? 'bg-primary-600/10' : 'bg-white/[0.02]'}`}>
-                   <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-600 mb-1">
-                      {day.toLocaleDateString('es', { weekday: 'long' })}
-                   </p>
-                   <p className={`text-3xl font-black italic tracking-tighter ${isToday ? 'text-primary-500' : 'text-white'}`}>
-                      {day.getDate()}
-                   </p>
-                </div>
-
-                {/* Contenido del Día */}
-                <div className="flex-1 p-4 space-y-4 overflow-y-auto custom-scrollbar">
-                   {plans.length > 0 ? (
-                     plans.map(plan => (
-                       <div 
-                         key={plan.id}
-                         onClick={() => navigate(`/planificador?edit=${plan.id}`)}
-                         className="group cursor-pointer bg-[#0A0A0A] border border-white/5 hover:border-primary-500/30 p-5 rounded-3xl transition-all hover:-translate-y-1 relative"
-                       >
-                          <div className="space-y-3 relative z-10">
-                             <div className="flex justify-between items-start">
-                                <span className="px-2 py-0.5 bg-primary-600/10 text-primary-500 text-[8px] font-black uppercase tracking-widest rounded-full border border-primary-500/20">
-                                   {plan.materia}
-                                </span>
-                                <div className={`w-2 h-2 rounded-full ${plan.estado === 'Activa' ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]' : 'bg-amber-500'}`} />
-                             </div>
-                             <h4 className="text-xs font-black uppercase italic tracking-tighter text-white leading-tight group-hover:text-primary-400 transition-colors">
-                                {plan.titulo}
-                             </h4>
-                             <div className="flex items-center gap-2 text-[9px] font-bold text-gray-700 uppercase tracking-widest">
-                                <Clock size={12} /> {plan.tipo === 'Semanal' ? 'Semanario' : 'Bloque Diario'}
-                             </div>
-                          </div>
-                          <div className="absolute -right-2 -bottom-2 opacity-0 group-hover:opacity-[0.05] transition-opacity">
-                             <BookOpen size={60} />
-                          </div>
-                       </div>
-                     ))
-                   ) : (
-                     <div className="h-full flex flex-col items-center justify-center opacity-20 py-20 grayscale">
-                        <Plus size={24} className="mb-2" />
-                        <p className="text-[8px] font-black uppercase tracking-widest">Sin Clases</p>
-                     </div>
-                   )}
-                </div>
-             </div>
-           );
-         })}
+      {/* ── FULLCALENDAR COMPONENT ── */}
+      <div className="bg-black/20 border border-white/5 p-8 rounded-[2.5rem] shadow-2xl">
+        <style>{`
+          .fc { --fc-border-color: rgba(255,255,255,0.05); color: white; font-family: 'Inter', sans-serif; }
+          .fc-header-toolbar { margin-bottom: 2rem !important; }
+          .fc-toolbar-title { font-size: 1.25rem !important; font-weight: 900 !important; text-transform: uppercase; letter-spacing: -0.05em; font-style: italic; }
+          .fc-button-primary { background: rgba(255,255,255,0.05) !important; border: 1px solid rgba(255,255,255,0.1) !important; font-size: 10px !important; font-weight: 900 !important; text-transform: uppercase !important; letter-spacing: 0.1em !important; border-radius: 12px !important; padding: 0.75rem 1.25rem !important; }
+          .fc-button-active { background: #2563eb !important; border-color: #2563eb !important; }
+          .fc-daygrid-day { transition: background 0.2s; }
+          .fc-daygrid-day:hover { background: rgba(255,255,255,0.02); }
+          .fc-daygrid-day-number { font-size: 11px; font-weight: 900; color: #4b5563; padding: 10px !important; }
+          .fc-day-today { background: rgba(37, 99, 235, 0.05) !important; }
+          .fc-event { border-radius: 8px !important; padding: 4px 8px !important; font-size: 10px !important; font-weight: 700 !important; cursor: pointer; transition: transform 0.2s; }
+          .fc-event:hover { transform: translateY(-1px); filter: brightness(1.2); }
+          .fc-col-header-cell { padding: 15px 0 !important; background: rgba(255,255,255,0.01); }
+          .fc-col-header-cell-cushion { font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; color: #4b5563; }
+        `}</style>
+        <FullCalendar
+          plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+          initialView="dayGridMonth"
+          headerToolbar={{
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+          }}
+          locale={esLocale}
+          events={events}
+          eventClick={handleEventClick}
+          dateClick={handleDateClick}
+          height="auto"
+          aspectRatio={1.8}
+        />
       </div>
 
       {/* ── FOOTER INFO ── */}
-      <div className="flex items-center gap-4 bg-primary-600/5 border border-primary-500/10 p-6 rounded-3xl max-w-2xl">
-         <div className="p-3 bg-primary-500/20 rounded-2xl text-primary-500">
+      <div className="flex items-center gap-4 bg-blue-600/5 border border-blue-500/10 p-6 rounded-3xl max-w-2xl">
+         <div className="p-3 bg-blue-500/20 rounded-2xl text-blue-500">
             <Info size={20} />
          </div>
          <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest leading-relaxed">
-            Puedes hacer clic en cualquier clase para editar sus objetivos y actividades. El calendario se sincroniza automáticamente con tus últimos cambios.
+            Las fechas se sincronizan con tus planificaciones guardadas. Los planes diarios aparecen en azul y los semanales en índigo. Haz clic en cualquier evento para editar.
          </p>
       </div>
 
