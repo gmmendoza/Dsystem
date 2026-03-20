@@ -1,69 +1,73 @@
 export const initialAlumnos = [
-  { id: 1, nombre: 'Juan', apellido: 'Pérez', dni: '11111111', email: 'juan.perez@example.com' },
-  { id: 2, nombre: 'María', apellido: 'García', dni: '22222222', email: 'maria.garcia@example.com' },
-  { id: 3, nombre: 'Carlos', apellido: 'Sánchez', dni: '33333333', email: 'carlos.sanchez@example.com' },
-  { id: 4, nombre: 'Ana', apellido: 'Martínez', dni: '44444444', email: 'ana.martinez@example.com' },
-  { id: 5, nombre: 'Luis', apellido: 'Rodríguez', dni: '55555555', email: 'luis.rodriguez@example.com' },
-  { id: 6, nombre: 'Elena', apellido: 'Gómez', dni: '66666666', email: 'elena.gomez@example.com' },
-  { id: 7, nombre: 'Pedro', apellido: 'López', dni: '77777777', email: 'pedro.lopez@example.com' },
-  { id: 8, nombre: 'Sofía', apellido: 'Fernández', dni: '88888888', email: 'sofia.fernandez@example.com' },
-  { id: 9, nombre: 'Diego', apellido: 'González', dni: '99999999', email: 'diego.gonzalez@example.com' },
-  { id: 10, nombre: 'Lucía', apellido: 'Díaz', dni: '10101010', email: 'lucia.diaz@example.com' },
+  { id: 1, nombre: "Juan", apellido: "Pérez", dni: "42.123.456", email: "juan.perez@escuela.edu" },
+  { id: 2, nombre: "María", apellido: "García", dni: "41.987.654", email: "maria.garcia@escuela.edu" },
+  { id: 3, nombre: "Pedro", apellido: "Rodríguez", dni: "43.555.444", email: "pedro.rod@escuela.edu" },
+  { id: 4, nombre: "Ana", apellido: "Martínez", dni: "42.333.222", email: "ana.martinez@escuela.edu" },
+  { id: 5, nombre: "Lucas", apellido: "Sánchez", dni: "44.111.999", email: "lucas.sanchez@escuela.edu" }
 ];
 
 export const initialCursos = [
   { 
     id: 1, 
-    nombre: '3° A - Primaria', 
-    descripcion: 'Año de fortalecimiento en lectoescritura', 
-    nivel: 'Primaria', 
+    nombre: "3° A - Primaria", 
+    nivel: "Primaria", 
+    descripcion: "Turno Mañana - Ciclo Básico",
     alumnos: [1, 2, 3, 4, 5],
     recursos: [
-      { id: 101, titulo: 'Video Fracciones', tipo: 'video', url: 'https://www.youtube.com/embed/P_NEn9vR9_k' },
-      { id: 102, titulo: 'Imagen Figuras', tipo: 'imagen', url: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=200&auto=format&fit=crop' }
+      { id: 101, titulo: "Mapa de Argentina", tipo: "image", url: "https://images.unsplash.com/photo-1526772662000-3f88f10405ff?q=80&w=800" },
+      { id: 102, titulo: "Video: Fotosíntesis", tipo: "video", url: "https://www.youtube.com/watch?v=kYbe_2xVezM" },
+      { id: 103, titulo: "Gráfico de Barras", tipo: "image", url: "https://images.unsplash.com/photo-1551288049-bbbda536339a?q=80&w=800" }
     ]
   },
   { 
     id: 2, 
-    nombre: 'Sala de 5 - Jardín', 
-    descripcion: 'Nivel Inicial: Sala Roja', 
-    nivel: 'Inicial', 
-    alumnos: [6, 7, 8],
+    nombre: "Sala Roja (5 años)", 
+    nivel: "Inicial", 
+    descripcion: "Jardín de Infantes - Turno Tarde",
+    alumnos: [1, 3, 5],
     recursos: [
-      { id: 103, titulo: 'Canción Infantil', tipo: 'video', url: 'https://www.youtube.com/embed/7P6L7p3E6yM' }
+      { id: 201, titulo: "Canción de los Colores", tipo: "video", url: "https://www.youtube.com/watch?v=7uV_G1Q6RzM" },
+      { id: 202, titulo: "Témperas y Pinceles", tipo: "image", url: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?q=80&w=800" }
     ]
-  },
+  }
 ];
 
 export const initialPlanificaciones = [
-  { 
-    id: 1, 
-    titulo: 'Unidad 1: Los Números', 
-    cursoId: 1, 
-    fechaInicio: '2026-03-01', 
-    fechaFin: '2026-03-15', 
-    estado: 'Finalizada', 
-    completada: true,
-    observaciones: 'Buena participación del grupo.',
-    secciones: [
-      { id: 'obj', label: 'Objetivos', value: 'Conocer los números del 1 al 100' },
-      { id: 'act', label: 'Actividades', value: 'Dictado y juegos de mesa' }
+  {
+    id: 1,
+    titulo: "Funciones Lineales y Gráficos",
+    materia: "Matemática",
+    cursoId: 1,
+    nivel: "Primaria",
+    tipo: "Diaria",
+    fechaInicio: "2026-03-20",
+    fechaFin: "2026-03-20",
+    objetivos: ["Comprender el concepto de pendiente", "Interpretar gráficos cartesianos"],
+    actividades: ["Introducción teórica mediante pizarra digital", "Resolución de ejercicios prácticos", "Debate sobre aplicaciones en la vida diaria"],
+    recursos: [
+      { id: 1, type: "image", url: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?q=80&w=800", title: "Gráfico de Funciones" },
+      { id: 2, type: "video", url: "https://www.youtube.com/watch?v=kYbe_2xVezM", title: "Explicación Pendiente" }
     ],
-    lastModified: '2026-03-10T10:00:00Z'
+    evaluacion: "Resolución de problemas prácticos individuales.",
+    estado: "Activa",
+    lastModified: "2026-03-20T10:00:00Z"
   },
-  { 
-    id: 2, 
-    titulo: 'Unidad 2: Multiplicación', 
-    cursoId: 1, 
-    fechaInicio: '2026-03-16', 
-    fechaFin: '2026-03-30', 
-    estado: 'Activa', 
-    completada: false,
-    observaciones: '',
-    secciones: [
-      { id: 'obj', label: 'Objetivos', value: 'Aprender las tablas del 2 al 5' },
-      { id: 'act', label: 'Actividades', value: 'Ejercicios en el cuaderno' }
+  {
+    id: 2,
+    titulo: "Exploración de Colores",
+    materia: "Expresión Artística",
+    cursoId: 2,
+    nivel: "Inicial",
+    tipo: "Diaria",
+    fechaInicio: "2026-03-22",
+    fechaFin: "2026-03-22",
+    objetivos: ["Reconocimiento de colores primarios", "Fomentar la motricidad fina"],
+    actividades: ["Mezcla de témperas sobre papel madera", "Juego de búsqueda de objetos rojos", "Canción de despedida descriptiva"],
+    recursos: [
+       { id: 3, type: "video", url: "https://www.youtube.com/watch?v=7uV_G1Q6RzM", title: "Canción: Los Colores" }
     ],
-    lastModified: '2026-03-20T08:30:00Z'
-  },
+    evaluacion: "Observación directa de la participación y disfrute lúdico.",
+    estado: "En progreso",
+    lastModified: "2026-03-20T11:00:00Z"
+  }
 ];
