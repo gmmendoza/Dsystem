@@ -302,10 +302,10 @@ export default function Planificador() {
                   <select 
                     value={cursoId}
                     onChange={(e) => setCursoId(e.target.value)}
-                    className="w-full bg-white/[0.02] border border-white/10 rounded-2xl p-4 text-sm font-bold text-gray-300 outline-none focus:border-primary-500 transition-all appearance-none"
+                    className="w-full bg-[#0F0F0F] border border-white/10 rounded-2xl p-4 text-sm font-bold text-gray-300 outline-none focus:border-primary-500 transition-all cursor-pointer"
                   >
-                    <option value="">Seleccionar...</option>
-                    {cursos.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
+                    <option value="" className="bg-[#0F0F0F] text-gray-400">Seleccionar el Aula...</option>
+                    {cursos.map(c => <option key={c.id} value={c.id} className="bg-[#0F0F0F] text-white">{c.nombre}</option>)}
                   </select>
                 </div>
               </div>

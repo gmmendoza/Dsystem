@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { useAuth } from '../context/AuthContext';
@@ -11,8 +11,12 @@ import {
 
 const LandingPage = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { token, login } = useAuth();
   const loginRef = useRef(null);
+  
+  useEffect(() => {
+    if (token) navigate('/dashboard')
+  }, [token, navigate])
   
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);

@@ -83,8 +83,8 @@ export default function Panel() {
                 <LayoutDashboard size={20} />
              </div>
              <div>
-                <span className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-600 block">DSystem Academic v2.5</span>
-                <span className="text-[9px] font-bold text-gray-800 uppercase tracking-widest leading-none">Actualizado hoy a las {new Date().toLocaleTimeString('es', {hour: '2-digit', minute:'2-digit'})}</span>
+                <span className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-600 block">Licencia Profesional</span>
+                <span className="text-[9px] font-bold text-gray-800 uppercase tracking-widest leading-none">Centro de Control Académico</span>
              </div>
           </div>
           <h2 className="text-6xl font-black uppercase italic tracking-tighter text-white leading-tight">
