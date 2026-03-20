@@ -20,7 +20,14 @@ import {
   Clock,
   AlertCircle,
   FileText,
-  UserCheck
+  UserCheck,
+  Bot,
+  Sparkles,
+  Check,
+  TrendingDown,
+  TrendingUp,
+  BrainCircuit,
+  Lightbulb
 } from 'lucide-react'
 import { CardSkeleton, TableSkeleton } from '../components/Common/LoadingSkeleton'
 import { Toast } from '../components/Common/Toast'
@@ -36,10 +43,37 @@ export default function AulaWorkspace() {
   const [activeTab, setActiveTab] = useState('planes')
   const [toast, setToast] = useState(null)
   const [confirm, setConfirm] = useState({ open: false, onConfirm: null, title: '', message: '' })
+  
+  // IA and Reports State
+  const [reportLoading, setReportLoading] = useState(false)
+  const [reportStep, setReportStep] = useState(0)
+  const [showReport, setShowReport] = useState(false)
+
+  const steps = [
+    { title: "Analizando actividades recientes", icon: Sparkles },
+    { title: "Revisando asistencia del grupo", icon: Users },
+    { title: "Generando conclusiones inteligentes", icon: BrainCircuit }
+  ]
 
   useEffect(() => {
     fetchWorkspaceData()
   }, [id])
+
+  useEffect(() => {
+    if (activeTab === 'progreso' && !showReport && !reportLoading) {
+      generateReport()
+    }
+  }, [activeTab])
+
+  const generateReport = async () => {
+    setReportLoading(true)
+    for (let i = 0; i < steps.length; i++) {
+        setReportStep(i)
+        await new Promise(r => setTimeout(r, 1500))
+    }
+    setReportLoading(false)
+    setShowReport(true)
+  }
 
   const fetchWorkspaceData = async () => {
     setLoading(true)
@@ -327,41 +361,182 @@ export default function AulaWorkspace() {
         )}
 
         {activeTab === 'progreso' && (
-          <div className="container mx-auto">
-             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="card bg-[#080808] border-white/5 p-8 space-y-6">
-                   <h4 className="text-xs font-black uppercase tracking-[0.3em] text-gray-600">Efectividad de Clases</h4>
-                   <div className="relative h-64 flex items-end justify-center gap-4">
-                      <div className="w-12 bg-primary-600/20 rounded-t-lg border-t-2 border-primary-500 h-[60%]" />
-                      <div className="w-12 bg-primary-600/40 rounded-t-lg border-t-2 border-primary-500 h-[80%]" />
-                      <div className="w-12 bg-primary-600 rounded-t-lg border-t-2 border-primary-500 h-[40%]" />
-                      <div className="w-12 bg-violet-600 rounded-t-lg border-t-2 border-violet-500 h-[95%]" />
-                   </div>
-                   <p className="text-[10px] font-bold text-gray-500 text-center uppercase tracking-widest italic">Análisis basado en checklist de cumplimiento</p>
-                </div>
-                
-                <div className="space-y-6">
-                   <div className="p-6 bg-white/[0.02] border border-white/5 rounded-[1.5rem] flex items-center gap-6">
-                      <div className="w-14 h-14 bg-green-500/10 rounded-2xl flex items-center justify-center text-green-500 border border-green-500/20">
-                         <AlertCircle size={24} />
+          <div className="container mx-auto space-y-12">
+             {/* Charts Section */}
+             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="lg:col-span-2 card bg-[#080808] border-white/5 p-8 space-y-8">
+                   <div className="flex items-center justify-between">
+                      <div className="space-y-1">
+                         <h4 className="text-sm font-black uppercase italic text-white">Efectividad de Clases</h4>
+                         <p className="text-[10px] font-bold text-gray-600 uppercase tracking-widest">Cumplimiento de objetivos por unidad</p>
                       </div>
-                      <div>
-                         <p className="text-sm font-black uppercase italic text-white leading-tight">Sugerencia de la IA</p>
-                         <p className="text-[10px] font-bold text-gray-600 uppercase tracking-widest mt-1">
-                           El grupo muestra déficit en la tabla del 4. Considera reforzar con recursos visuales.
-                         </p>
+                      <div className="flex gap-2">
+                         <div className="flex items-center gap-2 px-3 py-1 bg-primary-500/10 border border-primary-500/20 rounded-full">
+                            <TrendingUp size={10} className="text-primary-500" />
+                            <span className="text-[8px] font-black uppercase text-primary-500 tracking-widest">+12%</span>
+                         </div>
                       </div>
                    </div>
                    
-                   <div className="p-6 bg-white/[0.02] border border-white/5 rounded-[1.5rem] flex items-center gap-6 opacity-50 grayscale">
-                      <div className="w-14 h-14 bg-violet-500/10 rounded-2xl flex items-center justify-center text-violet-500 border border-violet-500/20">
-                         <FileText size={24} />
+                   <div className="relative h-64 flex items-end justify-between px-4 sm:px-10 gap-2 sm:gap-6">
+                      {[65, 85, 45, 92, 78].map((h, i) => (
+                        <div key={i} className="flex-1 flex flex-col items-center gap-4 group">
+                           <div className="relative w-full">
+                              <div 
+                                className={`w-full bg-gradient-to-t rounded-t-2xl transition-all duration-1000 group-hover:brightness-125 cursor-pointer relative ${
+                                  i === 3 ? 'from-violet-600/20 to-violet-500' : 'from-primary-600/20 to-primary-500'
+                                }`}
+                                style={{ height: showReport ? `${h}%` : '0px' }}
+                              >
+                                 <span className="absolute -top-8 left-1/2 -translate-x-1/2 text-[9px] font-black text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                                   {h}%
+                                 </span>
+                              </div>
+                           </div>
+                           <span className="text-[8px] font-bold text-gray-700 uppercase tracking-tighter">Sem 0{i+1}</span>
+                        </div>
+                      ))}
+                   </div>
+                </div>
+
+                {/* Metrics Summary */}
+                <div className="space-y-4">
+                  {[
+                    { label: 'Participación', value: '88%', trend: '+5%', color: 'text-green-500' },
+                    { label: 'Asistencia', value: '94%', trend: 'Estable', color: 'text-blue-500' },
+                    { label: 'Tareas', value: '72%', trend: '-2%', color: 'text-orange-500' }
+                  ].map((m, i) => (
+                    <div key={i} className="p-6 bg-white/[0.02] border border-white/5 rounded-2xl flex flex-col gap-2">
+                       <span className="text-[9px] font-black uppercase tracking-widest text-gray-600">{m.label}</span>
+                       <div className="flex items-end justify-between">
+                          <span className="text-2xl font-black italic text-white tracking-tighter">{m.value}</span>
+                          <span className={`text-[8px] font-black uppercase tracking-widest ${m.color}`}>{m.trend}</span>
+                       </div>
+                    </div>
+                  ))}
+                </div>
+             </div>
+             
+             {/* AI and Report Section */}
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {/* AI Suggestions Card */}
+                <div className="card bg-[#080808] border-white/5 p-8 flex flex-col gap-8 hover:border-primary-500/20 transition-colors group relative overflow-hidden">
+                   <div className="absolute top-0 right-0 p-8 text-primary-500/10 -rotate-12 group-hover:scale-110 transition-transform">
+                      <Bot size={120} />
+                   </div>
+                   
+                   <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 bg-primary-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-primary-900/30">
+                        <Bot size={24} />
                       </div>
-                      <div>
-                         <p className="text-sm font-black uppercase italic text-white leading-tight">Reporte Semanal</p>
-                         <p className="text-[10px] font-bold text-gray-600 uppercase tracking-widest mt-1"> Generando resumen de actividades para directivos... </p>
+                      <div className="space-y-1">
+                        <h4 className="text-sm font-black uppercase italic text-white">Sugerencia de la IA</h4>
+                        <p className="text-[9px] font-bold text-gray-600 uppercase tracking-widest italic">Basado en las últimas actividades y resultados...</p>
                       </div>
                    </div>
+
+                   <div className="space-y-4 relative z-10">
+                      <p className="text-sm font-bold text-gray-300 leading-relaxed">
+                        Detectamos que algunos estudiantes están teniendo dificultades con la <span className="text-primary-400">tabla del 4</span>. 
+                      </p>
+                      
+                      <div className="space-y-3">
+                         <p className="text-[10px] font-black uppercase tracking-widest text-gray-500 flex items-center gap-2">
+                            <Lightbulb size={12} className="text-yellow-500" /> Te recomendamos:
+                         </p>
+                         <ul className="space-y-2">
+                            {['Usar tarjetas visuales digitales', 'Incorporar juegos de repetición rítmica', 'Trabajar en grupos pequeños dirigidos'].map((rec, i) => (
+                              <li key={i} className="flex items-center gap-3 text-xs text-gray-400">
+                                 <div className="w-1.5 h-1.5 rounded-full bg-primary-500/50" />
+                                 {rec}
+                              </li>
+                            ))}
+                         </ul>
+                      </div>
+                   </div>
+
+                   <div className="flex flex-wrap gap-3 mt-auto">
+                      <button className="px-4 py-2 bg-primary-600 hover:bg-primary-500 text-white text-[9px] font-black uppercase tracking-widest rounded-lg transition-all">Ver Recursos</button>
+                      <button className="px-4 py-2 bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white text-[9px] font-black uppercase tracking-widest rounded-lg transition-all border border-white/5">Añadir Actividad</button>
+                      <button className="px-4 py-2 text-gray-600 hover:text-red-400 text-[9px] font-black uppercase tracking-widest transition-all">Ignorar</button>
+                   </div>
+                </div>
+
+                {/* Weekly Report Card */}
+                <div className="card bg-[#080808] border-white/5 p-8 flex flex-col gap-8 relative overflow-hidden">
+                   {!showReport ? (
+                      <div className="flex-1 flex flex-col items-center justify-center space-y-8 min-h-[300px]">
+                         <div className="relative">
+                            <div className="w-20 h-20 border-2 border-primary-500/20 rounded-full" />
+                            <div className="absolute inset-0 border-t-2 border-primary-500 rounded-full animate-spin" />
+                            <div className="absolute inset-0 flex items-center justify-center text-primary-500">
+                               {steps[reportStep]?.icon && (() => {
+                                  const StepIcon = steps[reportStep].icon;
+                                  return <StepIcon size={28} className="animate-pulse" />;
+                               })()}
+                            </div>
+                         </div>
+                         <div className="space-y-4 w-full max-w-[250px]">
+                            {steps.map((s, i) => (
+                              <div key={i} className={`flex items-center gap-4 transition-all duration-500 ${i > reportStep ? 'opacity-20 grayscale' : 'opacity-100'}`}>
+                                 <div className={`w-5 h-5 rounded-lg flex items-center justify-center border ${
+                                   i < reportStep ? 'bg-green-500 border-green-500 text-white' : 'border-white/10 text-gray-700'
+                                 }`}>
+                                    {i < reportStep ? <Check size={12} /> : i === reportStep ? <div className="w-1.5 h-1.5 bg-primary-500 rounded-full animate-ping" /> : null}
+                                 </div>
+                                 <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">{s.title}</span>
+                              </div>
+                            ))}
+                         </div>
+                      </div>
+                   ) : (
+                      <div className="flex flex-col h-full gap-8 animate-in fade-in zoom-in-95 duration-700">
+                         <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 bg-violet-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-violet-900/30">
+                              <BarChart3 size={24} />
+                            </div>
+                            <div className="space-y-1">
+                              <h4 className="text-sm font-black uppercase italic text-white">Reporte Semanal</h4>
+                              <p className="text-[10px] font-bold text-gray-600 uppercase tracking-widest">Semana del {new Date().toLocaleDateString('es', { day: '2-digit', month: 'short' })}</p>
+                            </div>
+                         </div>
+
+                         <div className="grid grid-cols-3 gap-4">
+                            {[
+                               { val: planes.length, label: 'Planes' },
+                               { val: Math.round(planes.length * 0.8), label: 'Clases' },
+                               { val: 1, label: 'Eval' }
+                            ].map((st, i) => (
+                               <div key={i} className="p-4 bg-white/[0.03] border border-white/5 rounded-2xl text-center">
+                                  <p className="text-xl font-black italic text-white">{st.val}</p>
+                                  <p className="text-[8px] font-black uppercase tracking-widest text-gray-600">{st.label}</p>
+                               </div>
+                            ))}
+                         </div>
+
+                         <div className="space-y-4">
+                            <h5 className="text-[10px] font-black uppercase tracking-widest text-gray-500">Observaciones Clave</h5>
+                            <div className="space-y-3">
+                               {[
+                                 { text: 'Buen nivel de participación grupal en Matemática.', color: 'text-green-400' },
+                                 { text: 'Dificultades persistentes en la tabla del 4.', color: 'text-orange-400' }
+                               ].map((obs, i) => (
+                                 <div key={i} className="flex gap-3 p-4 bg-white/[0.02] border border-white/5 rounded-xl">
+                                    <div className={`w-1.5 h-1.5 rounded-full mt-1 ${obs.color.replace('text', 'bg')}`} />
+                                    <p className={`text-xs font-bold ${obs.color}`}>{obs.text}</p>
+                                 </div>
+                               ))}
+                            </div>
+                         </div>
+
+                         <div className="flex gap-3 mt-auto">
+                            <button className="flex-1 py-3 bg-violet-600 hover:bg-violet-500 text-white text-[9px] font-black uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-violet-900/20">Ver Reporte Detallado</button>
+                            <button className="px-4 py-3 bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white rounded-xl border border-white/5 transition-all">
+                               <FileText size={16} />
+                            </button>
+                         </div>
+                      </div>
+                   )}
                 </div>
              </div>
           </div>
