@@ -11,6 +11,9 @@ const getLS = (key, initial) => {
 
 const setLS = (key, data) => localStorage.setItem(key, JSON.stringify(data));
 
+// Force refresh for development (uncomment if data doesn't update)
+// localStorage.clear(); 
+
 getLS('dsystem_alumnos', initialAlumnos);
 getLS('dsystem_cursos', initialCursos);
 getLS('dsystem_planificaciones', initialPlanificaciones);
