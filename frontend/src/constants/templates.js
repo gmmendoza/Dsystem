@@ -5,9 +5,9 @@ export const PLANNING_TEMPLATES = [
     nivel: 'Primaria',
     icon: '🎯',
     secciones: [
-      { id: 'objetivos', label: 'Objetivos del Día', placeholder: '¿Qué deben aprender hoy?', value: '' },
-      { id: 'actividades', label: 'Secuencia de Actividades', placeholder: 'Paso 1, Paso 2...', value: '' },
-      { id: 'evaluacion', label: 'Evaluación / Cierre', placeholder: '¿Cómo verificarás el aprendizaje?', value: '' }
+      { id: 'objetivos', label: 'Objetivos del Día', type: 'text', placeholder: '¿Qué deben aprender hoy?', value: { text: '' } },
+      { id: 'actividades', label: 'Secuencia de Actividades', type: 'text', placeholder: 'Paso 1, Paso 2...', value: { text: '' } },
+      { id: 'evaluacion', label: 'Evaluación / Cierre', type: 'text', placeholder: '¿Cómo verificarás el aprendizaje?', value: { text: '' } }
     ]
   },
   {
@@ -16,11 +16,11 @@ export const PLANNING_TEMPLATES = [
     nivel: 'Primaria',
     icon: '📅',
     secciones: [
-      { id: 'lunes', label: 'Lunes', placeholder: 'Inicio de unidad...', value: '' },
-      { id: 'martes', label: 'Martes', placeholder: 'Desarrollo...', value: '' },
-      { id: 'miercoles', label: 'Miércoles', placeholder: 'Práctica...', value: '' },
-      { id: 'jueves', label: 'Jueves', placeholder: 'Refuerzo...', value: '' },
-      { id: 'viernes', label: 'Viernes', placeholder: 'Cierre semanal...', value: '' }
+      { id: 'lunes', label: 'Lunes', type: 'text', placeholder: 'Inicio de unidad...', value: { text: '' } },
+      { id: 'martes', label: 'Martes', type: 'text', placeholder: 'Desarrollo...', value: { text: '' } },
+      { id: 'miercoles', label: 'Miércoles', type: 'text', placeholder: 'Práctica...', value: { text: '' } },
+      { id: 'jueves', label: 'Jueves', type: 'text', placeholder: 'Refuerzo...', value: { text: '' } },
+      { id: 'viernes', label: 'Viernes', type: 'text', placeholder: 'Cierre semanal...', value: { text: '' } }
     ]
   },
   {
@@ -29,11 +29,11 @@ export const PLANNING_TEMPLATES = [
     nivel: 'Inicial',
     icon: '🧩',
     secciones: [
-      { id: 'sala', label: 'Sala / Edad', placeholder: 'Ej: 4 años (Sala Roja)', value: '' },
-      { id: 'area', label: 'Área de Experiencia', placeholder: 'Ej: Expresión Corporal', value: '' },
-      { id: 'propositos', label: 'Propósitos Docentes', placeholder: '¿Qué pretendes fomentar?', value: '' },
-      { id: 'actividades_ludicas', label: 'Desarrollo del Juego', placeholder: 'Descripción de la propuesta grupal...', value: '' },
-      { id: 'recursos', label: 'Recursos y Materiales', placeholder: 'Canciones, bloques, telas...', value: '' }
+      { id: 'sala', label: 'Sala / Edad', type: 'text', placeholder: 'Ej: 4 años (Sala Roja)', value: { text: '' } },
+      { id: 'area', label: 'Área de Experiencia', type: 'text', placeholder: 'Ej: Expresión Corporal', value: { text: '' } },
+      { id: 'propositos', label: 'Propósitos Docentes', type: 'text', placeholder: '¿Qué pretendes fomentar?', value: { text: '' } },
+      { id: 'actividades_ludicas', label: 'Desarrollo del Juego', type: 'text', placeholder: 'Descripción de la propuesta grupal...', value: { text: '' } },
+      { id: 'recursos', label: 'Recursos y Materiales', type: 'text', placeholder: 'Canciones, bloques, telas...', value: { text: '' } }
     ]
   },
   {
@@ -42,9 +42,9 @@ export const PLANNING_TEMPLATES = [
     nivel: 'Cualquiera',
     icon: '🚀',
     secciones: [
-      { id: 'problema', label: 'Pregunta / Problema Eje', placeholder: '¿Cuál es el disparador del proyecto?', value: '' },
-      { id: 'etapas', label: 'Etapas de Investigación', placeholder: '¿Cómo se organizará el proceso?', value: '' },
-      { id: 'producto', label: 'Producto Final', placeholder: '¿Qué crearán los alumnos?', value: '' }
+      { id: 'problema', label: 'Pregunta / Problema Eje', type: 'text', placeholder: '¿Cuál es el disparador del proyecto?', value: { text: '' } },
+      { id: 'etapas', label: 'Etapas de Investigación', type: 'text', placeholder: '¿Cómo se organizará el proceso?', value: { text: '' } },
+      { id: 'producto', label: 'Producto Final', type: 'text', placeholder: '¿Qué crearán los alumnos?', value: { text: '' } }
     ]
   }
 ];

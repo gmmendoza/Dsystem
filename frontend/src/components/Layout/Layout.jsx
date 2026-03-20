@@ -9,7 +9,8 @@ import {
   Bell,
   GraduationCap,
   ChevronRight,
-  User
+  User,
+  Archive
 } from 'lucide-react'
 import NotificationToast from '../Notifications/NotificationToast'
 
@@ -18,6 +19,7 @@ const navItems = [
   { to: 'mi-aula',      icon: BookOpen,        label: 'Mi Aula' },
   { to: 'planificador', icon: ClipboardList,   label: 'Planificador' },
   { to: 'agenda',       icon: CalendarDays,    label: 'Calendario' },
+  { to: 'historial',    icon: Archive,         label: 'Historial' },
 ]
 
 export default function Layout() {

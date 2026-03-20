@@ -7,6 +7,8 @@ import Dashboard from './pages/Dashboard'
 import MiAula from './pages/MiAula'
 import Agenda from './pages/Agenda'
 import Planificador from './pages/Planificador'
+import AulaWorkspace from './pages/AulaWorkspace'
+import Historial from './pages/Historial'
 
 function ProtectedRoute({ children }) {
   const { token } = useAuth()
@@ -32,8 +34,10 @@ export default function App() {
         <Route index element={<Navigate to="dashboard" replace />} />
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="mi-aula" element={<MiAula />} />
+        <Route path="aula/:id" element={<AulaWorkspace />} />
         <Route path="agenda" element={<Agenda />} />
         <Route path="planificador" element={<Planificador />} />
+        <Route path="historial" element={<Historial />} />
       </Route>
 
       {/* Redirección por defecto */}

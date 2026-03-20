@@ -84,9 +84,31 @@ export default function PreviewModal({ isOpen, onClose, data, cursoName }) {
                        <CheckCircle2 size={18} className="text-gray-900" />
                        <h4 className="text-xs font-black uppercase tracking-[0.3em] border-b border-gray-100 flex-1 pb-1">{s.label}</h4>
                     </div>
-                    <p className="text-md leading-relaxed whitespace-pre-wrap pl-8 text-gray-800">
-                      {s.value || 'N/A'}
-                    </p>
+                    {s.type === 'media' ? (
+                      <div className="pl-8 space-y-4">
+                         {s.value?.type === 'video' ? (
+                           <div className="aspect-video bg-black rounded-xl overflow-hidden border border-gray-100 max-w-xl">
+                              <iframe 
+                                className="w-full h-full"
+                                src={s.value?.url?.replace('watch?v=', 'embed/')} 
+                                title="YouTube content" 
+                                frameBorder="0" 
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                allowFullScreen
+                              />
+                           </div>
+                         ) : (
+                           <div className="rounded-xl overflow-hidden border border-gray-100 max-w-xl">
+                             <img src={s.value?.url} alt="Recurso" className="w-full h-auto" />
+                           </div>
+                         )}
+                         <p className="text-[10px] italic text-gray-400">Recurso multimedia vinculado: {s.value?.url}</p>
+                      </div>
+                    ) : (
+                      <p className="text-md leading-relaxed whitespace-pre-wrap pl-8 text-gray-800">
+                        {s.value?.text || 'Sin contenido especificado.'}
+                      </p>
+                    )}
                  </div>
                ))}
             </div>

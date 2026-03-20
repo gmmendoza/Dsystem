@@ -1,335 +1,168 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
+import { 
+  Save, Eye, FileUp, Sparkles, Layout, 
+  ChevronRight, Calendar, BookOpen, Clock, 
+  Trash2, Plus, GripVertical, Settings, 
+  Type, Video, Image as ImageIcon, Link2
+} from 'lucide-react'
+import { useSearchParams } from 'react-router-dom'
 import { planificacionAPI, cursoAPI } from '../services/api'
 import { PLANNING_TEMPLATES } from '../constants/templates'
-import { 
-  ClipboardList, Plus, ArrowLeft, Loader2, 
-  FileText, Search, Trash2, LayoutGrid, 
-  ArrowRight, CheckCircle2, Cloud, Eye, 
-  ChevronDown, Sparkles
-} from 'lucide-react'
-import { FormSkeleton, CardSkeleton } from '../components/Common/LoadingSkeleton'
-import { Toast } from '../components/Common/Toast'
-import { EditorBlock, AddBlockButton } from '../components/Editor/EditorBlocks'
 import PreviewModal from '../components/Modals/PreviewModal'
+import { MultimediaBlock, AddBlockButton } from '../components/Editor/EditorBlocks'
 
 export default function Planificador() {
-  const [plans, setPlans] = useState([])
-  const [cursos, setCursos] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [editingPlan, setEditingPlan] = useState(null)
-  const [currentTemplate, setCurrentTemplate] = useState(null)
+  const [searchParams] = useSearchParams()
+  const editId = searchParams.get('edit')
+  
+  const [currentStep, setCurrentStep] = useState(1)
   const [title, setTitle] = useState('')
   const [cursoId, setCursoId] = useState('')
   const [fechaInicio, setFechaInicio] = useState('')
   const [fechaFin, setFechaFin] = useState('')
   const [sections, setSections] = useState([])
-  const [toast, setToast] = useState(null)
-  const [searchTerm, setSearchTerm] = useState('')
   const [isPreviewOpen, setIsPreviewOpen] = useState(false)
-  const [autoSaveStatus, setAutoSaveStatus] = useState('saved') // 'saved', 'saving', 'error'
+  const [cursos, setCursos] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [editingPlan, setEditingPlan] = useState(null)
 
-  const fetchData = async () => {
+  useEffect(() => {
+    fetchCursos()
+    if (editId) {
+       loadPlan(editId)
+    }
+  }, [editId])
+
+  const fetchCursos = async () => {
+    const res = await cursoAPI.getAll()
+    setCursos(res.data)
+  }
+
+  const loadPlan = async (id) => {
     setLoading(true)
     try {
-      const [{ data: pData }, { data: cData }] = await Promise.all([
-        planificacionAPI.getAll(),
-        cursoAPI.getAll()
-      ])
-      setPlans(pData)
-      setCursos(cData)
+      const res = await planificacionAPI.getById(id)
+      const plan = res.data
+      setEditingPlan(plan)
+      setTitle(plan.titulo)
+      setCursoId(plan.cursoId)
+      setFechaInicio(plan.fechaInicio)
+      setFechaFin(plan.fechaFin)
+      setSections(plan.secciones || [])
+      setCurrentStep(2) // Ir directo al editor
     } finally {
       setLoading(false)
     }
   }
 
-  useEffect(() => { fetchData() }, [])
-
-  // Simulación de auto-guardado
-  useEffect(() => {
-    if (editingPlan || currentTemplate) {
-      const timer = setTimeout(() => {
-        if (title.length > 3) setAutoSaveStatus('saved')
-      }, 2000)
-      return () => {
-        setAutoSaveStatus('saving')
-        clearTimeout(timer)
-      }
-    }
-  }, [title, sections, cursoId])
-
-  const handleSelectTemplate = (template) => {
-    setCurrentTemplate(template)
-    setSections(template.secciones.map(s => ({ ...s, value: '' })))
-    setTitle('')
-    setCursoId('')
-    setEditingPlan(null)
+  const handleSelectTemplate = (templateId) => {
+    const template = PLANNING_TEMPLATES.find(t => t.id === templateId)
+    setSections(template.sections.map((s, idx) => ({
+      id: Date.now() + idx,
+      label: s.label,
+      value: { text: '' },
+      type: 'text'
+    })))
+    setCurrentStep(2)
   }
 
-  const handleBlockChange = (id, value) => {
-    setSections(prev => prev.map(s => s.id === id ? { ...s, value } : s))
+  const handleUpdateSection = (id, newValue) => {
+    setSections(prev => prev.map(s => s.id === id ? { ...s, value: newValue } : s))
   }
 
-  const handleRemoveBlock = (id) => {
-    setSections(prev => prev.filter(s => s.id !== id))
-  }
-
-  const handleAddCustomBlock = () => {
-    const newBlock = { 
-      id: `custom-${Date.now()}`, 
-      label: 'Bloque Personalizado', 
-      placeholder: 'Escribe aquí...', 
-      value: '' 
+  const handleAddBlock = (type) => {
+    const newBlock = {
+      id: Date.now(),
+      label: type === 'media' ? 'Recurso Multimedia' : 'Nuevo Bloque de Texto',
+      value: type === 'media' ? { url: '', type: 'video' } : { text: '' },
+      type
     }
     setSections([...sections, newBlock])
   }
 
+  const handleRemoveBlock = (id) => {
+    setSections(sections.filter(s => s.id !== id))
+  }
+
   const handleSave = async () => {
-    if (!title || !cursoId) {
-      setToast({ message: 'Título y Curso son obligatorios', type: 'error' })
-      return
+    if (!title || !cursoId) return alert('Por favor completa título y curso')
+    
+    const payload = {
+      titulo: title,
+      cursoId: parseInt(cursoId),
+      fechaInicio,
+      fechaFin,
+      secciones: sections,
+      lastModified: new Date().toISOString(),
+      estado: editingPlan?.estado || 'Activa',
+      observaciones: editingPlan?.observaciones || ''
     }
-    setSaving(true)
+
     try {
-      const data = { 
-        titulo: title, 
-        cursoId, 
-        fechaInicio, 
-        fechaFin, 
-        secciones: sections,
-        lastModified: new Date().toISOString()
-      }
-      
       if (editingPlan) {
-        await planificacionAPI.update(editingPlan.id, data)
-        setToast({ message: 'Planificación actualizada', type: 'success' })
+        await planificacionAPI.update(editingPlan.id, payload)
       } else {
-        await planificacionAPI.create(data)
-        setToast({ message: 'Nueva planificación guardada', type: 'success' })
+        await planificacionAPI.create(payload)
       }
-      resetForm()
-      fetchData()
+      alert('Planificación guardada con éxito')
     } catch (err) {
-      setToast({ message: 'Error al guardar', type: 'error' })
-    } finally {
-      setSaving(false)
+      alert('Error al guardar')
     }
-  }
-
-  const handleEdit = (p) => {
-    setEditingPlan(p)
-    setCurrentTemplate(true) // Activa la vista de editor
-    setTitle(p.titulo)
-    setCursoId(p.cursoId)
-    setFechaInicio(p.fechaInicio)
-    setFechaFin(p.fechaFin)
-    setSections(p.secciones || [])
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
-
-  const handleDelete = async (id) => {
-    if (confirm('¿Eliminar planificación?')) {
-      await planificacionAPI.delete(id)
-      setToast({ message: 'Eliminado con éxito', type: 'success' })
-      fetchData()
-    }
-  }
-
-  const resetForm = () => {
-    setEditingPlan(null)
-    setCurrentTemplate(null)
-    setTitle('')
-    setSections([])
-    setCursoId('')
-  }
-
-  const filteredPlans = plans.filter(p => p.titulo.toLowerCase().includes(searchTerm.toLowerCase()))
-  const getCursoName = (id) => cursos.find(c => c.id === Number(id))?.nombre || 'General'
-
-  const isInicial = currentTemplate?.nivel === 'Inicial'
-  const theme = {
-    accent: isInicial ? 'text-orange-500' : 'text-primary-500',
-    bgAccent: isInicial ? 'bg-orange-500/10' : 'bg-primary-500/10',
-    btn: isInicial ? 'bg-orange-600 hover:bg-orange-500 shadow-orange-900/20' : 'bg-primary-600 hover:bg-primary-500 shadow-primary-900/20',
-    dot: isInicial ? 'bg-orange-500' : 'bg-primary-500'
   }
 
   return (
-    <div className={`space-y-10 animate-in fade-in duration-700 pb-32 ${isInicial ? 'theme-inicial' : ''}`}>
-      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
+    <div className="max-w-7xl mx-auto space-y-10 animate-in fade-in slide-in-from-bottom-5 duration-700">
       
-      <PreviewModal 
-        isOpen={isPreviewOpen} 
-        onClose={() => setIsPreviewOpen(false)} 
-        data={{ titulo: title, fechaInicio, fechaFin, secciones: sections }}
-        cursoName={getCursoName(cursoId)}
-      />
-
-      {/* Header & Mode Switcher */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-        <div className="space-y-1">
-          <h2 className="text-4xl font-black uppercase italic tracking-tighter text-white flex items-center gap-3">
-            <ClipboardList className={`${theme.accent} w-10 h-10`} /> 
-            Planner <span className={theme.accent}>SaaS</span>
-          </h2>
-          <div className="flex items-center gap-3">
-            <p className="text-gray-500 text-[10px] font-black uppercase tracking-[0.3em]">
-              {currentTemplate ? `Modo Editor Activo (${currentTemplate.nivel})` : 'Gestión de Documentos'}
+      {/* Header Interactivo */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-white/5 pb-10">
+         <div className="space-y-2">
+            <h2 className="text-5xl font-black uppercase italic tracking-tighter text-white flex items-center gap-4">
+               <Sparkles className="text-primary-500" size={40} />
+               Planificador <span className="text-primary-500">Pro</span>
+            </h2>
+            <p className="text-xs font-black uppercase tracking-[0.3em] text-gray-600">
+               {currentStep === 1 ? 'Selecciona una estructura base para comenzar' : 'Editando planificación dinámica'}
             </p>
-            {currentTemplate && (
-              <div className="flex items-center gap-2 px-2 py-0.5 bg-white/[0.03] rounded-full border border-white/5">
-                 <Cloud size={10} className={autoSaveStatus === 'saving' ? `animate-pulse ${theme.accent}` : 'text-gray-600'} />
-                 <span className="text-[8px] font-black uppercase tracking-widest text-gray-500">
-                   {autoSaveStatus === 'saving' ? 'Guardando...' : 'Cambios guardados'}
-                 </span>
-              </div>
-            )}
-          </div>
-        </div>
-        
-        <div className="flex gap-3">
-          {currentTemplate ? (
-            <>
-              <button 
-                onClick={() => setIsPreviewOpen(true)}
-                className="px-6 py-3 bg-white/5 hover:bg-white/10 text-gray-300 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all flex items-center gap-2 border border-white/5"
-              >
-                <Eye size={16} /> Vista Previa
-              </button>
-              <button 
-                onClick={handleSave}
-                disabled={saving}
-                className={`px-8 py-3 ${theme.btn} text-white text-[10px] font-black uppercase tracking-widest rounded-xl shadow-xl transition-all flex items-center gap-2`}
-              >
-                {saving ? <Loader2 className="animate-spin" size={16} /> : <CheckCircle2 size={16} />}
-                Guardar Documento
-              </button>
-              <button 
-                onClick={resetForm}
-                className="p-3 bg-white/5 text-gray-500 hover:text-white rounded-xl transition-colors"
-                title="Cerrar Editor"
-              >
-                <X size={20} />
-              </button>
-            </>
-          ) : (
-            <div className="relative group">
-               <div className="absolute -inset-1 bg-gradient-to-r from-primary-600 to-indigo-600 rounded-2xl blur opacity-25 group-hover:opacity-40 transition" />
-               <button 
-                onClick={() => handleSelectTemplate(PLANNING_TEMPLATES[0])}
-                className="relative px-8 py-4 bg-black text-white text-[10px] font-black uppercase tracking-widest rounded-2xl transition-all flex items-center gap-3"
-              >
-                <Plus size={18} className="text-primary-500" /> Nuevo Proyecto Docente
-              </button>
-            </div>
-          )}
-        </div>
+         </div>
+
+         <div className="flex items-center gap-4">
+            <button 
+              onClick={() => setIsPreviewOpen(true)}
+              className="px-6 py-3 bg-white/5 hover:bg-white/10 text-white text-[10px] font-black uppercase tracking-widest rounded-xl border border-white/5 transition-all flex items-center gap-2"
+            >
+               <Eye size={16} /> Vista Previa
+            </button>
+            <button 
+              onClick={handleSave}
+              className="px-8 py-3 bg-primary-600 hover:bg-primary-500 text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-primary-900/20 flex items-center gap-2"
+            >
+               <Save size={16} /> Guardar Cambios
+            </button>
+         </div>
       </div>
 
-      {!currentTemplate ? (
-        /* LISTADO Y BÚSQUEDA (VISTA PRINCIPAL) */
-        <div className="space-y-8">
-           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-              {/* Filtros Tags */}
-              <div className="lg:col-span-1 space-y-6">
-                 <div className="card bg-white/[0.02] border-white/5 p-6 space-y-6">
-                    <div>
-                       <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-600 mb-4 flex items-center gap-2">
-                         <Search size={14} /> Filtro Rápido
-                       </h4>
-                       <input 
-                         type="text" 
-                         className="w-full bg-black border border-white/10 rounded-xl py-3 px-4 text-xs font-bold uppercase outline-none focus:border-primary-500 transition-all"
-                         placeholder="Buscar por título..."
-                         value={searchTerm}
-                         onChange={(e) => setSearchTerm(e.target.value)}
-                       />
-                    </div>
-                    <div>
-                       <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-600 mb-4 flex items-center gap-2">
-                         <Filter size={14} /> Nivel Académico
-                       </h4>
-                       <div className="space-y-2">
-                          {['Todos', 'Primaria', 'Inicial', 'Proyecto'].map(tag => (
-                            <button key={tag} className="w-full text-left px-4 py-2 rounded-lg text-xs font-black uppercase tracking-widest text-gray-500 hover:bg-white/5 hover:text-white transition-all">
-                               {tag}
-                            </button>
-                          ))}
-                       </div>
-                    </div>
-                 </div>
-
-                 {/* Sugerencia SaaS */}
-                 <div className="bg-primary-600/10 border border-primary-500/20 p-6 rounded-2xl space-y-3">
-                    <Sparkles className="text-primary-500" size={20} />
-                    <p className="text-[10px] font-black text-primary-400 uppercase tracking-widest">Sugerencia Pro</p>
-                    <p className="text-xs text-gray-400 leading-relaxed">
-                      ¿Sabías que puedes duplicar planificaciones anteriores para editarlas como una base nueva?
-                    </p>
-                 </div>
-              </div>
-
-              {/* Grid de Planificaciones */}
-              <div className="lg:col-span-3">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {loading ? (
-                    [...Array(4)].map((_, i) => <CardSkeleton key={i} />)
-                  ) : filteredPlans.map(p => (
-                    <div key={p.id} className="group relative bg-[#080808] border border-white/5 hover:border-primary-500/30 p-8 rounded-[2rem] transition-all hover:-translate-y-1">
-                       <div className="flex justify-between items-start mb-6">
-                          <div className="p-3 bg-white/[0.03] rounded-2xl group-hover:bg-primary-500/10 transition-colors">
-                             <FileText className="text-gray-700 group-hover:text-primary-500 transition-colors" />
-                          </div>
-                          <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                             <button onClick={() => handleEdit(p)} className="p-2 text-gray-500 hover:text-white bg-black/40 rounded-xl">
-                               <FileText size={16} />
-                             </button>
-                             <button onClick={() => handleDelete(p.id)} className="p-2 text-gray-500 hover:text-red-500 bg-black/40 rounded-xl">
-                               <Trash2 size={16} />
-                             </button>
-                          </div>
-                       </div>
-                       
-                       <div className="space-y-2 mb-8">
-                          <span className="text-[9px] font-black uppercase tracking-[0.2em] text-primary-600">
-                             {getCursoName(p.cursoId)}
-                          </span>
-                          <h4 className="text-xl font-black uppercase italic tracking-tighter text-white leading-tight">
-                            {p.titulo}
-                          </h4>
-                       </div>
-
-                       <div className="flex items-center justify-between pt-6 border-t border-white/5">
-                          <div className="flex items-center gap-2 text-gray-600">
-                             <Clock size={14} />
-                             <span className="text-[9px] font-black uppercase tracking-widest">
-                               {new Date(p.lastModified).toLocaleDateString()}
-                             </span>
-                          </div>
-                          <button 
-                            onClick={() => handleEdit(p)}
-                            className="text-[9px] font-black uppercase tracking-widest text-primary-500 flex items-center gap-2"
-                          >
-                             Editar documento <ArrowRight size={14} />
-                          </button>
-                       </div>
-                    </div>
-                  ))}
-                  {!loading && filteredPlans.length === 0 && (
-                    <div className="col-span-full py-20 bg-white/[0.01] border-2 border-dashed border-white/5 rounded-[3rem] text-center">
-                       <LayoutGrid size={48} className="mx-auto text-gray-800 mb-6" />
-                       <h3 className="text-gray-500 font-black uppercase tracking-widest text-xs">No tienes planificaciones aún</h3>
-                       <button 
-                         onClick={() => handleSelectTemplate(PLANNING_TEMPLATES[0])}
-                         className="mt-6 text-primary-500 font-black uppercase tracking-widest text-[10px] hover:underline"
-                       >
-                         Empieza creando una desde cero
-                       </button>
-                    </div>
-                  )}
+      {currentStep === 1 ? (
+        /* PASO 1: SELECCIÓN DE PLANTILLA */
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+           {PLANNING_TEMPLATES.map((template) => (
+             <button 
+               key={template.id}
+               onClick={() => handleSelectTemplate(template.id)}
+               className="group relative flex flex-col text-left bg-[#0A0A0A] border border-white/5 hover:border-primary-500/30 rounded-[2.5rem] p-8 transition-all hover:scale-[1.02] hover:shadow-2xl hover:shadow-primary-500/10 overflow-hidden"
+             >
+                <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-20 transition-opacity">
+                   <Layout size={80} />
                 </div>
-              </div>
-           </div>
+                <div className="w-14 h-14 bg-primary-600/10 rounded-2xl flex items-center justify-center text-primary-500 mb-6 group-hover:bg-primary-600 group-hover:text-white transition-all">
+                   <template.icon size={28} />
+                </div>
+                <h3 className="text-xl font-black uppercase italic tracking-tighter text-white mb-2 leading-none">{template.name}</h3>
+                <p className="text-[10px] font-bold text-gray-600 uppercase tracking-widest leading-relaxed mb-6">{template.description}</p>
+                <div className="mt-auto flex items-center gap-2 text-primary-500 text-[10px] font-black uppercase tracking-widest">
+                   Empezar ahora <ChevronRight size={14} />
+                </div>
+             </button>
+           ))}
         </div>
       ) : (
         /* MODO EDITOR "NOTION-STYLE" */
@@ -337,102 +170,176 @@ export default function Planificador() {
            {/* Sidebar del Editor */}
            <div className="xl:col-span-4 space-y-8">
               <div className="card bg-[#0A0A0A] border-white/5 p-8 space-y-8">
-                 <div className="space-y-4">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-600">Título del Proyecto</label>
-                    <input 
-                      type="text"
-                      className="w-full bg-transparent text-2xl font-black uppercase italic tracking-tighter text-white outline-none border-b border-white/5 focus:border-primary-500 transition-all pb-2"
-                      placeholder="Ej: Unidad 1: El Universo"
-                      value={title}
-                      onChange={(e) => setTitle(e.target.value)}
-                    />
-                 </div>
+                  <div className="space-y-4">
+                     <label className="text-[10px] font-black uppercase tracking-widest text-gray-600">Título del Proyecto</label>
+                     <input 
+                       type="text"
+                       className="w-full bg-transparent text-2xl font-black uppercase italic tracking-tighter text-white outline-none border-b border-white/5 focus:border-primary-500 transition-all pb-2"
+                       placeholder="Ej: Unidad 1: El Universo"
+                       value={title}
+                       onChange={(e) => setTitle(e.target.value)}
+                     />
+                  </div>
 
-                 <div className="space-y-6">
-                    <div className="space-y-2">
-                       <label className="text-[10px] font-black uppercase tracking-widest text-gray-600">Curso Vinculado</label>
-                       <select 
-                         value={cursoId}
-                         onChange={(e) => setCursoId(e.target.value)}
-                         className="w-full bg-black border border-white/10 rounded-xl py-3 px-4 text-xs font-black uppercase outline-none focus:border-primary-500 text-gray-300"
-                       >
-                         <option value="">Seleccionar curso...</option>
-                         {cursos.map(c => <option key={c.id} value={c.id}>{c.nombre} ({c.nivel})</option>)}
-                       </select>
-                    </div>
+                  <div className="space-y-6">
+                     <div className="space-y-2">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-gray-600">Curso Vinculado</label>
+                        <select 
+                          value={cursoId}
+                          onChange={(e) => setCursoId(e.target.value)}
+                          className="w-full bg-black border border-white/10 rounded-xl py-3 px-4 text-xs font-black uppercase outline-none focus:border-primary-500 text-gray-300"
+                        >
+                          <option value="">Seleccionar curso...</option>
+                          {cursos.map(c => <option key={c.id} value={c.id}>{c.nombre} ({c.nivel})</option>)}
+                        </select>
+                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                       <div className="space-y-2">
-                          <label className="text-[10px] font-black uppercase tracking-widest text-gray-600">Fecha Inicio</label>
-                          <input 
-                            type="date" 
-                            className="w-full bg-black border border-white/10 rounded-xl py-3 px-4 text-[10px] font-bold outline-none focus:border-primary-500"
-                            value={fechaInicio}
-                            onChange={(e) => setFechaInicio(e.target.value)}
-                          />
-                       </div>
-                       <div className="space-y-2">
-                          <label className="text-[10px] font-black uppercase tracking-widest text-gray-600">Fecha Fin</label>
-                          <input 
-                            type="date" 
-                            className="w-full bg-black border border-white/10 rounded-xl py-3 px-4 text-[10px] font-bold outline-none focus:border-primary-500"
-                            value={fechaFin}
-                            onChange={(e) => setFechaFin(e.target.value)}
-                          />
-                       </div>
-                    </div>
-                 </div>
+                     <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                           <label className="text-[10px] font-black uppercase tracking-widest text-gray-600">Fecha Inicio</label>
+                           <input 
+                             type="date" 
+                             className="w-full bg-black border border-white/10 rounded-xl py-3 px-4 text-[10px] font-bold outline-none focus:border-primary-500"
+                             value={fechaInicio}
+                             onChange={(e) => setFechaInicio(e.target.value)}
+                           />
+                        </div>
+                        <div className="space-y-2">
+                           <label className="text-[10px] font-black uppercase tracking-widest text-gray-600">Fecha Fin</label>
+                           <input 
+                             type="date" 
+                             className="w-full bg-black border border-white/10 rounded-xl py-3 px-4 text-[10px] font-bold outline-none focus:border-primary-500"
+                             value={fechaFin}
+                             onChange={(e) => setFechaFin(e.target.value)}
+                           />
+                        </div>
+                     </div>
 
-                 {/* Selector de Plantillas (Mini) */}
-                 <div className="pt-6 border-t border-white/5 space-y-4">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-600">Cambiar Estructura</label>
-                    <div className="grid grid-cols-2 gap-2">
-                       {PLANNING_TEMPLATES.map(t => (
-                         <button 
-                           key={t.id}
-                           onClick={() => handleSelectTemplate(t)}
-                           className={`p-3 rounded-xl border text-[9px] font-black uppercase tracking-tighter flex flex-col items-center gap-1 transition-all ${
-                             currentTemplate?.id === t.id ? 'bg-primary-600/10 border-primary-500 text-primary-500' : 'bg-black border-white/5 text-gray-600 hover:border-white/20'
-                           }`}
-                         >
-                            <span className="text-xl">{t.icon}</span>
-                            {t.nombre.split(' ')[1]}
-                         </button>
-                       ))}
-                    </div>
-                 </div>
+                     {/* Agregado: Estado y Observaciones */}
+                     <div className="space-y-2 pt-4 border-t border-white/5">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-gray-600">Estado Pedagógico</label>
+                        <div className="flex gap-2">
+                           {['Activa', 'En progreso', 'Finalizada'].map(st => (
+                             <button
+                               key={st}
+                               type="button"
+                               onClick={() => setEditingPlan(prev => ({ ...prev, estado: st }))}
+                               className={`flex-1 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest border transition-all ${
+                                 (editingPlan?.estado || 'Activa') === st 
+                                 ? 'bg-primary-600/20 border-primary-500 text-primary-400' 
+                                 : 'bg-black border-white/5 text-gray-600 hover:border-white/10'
+                               }`}
+                             >
+                               {st}
+                             </button>
+                           ))}
+                        </div>
+                     </div>
+
+                     <div className="space-y-2">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-gray-600">Observaciones Académicas</label>
+                        <textarea 
+                          placeholder="Notas sobre el desempeño del grupo..."
+                          className="w-full bg-black border border-white/10 rounded-xl py-3 px-4 text-xs font-bold outline-none focus:border-primary-500 min-h-[80px] resize-none"
+                          value={editingPlan?.observaciones || ''}
+                          onChange={(e) => setEditingPlan(prev => ({ ...prev, observaciones: e.target.value }))}
+                        />
+                     </div>
+                  </div>
+
+                  {/* Selector de Plantillas (Mini) */}
+                  <div className="pt-6 border-t border-white/5 space-y-4">
+                     <label className="text-[10px] font-black uppercase tracking-widest text-gray-600">Cambiar Estructura</label>
+                     <div className="grid grid-cols-2 gap-2">
+                        {PLANNING_TEMPLATES.map(t => (
+                          <button 
+                            key={t.id}
+                            onClick={() => handleSelectTemplate(t.id)}
+                            className="bg-black border border-white/5 hover:border-primary-500/50 p-4 rounded-xl text-left transition-all group"
+                          >
+                             <t.icon size={16} className="text-gray-600 group-hover:text-primary-500 mb-2" />
+                             <p className="text-[8px] font-black uppercase tracking-widest text-gray-400 group-hover:text-white">{t.name}</p>
+                          </button>
+                        ))}
+                     </div>
+                  </div>
               </div>
 
-              <div className="bg-gradient-to-br from-indigo-900/20 to-primary-900/10 p-8 rounded-3xl border border-white/5 space-y-4">
-                 <div className="flex items-center gap-3">
-                    <Sparkles size={20} className="text-primary-500" />
-                    <p className="text-[10px] font-black uppercase tracking-widest text-primary-400 leading-tight">Asistente Inteligente</p>
-                 </div>
-                 <p className="text-xs text-gray-400 font-medium leading-relaxed">
-                   Basándonos en tu selección de <strong>{currentTemplate?.nombre}</strong>, te sugerimos enfocarte en 
-                   actividades {currentTemplate?.nivel === 'Inicial' ? 'lúdicas y sensoriales.' : 'de investigación y debate.'}
+              {/* Tips de AI */}
+              <div className="p-6 bg-primary-600/10 border border-primary-500/20 rounded-[2rem] flex items-start gap-4">
+                 <Sparkles className="text-primary-500 shrink-0" size={20} />
+                 <p className="text-[10px] font-bold text-primary-200 leading-relaxed italic uppercase">
+                    Carga un video de YouTube para que el sistema genere automáticamente actividades sugeridas basadas en el transcrito.
                  </p>
               </div>
            </div>
 
-           {/* Área Central del Editor */}
+           {/* Área Central: El Editor "Canvas" */}
            <div className="xl:col-span-8 space-y-6">
-              <div className="space-y-6 max-w-3xl">
-                 {sections.map((section, index) => (
-                   <EditorBlock 
-                     key={section.id}
-                     {...section}
-                     onChange={handleBlockChange}
-                     onRemove={handleRemoveBlock}
-                     isRemovable={sections.length > 2}
-                   />
-                 ))}
-                 
-                 <AddBlockButton onClick={handleAddCustomBlock} />
+              <div className="card bg-[#050505] border-white/5 min-h-[600px] rounded-[3rem] p-12 relative">
+                 <div className="max-w-3xl mx-auto space-y-12">
+                   {sections.map((section, index) => (
+                     <div key={section.id} className="group relative">
+                        <div className="absolute -left-12 top-0 flex flex-col items-center gap-2 opacity-0 group-hover:opacity-100 transition-all">
+                           <button className="p-2 hover:bg-white/5 rounded-lg text-gray-700 hover:text-white cursor-grab">
+                              <GripVertical size={16} />
+                           </button>
+                           <button 
+                             onClick={() => handleRemoveBlock(section.id)}
+                             className="p-2 hover:bg-red-500/10 rounded-lg text-gray-700 hover:text-red-500"
+                           >
+                              <Trash2 size={16} />
+                           </button>
+                        </div>
+
+                        {section.type === 'media' ? (
+                          <MultimediaBlock 
+                            id={section.id}
+                            label={section.label}
+                            value={section.value}
+                            onChange={(val) => handleUpdateSection(section.id, val)}
+                          />
+                        ) : (
+                          <div className="space-y-4">
+                            <input 
+                              type="text"
+                              className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-700 bg-transparent border-none outline-none focus:text-primary-500 transition-colors"
+                              value={section.label}
+                              onChange={(e) => {
+                                 const newSections = [...sections]
+                                 newSections[index].label = e.target.value
+                                 setSections(newSections)
+                              }}
+                            />
+                            <textarea
+                              className="w-full bg-transparent text-gray-300 text-lg leading-relaxed placeholder:text-white/5 border-none outline-none resize-none min-h-[50px]"
+                              placeholder="Presiona para escribir..."
+                              value={section.value?.text || ''}
+                              onChange={(e) => handleUpdateSection(section.id, { text: e.target.value })}
+                              onInput={(e) => {
+                                 e.target.style.height = 'auto'
+                                 e.target.style.height = e.target.scrollHeight + 'px'
+                              }}
+                            />
+                          </div>
+                        )}
+                     </div>
+                   ))}
+
+                   <AddBlockButton onAdd={handleAddBlock} />
+                 </div>
               </div>
            </div>
         </div>
       )}
+
+      {/* Modal de Vista Previa */}
+      <PreviewModal 
+         isOpen={isPreviewOpen} 
+         onClose={() => setIsPreviewOpen(false)} 
+         data={{ titulo: title, fechaInicio, fechaFin, secciones: sections, observaciones: editingPlan?.observaciones }}
+         cursoName={cursos.find(c => c.id == cursoId)?.nombre || 'Curso no seleccionado'}
+      />
     </div>
   )
 }
