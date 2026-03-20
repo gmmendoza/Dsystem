@@ -34,16 +34,31 @@ export default function AIChat() {
   };
 
   const getAIResponse = (query) => {
-    if (query.includes('clase') || query.includes('matemática')) {
-      return "Podrías iniciar con un juego de 'Preguntas Relámpago' sobre las tablas. Luego, usa el recurso 'Gráfico de Funciones' que ya tienes en tu aula para visualizar la pendiente.";
+    if (query.includes('asistencia')) {
+      return "He notado que la asistencia promedio es del 94.5%. Es un excelente indicador. Sin embargo, hay 3 alumnos que han faltado más de 2 veces esta semana. ¿Te gustaría que prepare un informe de seguimiento para ellos?";
+    }
+    if (query.includes('geometría') || query.includes('geometria')) {
+      return "El 52% del curso está teniendo dificultades con Geometría del Espacio. Te sugiero usar el recurso de 'Visualización 3D' disponible en tu biblioteca o realizar una actividad de construcción de cuerpos geométricos con materiales reciclados para bajar la abstracción.";
+    }
+    if (query.includes('rendimiento') || query.includes('notas') || query.includes('promedio')) {
+      return "El rendimiento académico ha subido un 12% respecto al mes pasado. Las áreas de Ciencias y Matemáticas lideran el crecimiento, mientras que Lenguaje se mantiene estable. ¿Querés profundizar en el análisis de algún alumno en particular?";
+    }
+    if (query.includes('recurso') || query.includes('material')) {
+      return "Basado en tu planificación actual, el video de 'Funciones Lineales en la Vida Real' sería ideal para tu próxima clase. También tengo 3 nuevos PDFs sobre comprensión lectora que podrían interesarte.";
+    }
+    if (query.includes('dificultad') || query.includes('problema')) {
+      return "Los temas con mayor dificultad detectados son Geometría y Ecuaciones Trigonométricas. Recomiendo dedicar la sesión del viernes a un taller de refuerzo práctico. ¿Querés que diseñe una estructura para ese taller?";
     }
     if (query.includes('evaluar') || query.includes('evaluación')) {
-      return "Para esta unidad, te recomiendo una evaluación formativa mediante una rúbrica de desempeño grupal. ¿Querés que te ayude a redactar los criterios?";
+      return "Para esta unidad, te recomiendo una evaluación formativa mediante una rúbrica de desempeño grupal. He diseñado una que mide: Colaboración, Resolución de Problemas y Comunicación Técnica. ¿Te la muestro?";
     }
     if (query.includes('objetivo') || query.includes('propósito')) {
-      return "Un buen objetivo para primaria sería: 'Lograr que el estudiante identifique y represente funciones lineales en situaciones de la vida cotidiana'.";
+      return "Un objetivo pedagógico alineado a las competencias actuales sería: 'Lograr que el estudiante identifique y represente funciones lineales en situaciones de la vida cotidiana'. ¿Está alineado con lo que buscas?";
     }
-    return "Esa es una excelente pregunta. Como docente, podés enfocarlo desde el aprendizaje basado en proyectos (ABP) para aumentar la motivación. ¿Te gustaría profundizar en alguna actividad específica?";
+    if (query.includes('hola') || query.includes('buenos días') || query.includes('saludos')) {
+      return "¡Hola! Un gusto saludarte. Soy DocenTico. Estoy listo para analizar tu aula o ayudarte con tus planificaciones. ¿Qué tenemos en agenda para hoy?";
+    }
+    return "Esa es una perspectiva interesante. Desde un enfoque pedagógico de Aprendizaje Basado en Proyectos (ABP), podríamos vincular eso con una actividad trasversal. ¿Te gustaría que desarrollemos una idea juntos?";
   };
 
   return (

@@ -256,19 +256,19 @@ export default function AulaWorkspace() {
                 </div>
              {planes.length === 0 ? (
                <div className="py-20 text-center border-2 border-dashed border-white/5 rounded-[3rem] space-y-6 bg-white/[0.01]">
-                  <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto text-gray-700">
-                    <FileText size={32} />
-                  </div>
-                  <div className="space-y-2">
-                    <p className="text-sm font-black uppercase italic text-gray-400">¿Empezamos con la primera?</p>
-                    <p className="text-[9px] font-bold text-gray-700 uppercase tracking-widest">Organizá tu aula creando tu primer plan docente.</p>
-                  </div>
-                  <button 
-                    onClick={() => navigate(`/planificador?cursoId=${id}`)}
-                    className="px-6 py-3 bg-white/5 hover:bg-white/10 text-[9px] font-black uppercase tracking-widest text-white rounded-xl border border-white/5 transition-all"
-                  >
-                    + Crear Planificación
-                  </button>
+                   <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto text-gray-700">
+                     <FileText size={32} />
+                   </div>
+                   <div className="space-y-2">
+                     <p className="text-sm font-black uppercase italic text-gray-400">¿Empezamos con la primera?</p>
+                     <p className="text-[9px] font-bold text-gray-700 uppercase tracking-widest">Organizá tu aula creando tu primer plan docente.</p>
+                   </div>
+                   <button 
+                     onClick={() => navigate(`/planificador?cursoId=${id}`)}
+                     className="px-6 py-3 bg-white/5 hover:bg-white/10 text-[9px] font-black uppercase tracking-widest text-white rounded-xl border border-white/5 transition-all"
+                   >
+                     + Crear Planificación
+                   </button>
                </div>
              ) : (
                 planes.map(plan => (
@@ -491,7 +491,7 @@ export default function AulaWorkspace() {
         )}
 
         {activeTab === 'progreso' && (
-          <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
+          <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
              {!showReport && reportLoading ? (
                 <div className="flex-1 flex flex-col items-center justify-center space-y-8 min-h-[400px] bg-[#080808] border border-white/5 rounded-3xl">
                    <div className="relative">
@@ -505,186 +505,172 @@ export default function AulaWorkspace() {
                       </div>
                    </div>
                    <div className="space-y-6 w-full max-w-[300px]">
-                      <p className="text-center text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">Procesando Inteligencia...</p>
+                      <p className="text-center text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">Procesando Inteligencia Académica...</p>
                       <div className="space-y-3">
                          {steps.map((s, i) => (
-                           <div key={i} className={`flex items-center gap-4 transition-all duration-500 ${i > reportStep ? 'opacity-20 grayscale' : 'opacity-100'}`}>
-                              <div className={`w-6 h-6 rounded-xl flex items-center justify-center border-2 ${
-                                i < reportStep ? 'bg-green-500 border-green-500 text-white' : i === reportStep ? 'border-primary-500 text-primary-500' : 'border-white/10 text-gray-800'
-                              }`}>
-                                 {i < reportStep ? <Check size={14} /> : <span className="text-[10px] font-black">{i + 1}</span>}
-                              </div>
-                              <span className={`text-xs font-bold ${i === reportStep ? 'text-white' : 'text-gray-500'}`}>{s.title}</span>
-                           </div>
+                            <div key={i} className={`flex items-center gap-4 transition-all duration-500 ${i > reportStep ? 'opacity-20 grayscale' : 'opacity-100'}`}>
+                               <div className={`w-6 h-6 rounded-xl flex items-center justify-center border-2 ${
+                                 i < reportStep ? 'bg-green-500 border-green-500 text-white' : i === reportStep ? 'border-primary-500 text-primary-500' : 'border-white/10 text-gray-800'
+                               }`}>
+                                  {i < reportStep ? <Check size={14} /> : <span className="text-[10px] font-black">{i + 1}</span>}
+                               </div>
+                               <span className={`text-xs font-bold ${i === reportStep ? 'text-white' : 'text-gray-500'}`}>{s.title}</span>
+                            </div>
                          ))}
                       </div>
                    </div>
                 </div>
              ) : showReport ? (
-                <div className="space-y-10">
-                   {/* Insights Panel */}
-                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                      <div className="lg:col-span-2 space-y-6">
-                         <div className="flex items-center gap-3">
-                            <div className="p-2 bg-primary-600 rounded-lg text-white">
-                               <Sparkles size={20} />
-                            </div>
-                            <h3 className="text-lg font-black uppercase italic text-white tracking-tight">Insights Automáticos</h3>
-                         </div>
-                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            {curso.insights?.map((insight, i) => (
-                               <div key={i} className="p-5 bg-[#080808] border border-white/5 rounded-2xl hover:border-primary-500/30 transition-all group">
-                                  <div className="flex gap-4">
-                                     <div className="mt-1">
-                                        {insight.includes('baja asistencia') ? <AlertTriangle className="text-orange-500" size={16} /> : <CheckCircle2 className="text-green-500" size={16} />}
-                                     </div>
-                                     <p className="text-xs text-gray-400 leading-relaxed font-medium group-hover:text-gray-200 transition-colors">{insight}</p>
-                                  </div>
-                               </div>
-                            ))}
-                         </div>
-                      </div>
-                      
-                      <div className="bg-primary-600 rounded-3xl p-8 text-white relative overflow-hidden flex flex-col justify-between shadow-2xl shadow-primary-900/20">
-                         <div className="absolute -right-8 -bottom-8 opacity-10 rotate-12">
-                            <Bot size={200} />
-                         </div>
-                         <div className="space-y-2 relative z-10">
-                            <p className="text-[10px] font-black uppercase tracking-widest opacity-60">Acción Recomendada</p>
-                            <h4 className="text-xl font-black leading-tight italic">¿Quieres crear una planificación de refuerzo para Geometría?</h4>
-                         </div>
-                         <div className="pt-8 space-y-3 relative z-10">
-                            <button className="w-full py-3 bg-white text-black text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-gray-100 transition-all shadow-xl">Crear Planificación</button>
-                            <button className="w-full py-3 bg-black/20 text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-black/30 transition-all border border-white/10">Ver Sugerencias de Material</button>
-                         </div>
-                      </div>
+                <div className="space-y-8">
+                   {/* ── HEADER DE INSIGHTS ── */}
+                   <div className="flex items-center gap-4 mb-2">
+                       <div className="w-12 h-12 bg-primary-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-primary-900/20">
+                          <Sparkles size={24} />
+                       </div>
+                       <div>
+                          <h3 className="text-xl font-black uppercase italic tracking-tighter text-white">Insights Automáticos</h3>
+                          <p className="text-[10px] font-bold uppercase tracking-widest text-gray-600">Análisis predictivo basado en el desempeño real del grupo</p>
+                       </div>
                    </div>
 
-                   {/* Metrics Grid */}
-                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                      <div className="bg-[#080808] border border-white/5 p-6 rounded-3xl space-y-6">
-                         <div className="flex justify-between items-start">
-                            <div className="p-3 bg-blue-500/10 rounded-2xl text-blue-500"><Users size={20} /></div>
-                            <span className="text-[10px] font-black text-green-500">+12% vs mes ant.</span>
+                   {/* ── GRID DE INSIGHTS ── */}
+                   <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+                      
+                      {/* CARD 1: ACCIÓN RECOMENDADA (DESTACADA) */}
+                      <div className="xl:col-span-1 bg-gradient-to-br from-primary-600 to-indigo-700 rounded-[2.5rem] p-8 text-white relative overflow-hidden flex flex-col justify-between shadow-2xl shadow-primary-900/40 group">
+                         <div className="absolute -right-8 -bottom-8 opacity-10 rotate-12 group-hover:scale-110 transition-transform duration-700">
+                            <Bot size={200} />
                          </div>
-                         <div>
-                            <p className="text-[10px] font-black uppercase text-gray-600 tracking-widest">Asistencia Promedio</p>
-                            <h4 className="text-3xl font-black text-white italic">{curso.metrics?.asistenciaPromedio}%</h4>
-                         </div>
-                         <div className="flex items-end gap-1 h-12">
-                            {curso.metrics?.asistenciaPorDia.map((v, i) => (
-                               <div key={i} className="flex-1 bg-blue-500/20 rounded-t-md hover:bg-blue-500/40 transition-all relative group" style={{ height: `${v}%` }}>
-                                  <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-white text-black text-[8px] font-bold px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">{v}%</div>
+                         <div className="space-y-6 relative z-10">
+                            <div className="flex justify-between items-start">
+                               <div className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center">
+                                  <Lightbulb size={24} className="text-white" />
                                </div>
-                            ))}
-                         </div>
-                      </div>
-
-                      <div className="bg-[#080808] border border-white/5 p-6 rounded-3xl space-y-6 lg:col-span-2">
-                         <div className="flex justify-between items-center">
-                            <p className="text-[10px] font-black uppercase text-gray-600 tracking-widest">Rendimiento Académico por Materia</p>
-                            <div className="flex gap-1.5">
-                               <div className="w-2 h-2 rounded-full bg-primary-500" />
-                               <div className="w-2 h-2 rounded-full bg-white/10" />
+                               <span className="px-3 py-1 bg-black/20 backdrop-blur-md text-[8px] font-black uppercase tracking-widest rounded-full border border-white/10">Bajo rendimiento detectado</span>
+                            </div>
+                            <div className="space-y-3">
+                               <h4 className="text-[10px] font-black uppercase tracking-[0.2em] opacity-80">Acción Recomendada</h4>
+                               <h3 className="text-xl font-black italic leading-tight">¿Quieres crear una planificación de refuerzo para Geometría?</h3>
                             </div>
                          </div>
-                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
-                            {curso.metrics?.rendimientoMaterias.map((m, i) => (
-                               <div key={i} className="space-y-2">
-                                  <div className="flex justify-between items-end">
-                                     <span className="text-[11px] font-bold text-gray-400">{m.materia}</span>
-                                     <span className="text-[10px] font-black text-white italic">{m.promedio} <span className="text-green-500 ml-1">{m.tendencia}</span></span>
-                                  </div>
-                                  <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
-                                     <div className="h-full bg-gradient-to-r from-primary-600 to-primary-400 rounded-full" style={{ width: `${m.promedio * 10}%` }} />
-                                  </div>
-                               </div>
-                            ))}
-                         </div>
-                      </div>
-
-                      <div className="bg-[#080808] border border-white/5 p-6 rounded-3xl space-y-6">
-                         <div className="p-3 bg-red-500/10 rounded-2xl text-red-500 w-fit"><AlertTriangle size={20} /></div>
-                         <div className="space-y-4">
-                            <p className="text-[10px] font-black uppercase text-gray-600 tracking-widest">Temas con Mayor Dificultad</p>
-                            <div className="flex flex-wrap gap-2">
-                               {curso.metrics?.temasDificultad.map((t, i) => (
-                                 <span key={i} className="px-3 py-1.5 bg-red-500/5 text-red-400 text-[9px] font-black uppercase tracking-widest rounded-lg border border-red-500/10">{t}</span>
-                               ))}
-                            </div>
-                            <button className="text-[9px] font-black uppercase text-primary-500 hover:text-primary-400 tracking-widest transition-colors flex items-center gap-2">
-                               Ver Plan de Refuerzo <ChevronLeft className="rotate-180" size={14} />
+                         <div className="space-y-3 relative z-10 mt-10">
+                            <button 
+                               onClick={() => navigate(`/planificador?cursoId=${id}&suggested=refuerzo-geometria`)}
+                               className="w-full py-4 bg-white text-primary-600 text-[10px] font-black uppercase tracking-widest rounded-2xl hover:bg-gray-100 transition-all shadow-xl active:scale-95"
+                            >
+                               Crear Planificación
+                            </button>
+                            <button 
+                               onClick={() => setToast({ message: 'Buscando recursos de Geometría en la biblioteca...', type: 'info' })}
+                               className="w-full py-4 bg-black/10 text-white text-[10px] font-black uppercase tracking-widest rounded-2xl hover:bg-black/20 transition-all border border-white/20 backdrop-blur-sm"
+                            >
+                               Ver sugerencias de material
                             </button>
                          </div>
                       </div>
-                   </div>
 
-                   {/* Student Performance Table */}
-                   <div className="bg-[#080808] border border-white/5 rounded-3xl overflow-hidden">
-                      <div className="p-8 border-b border-white/5 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                         <div className="space-y-1">
-                            <h3 className="text-lg font-black uppercase italic text-white tracking-tight">Análisis Individual por Alumno</h3>
-                            <p className="text-[10px] font-bold text-gray-600 uppercase tracking-widest italic">Detalle de participación y dificultades detectadas</p>
+                      {/* CARD 2: RENDIMIENTO ACADÉMICO */}
+                      <div className="bg-[#080808] border border-white/5 p-8 rounded-[2.5rem] flex flex-col gap-6 hover:border-primary-500/20 transition-all">
+                         <div className="flex justify-between items-center">
+                            <div className="flex items-center gap-3">
+                               <div className="p-3 bg-white/5 rounded-2xl text-primary-500"><BarChart3 size={20} /></div>
+                               <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-500">Rendimiento Académico</h4>
+                            </div>
+                            <div className="flex items-center gap-1 text-green-500">
+                               <TrendingUp size={14} />
+                               <span className="text-[10px] font-black">+12% vs mes ant.</span>
+                            </div>
                          </div>
-                         <button className="px-4 py-2 bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white text-[9px] font-black uppercase tracking-widest rounded-xl transition-all border border-white/5">Exportar Informe Individual</button>
+                         
+                         <div className="flex-1 flex flex-col justify-between gap-4 mt-2">
+                            {[
+                               { label: 'MAT', val: 85, color: 'bg-primary-500' },
+                               { label: 'LEN', val: 78, color: 'bg-primary-400' },
+                               { label: 'GEO', val: 52, color: 'bg-orange-500', alert: true },
+                               { label: 'CIE', val: 91, color: 'bg-green-500' },
+                               { label: 'HIS', val: 73, color: 'bg-primary-300' }
+                            ].map(item => (
+                               <div key={item.label} className="space-y-1.5">
+                                  <div className="flex justify-between items-end">
+                                     <span className="text-[9px] font-black text-gray-600">{item.label}</span>
+                                     <span className={`text-[10px] font-black ${item.alert ? 'text-orange-500' : 'text-gray-400'}`}>{item.val}%</span>
+                                  </div>
+                                  <div className="h-2 bg-white/5 rounded-full overflow-hidden">
+                                     <div 
+                                        className={`h-full rounded-full transition-all duration-1000 ${item.color} ${item.alert ? 'shadow-[0_0_10px_rgba(249,115,22,0.3)]' : ''}`}
+                                        style={{ width: `${item.val}%` }} 
+                                     />
+                                  </div>
+                               </div>
+                            ))}
+                         </div>
                       </div>
-                      <div className="overflow-x-auto">
-                         <table className="w-full text-left">
-                            <thead className="bg-[#0A0A0A] border-b border-white/5">
-                               <tr>
-                                  <th className="px-8 py-4 text-[9px] font-black uppercase text-gray-600 tracking-widest">Alumno</th>
-                                  <th className="px-8 py-4 text-[9px] font-black uppercase text-gray-600 tracking-widest">Asistencia</th>
-                                  <th className="px-8 py-4 text-[9px] font-black uppercase text-gray-600 tracking-widest">Participación</th>
-                                  <th className="px-8 py-4 text-[9px] font-black uppercase text-gray-600 tracking-widest">Dificultades</th>
-                                  <th className="px-8 py-4 text-[9px] font-black uppercase text-gray-600 tracking-widest">Acciones</th>
-                               </tr>
-                            </thead>
-                            <tbody className="divide-y divide-white/5">
-                               {alumnos.map(alumno => (
-                                 <tr key={alumno.id} className="hover:bg-white/[0.02] transition-colors group">
-                                    <td className="px-8 py-5">
-                                       <div className="flex items-center gap-4">
-                                          <div className="w-8 h-8 bg-gradient-to-br from-primary-600 to-primary-900 rounded-lg flex items-center justify-center text-white font-black text-xs">
-                                             {alumno.nombre[0]}{alumno.apellido?.[0]}
-                                          </div>
-                                          <span className="text-xs font-bold text-gray-200">{alumno.nombre} {alumno.apellido}</span>
-                                       </div>
-                                    </td>
-                                    <td className="px-8 py-5">
-                                       <div className="flex items-center gap-3">
-                                          <div className="flex-1 h-1.5 w-16 bg-white/5 rounded-full overflow-hidden">
-                                             <div className={`h-full rounded-full transition-all duration-1000 ${alumno.asistencia > 90 ? 'bg-green-500' : alumno.asistencia > 80 ? 'bg-primary-500' : 'bg-orange-500'}`} style={{ width: `${alumno.asistencia}%` }} />
-                                          </div>
-                                          <span className="text-[10px] font-black text-white">{alumno.asistencia}%</span>
-                                       </div>
-                                    </td>
-                                    <td className="px-8 py-5">
-                                       <div className="flex items-center gap-3">
-                                          <div className="flex-1 h-1.5 w-16 bg-white/5 rounded-full overflow-hidden">
-                                             <div className={`h-full rounded-full transition-all duration-1000 ${alumno.participacion > 90 ? 'bg-green-500' : alumno.participacion > 70 ? 'bg-primary-500' : 'bg-red-500'}`} style={{ width: `${alumno.participacion}%` }} />
-                                          </div>
-                                          <span className="text-[10px] font-black text-white">{alumno.participacion}%</span>
-                                       </div>
-                                    </td>
-                                    <td className="px-8 py-5">
-                                       <div className="flex flex-wrap gap-1">
-                                          {alumno.dificultades?.length > 0 ? alumno.dificultades.map((d, i) => (
-                                            <span key={i} className="px-2 py-0.5 bg-red-500/5 text-red-500/60 text-[8px] font-bold rounded border border-red-500/10">! {d}</span>
-                                          )) : (
-                                            <span className="px-2 py-0.5 bg-green-500/5 text-green-500/60 text-[8px] font-bold rounded border border-green-500/10">Sin dificultades</span>
-                                          )}
-                                       </div>
-                                    </td>
-                                    <td className="px-8 py-5">
-                                       <button className="p-2 bg-white/5 hover:bg-primary-500/20 text-gray-600 hover:text-primary-500 rounded-xl transition-all border border-white/5">
-                                          <Eye size={14} />
-                                       </button>
-                                    </td>
-                                 </tr>
-                               ))}
-                            </tbody>
-                         </table>
+
+                      {/* CARD 3: ASISTENCIA PROMEDIO */}
+                      <div className="bg-[#080808] border border-white/5 p-8 rounded-[2.5rem] flex flex-col justify-between hover:border-primary-500/20 transition-all">
+                         <div className="space-y-8">
+                            <div className="flex justify-between items-center">
+                               <div className="flex items-center gap-3">
+                                  <div className="p-3 bg-white/5 rounded-2xl text-primary-500"><Users size={20} /></div>
+                                  <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-500">Asistencia Promedio</h4>
+                               </div>
+                            </div>
+                            
+                            <div className="space-y-1">
+                               <div className="flex items-baseline gap-2">
+                                  <h2 className="text-6xl font-black italic tracking-tighter text-white">94.5%</h2>
+                                  <div className="flex items-center gap-1 text-green-500 text-[10px] font-black">
+                                     <TrendingUp size={12} />
+                                     +3.2%
+                                  </div>
+                               </div>
+                               <span className="text-[9px] font-bold text-gray-600 uppercase tracking-widest">Promedio general del curso</span>
+                            </div>
+                         </div>
+
+                         <div className="mt-8 space-y-4">
+                            <div className="h-3 bg-white/5 rounded-full overflow-hidden p-[2px] border border-white/5">
+                               <div className="h-full bg-gradient-to-r from-primary-600 to-green-500 rounded-full w-[94.5%]" />
+                            </div>
+                            <div className="flex justify-between text-[8px] font-black uppercase text-gray-500">
+                               <span>Objetivo: 90%</span>
+                               <span className="text-green-500">¡Superado!</span>
+                            </div>
+                         </div>
                       </div>
+
+                      {/* CARD 4: TEMAS CON MAYOR DIFICULTAD */}
+                      <div className="bg-[#080808] border border-white/5 p-8 rounded-[2.5rem] flex flex-col gap-6 hover:border-red-500/10 transition-all">
+                         <div className="flex items-center gap-3">
+                            <div className="p-3 bg-red-500/10 rounded-2xl text-red-500"><AlertTriangle size={20} /></div>
+                            <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-500">Temas con Mayor Dificultad</h4>
+                         </div>
+
+                         <div className="space-y-4">
+                            {[
+                               { t: 'Geometría del espacio', p: 42, color: 'bg-red-500' },
+                               { t: 'Ecuaciones trigonométricas', p: 58, color: 'bg-orange-500' },
+                               { t: 'Comprensión lectora', p: 63, color: 'bg-amber-500' }
+                            ].map((item, i) => (
+                               <div key={i} className="p-4 bg-white/[0.02] border border-white/5 rounded-2xl space-y-3 group/item">
+                                  <div className="flex justify-between items-center">
+                                     <p className="text-[11px] font-black text-white italic truncate pr-2">{item.t}</p>
+                                     <span className="text-[10px] font-black text-gray-500">{item.p}%</span>
+                                  </div>
+                                  <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                                     <div className={`h-full rounded-full ${item.color}`} style={{ width: `${item.p}%` }} />
+                                  </div>
+                                  <button 
+                                     onClick={() => setToast({ message: `Abriendo ejercicios de ${item.t}...`, type: 'info' })}
+                                     className="w-full py-2 bg-white/5 hover:bg-white/10 text-[8px] font-black uppercase tracking-widest text-gray-500 hover:text-white rounded-lg transition-all opacity-0 group-hover/item:opacity-100"
+                                  >
+                                     Ver ejercicios
+                                  </button>
+                               </div>
+                            ))}
+                         </div>
+                      </div>
+
                    </div>
                 </div>
              ) : (
@@ -693,7 +679,7 @@ export default function AulaWorkspace() {
                       <BarChart3 size={40} />
                    </div>
                    <div className="space-y-2">
-                      <h3 className="text-xl font-black uppercase italic text-white">Reporte Semanal de Inteligencia</h3>
+                      <h3 className="text-xl font-black uppercase italic text-white">Reporte Semanal de Inteligencia Académica</h3>
                       <p className="text-gray-500 text-sm max-w-md mx-auto leading-relaxed">Analizaremos el progreso del grupo, asistencia y áreas de mejora basadas en el último período de actividades.</p>
                    </div>
                    <button 
