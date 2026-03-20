@@ -211,7 +211,7 @@ export default function MiAula() {
                     <div className="flex items-center gap-6">
                       <div className="flex flex-col">
                         <span className="text-[8px] font-black text-gray-900 dark:text-gray-500 uppercase mb-1 opacity-60">Alumnado</span>
-                        <div className="flex items-center gap-1.5 font-black uppercase tracking-widest text-[10px] text-gray-900 dark:text-gray-400">
+                        <div className="flex flex-items-center gap-1.5 font-black uppercase tracking-widest text-[10px] text-gray-900 dark:text-gray-100">
                           <Users size={14} className="text-primary-500" />
                           <span>{curso.alumnos?.length || 0}</span>
                         </div>

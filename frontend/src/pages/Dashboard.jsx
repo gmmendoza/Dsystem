@@ -21,17 +21,16 @@ import {
   LayoutDashboard
 } from 'lucide-react'
 import { CardSkeleton } from '../components/Common/LoadingSkeleton'
-import { AIService } from '../services/AIService'
+import { useAI } from '../context/AIContext'
 import DashboardHero from '../components/Dashboard/DashboardHero'
 
 export default function Panel() {
   const navigate = useNavigate()
+  const { dailySummary: aiSummary } = useAI()
   const [stats, setStats] = useState({ alumnos: 0, cursos: 0, planificaciones: 0, inicial: 0, primaria: 0 })
   const [cursos, setCursos] = useState([])
   const [recentPlans, setRecentPlans] = useState([])
   const [loading, setLoading] = useState(true)
-  const [showReport, setShowReport] = useState(false)
-  const [aiSummary, setAiSummary] = useState(null)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -60,10 +59,6 @@ export default function Panel() {
 
         const sorted = plans.data.sort((a, b) => new Date(b.lastModified || b.fechaInicio) - new Date(a.lastModified || a.fechaInicio))
         setRecentPlans(sorted.slice(0, 3))
-        
-        // Fetch AI Summary
-        const summary = AIService.getDailySummary()
-        setAiSummary(summary)
       } catch (err) {
         console.error(err)
       } finally {
@@ -80,7 +75,7 @@ export default function Panel() {
   ]
 
   return (
-    <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-1000 pb-20">
+    <div className="space-y-12 animate-fade-in pb-20">
       
       {/* ── HEADER PANEL ── */}
       <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 lg:gap-10">
@@ -119,7 +114,7 @@ export default function Panel() {
         {/* ── SECCIÓN IZQUIERDA: RESUMEN Y AULAS ── */}
         <div className="xl:col-span-8 space-y-12">
           
-          {/* ESTA SEMANA (ESTADÍSTICAS PEDAGÓGICAS) */}
+          {/* ESTA SEMANA */}
           <section className="space-y-6">
             <div className="flex items-center justify-between px-2">
                <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-900 dark:text-gray-400 flex items-center gap-3">
@@ -151,7 +146,7 @@ export default function Panel() {
             </div>
           </section>
 
-          {/* STATS RAPIDAS (ANTERIORES) */}
+          {/* STATS RAPIDAS */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {loading ? (
               [...Array(3)].map((_, i) => <CardSkeleton key={i} />)
@@ -172,7 +167,7 @@ export default function Panel() {
             )}
           </div>
 
-          {/* MIS AULAS (WORKSPACE BROWSER) */}
+          {/* MIS AULAS */}
           <section className="space-y-6">
             <div className="flex items-center justify-between px-2">
                <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-900 dark:text-gray-400 flex items-center gap-3">
@@ -217,7 +212,7 @@ export default function Panel() {
                <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-600 flex items-center gap-3">
                   <Clock className="text-amber-500" size={16} /> Editado recientemente
                </h3>
-            </div>
+             </div>
             
             <div className="grid grid-cols-1 gap-4">
                {recentPlans.map(plan => (
@@ -287,7 +282,7 @@ export default function Panel() {
              </div>
           </div>
 
-          {/* ALUMNOS EN RIESGO (SIMULADO) */}
+          {/* ALUMNOS EN RIESGO */}
           <div className="bg-red-500/5 border border-red-500/10 p-8 rounded-[2rem] space-y-6 shadow-sm">
              <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -320,7 +315,7 @@ export default function Panel() {
              </div>
           </div>
 
-          {/* NOTIFICACIONES / TIPS */}
+          {/* TIP PEDAGÓGICO */}
           <div className="bg-primary-600/5 border border-primary-500/10 p-8 rounded-[2rem] space-y-6">
              <div className="flex items-center gap-3">
                 <Zap size={18} className="text-primary-500" />

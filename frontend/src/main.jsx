@@ -5,20 +5,22 @@ import App from './App'
 import './index.css'
 import { AuthProvider } from './context/AuthContext'
 import { ThemeProvider } from './context/ThemeContext'
+import { AIProvider } from './context/AIContext'
 
 try {
   ReactDOM.createRoot(document.getElementById('root')).render(
     <React.StrictMode>
       <HashRouter>
         <ThemeProvider>
-          <AuthProvider>
-            <App />
-          </AuthProvider>
+          <AIProvider>
+            <AuthProvider>
+              <App />
+            </AuthProvider>
+          </AIProvider>
         </ThemeProvider>
       </HashRouter>
     </React.StrictMode>
   )
 } catch (error) {
-  alert("FATAL ERROR: " + error.message);
-  console.error(error);
+  console.error('FATAL:', error)
 }

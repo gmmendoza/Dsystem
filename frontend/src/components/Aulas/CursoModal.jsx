@@ -128,7 +128,7 @@ export default function CursoModal({ isOpen, onClose, onSave, curso = null }) {
                   <Info className="absolute left-4 top-4 text-gray-800 dark:text-gray-500" size={18} />
                   <textarea
                     value={formData.descripcion}
-                    onChange={e => setFormData({ ...formData, description: e.target.value })}
+                    onChange={e => setFormData({ ...formData, descripcion: e.target.value })}
                     className="w-full bg-surface-subtle border border-black/10 dark:border-white/5 rounded-2xl py-4 pl-12 pr-6 text-[11px] font-bold outline-none focus:border-primary-500/50 transition-all min-h-[100px] resize-none placeholder:text-gray-700 dark:placeholder:text-gray-500"
                     placeholder="Describe brevemente los objetivos del aula..."
                   />
