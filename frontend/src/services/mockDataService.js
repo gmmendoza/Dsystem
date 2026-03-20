@@ -86,6 +86,7 @@ export const mockDataService = {
         ...data, 
         id: Date.now(),
         alumnos: [],
+        horario: data.horario || '08:00 AM',
         lastModified: new Date().toISOString()
       };
       updatedCourses = [savedItem, ...courses];

@@ -183,7 +183,7 @@ export default function MiAula() {
                           {curso.nivel}
                        </span>
                        <div className="flex items-center gap-1 text-[8px] font-black text-gray-700 uppercase tracking-widest">
-                          <Clock size={10} /> 10:00 AM
+                          <Clock size={10} /> {curso.horario || '08:00 AM'}
                        </div>
                     </div>
                   </div>
@@ -238,8 +238,8 @@ export default function MiAula() {
                  <Plus size={40} />
                </div>
                <div className="space-y-2">
-                 <p className="text-xs font-black uppercase tracking-[0.2em] text-gray-600">Nuevo Espacio de Trabajo</p>
-                 <p className="text-[10px] font-bold text-gray-800 uppercase tracking-widest">Digitaliza un nuevo aula <br/> con ayuda de DocenTico</p>
+                 <p className="text-xs font-black uppercase tracking-[0.2em] text-gray-800 dark:text-gray-400">Nuevo Espacio de Trabajo</p>
+                 <p className="text-[10px] font-bold text-gray-900 dark:text-gray-500 uppercase tracking-widest">Digitaliza un nuevo aula <br/> con ayuda de DocenTico</p>
                </div>
             </motion.div>
           </>

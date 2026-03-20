@@ -6,7 +6,8 @@ export default function CursoModal({ isOpen, onClose, onSave, curso = null }) {
   const [formData, setFormData] = useState({
     nombre: '',
     nivel: 'Primaria',
-    descripcion: ''
+    descripcion: '',
+    horario: '08:00 AM'
   })
 
   useEffect(() => {
@@ -14,13 +15,15 @@ export default function CursoModal({ isOpen, onClose, onSave, curso = null }) {
       setFormData({
         nombre: curso.nombre || '',
         nivel: curso.nivel || 'Primaria',
-        descripcion: curso.descripcion || ''
+        descripcion: curso.descripcion || '',
+        horario: curso.horario || '08:00 AM'
       })
     } else {
       setFormData({
         nombre: '',
         nivel: 'Primaria',
-        descripcion: ''
+        descripcion: '',
+        horario: '08:00 AM'
       })
     }
   }, [curso, isOpen])
@@ -101,6 +104,19 @@ export default function CursoModal({ isOpen, onClose, onSave, curso = null }) {
                       {n}
                     </button>
                   ))}
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-gray-600 block px-1">Horario / Turno</label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={formData.horario}
+                    onChange={e => setFormData({ ...formData, horario: e.target.value })}
+                    className="w-full bg-surface-subtle border border-black/5 dark:border-white/5 rounded-2xl py-4 px-6 text-[11px] font-black uppercase tracking-widest outline-none focus:border-primary-500/50 transition-all"
+                    placeholder="Ej: 08:00 AM - 12:00 PM"
+                  />
                 </div>
               </div>
 

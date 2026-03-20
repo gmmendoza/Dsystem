@@ -98,22 +98,22 @@ export default function AIChat() {
             initial={{ opacity: 0, scale: 0.9, y: 20, filter: 'blur(10px)' }}
             animate={{ opacity: 1, scale: 1, y: 0, filter: 'blur(0px)' }}
             exit={{ opacity: 0, scale: 0.9, y: 20, filter: 'blur(10px)' }}
-            className="absolute bottom-20 right-0 w-[400px] h-[600px] bg-surface-subtle/95 backdrop-blur-2xl border border-black/5 dark:border-white/10 rounded-[2.5rem] shadow-2xl flex flex-col overflow-hidden transition-colors duration-300"
+            className="absolute bottom-20 right-0 w-[320px] h-[500px] bg-surface-subtle/95 backdrop-blur-2xl border border-black/5 dark:border-white/10 rounded-[2rem] shadow-2xl flex flex-col overflow-hidden transition-colors duration-300"
           >
             {/* AI Header */}
-            <div className="p-6 bg-gradient-to-r from-primary-600/20 to-indigo-600/20 border-b border-white/5 flex items-center justify-between">
-              <div className="flex items-center gap-4">
+            <div className="p-4 bg-gradient-to-r from-primary-600/20 to-indigo-600/20 border-b border-white/5 flex items-center justify-between">
+              <div className="flex items-center gap-3">
                 <div className="relative">
-                    <div className="w-12 h-12 bg-primary-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-primary-900/40">
+                    <div className="w-10 h-10 bg-primary-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-primary-900/40">
                        <Bot size={24} />
                     </div>
                     <div className="absolute -top-1 -right-1 w-4 h-4 bg-accent-emerald rounded-full border-4 border-surface-subtle" />
                 </div>
                 <div>
-                   <h3 className="text-sm font-black uppercase tracking-widest flex items-center gap-2">
-                     DocenTico <Sparkles size={14} className="text-primary-400" />
+                   <h3 className="text-[12px] font-black uppercase tracking-widest flex items-center gap-2">
+                     DocenTico <Sparkles size={12} className="text-primary-400" />
                    </h3>
-                   <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Inteligencia Pedagógica</p>
+                   <p className="text-[8px] font-bold text-gray-500 uppercase tracking-widest">Inteligencia Pedagógica</p>
                 </div>
               </div>
               <button onClick={() => setIsOpen(false)} className="p-2 text-gray-500 hover:text-primary-500 transition-colors">
@@ -122,7 +122,7 @@ export default function AIChat() {
             </div>
 
             {/* Chat Messages */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar">
+            <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
               {messages.map((msg) => (
                 <motion.div
                   initial={{ opacity: 0, x: msg.role === 'user' ? 20 : -20 }}
@@ -130,7 +130,7 @@ export default function AIChat() {
                   key={msg.id}
                   className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
-                  <div className={`max-w-[85%] p-4 rounded-2xl text-[11px] leading-relaxed relative ${
+                  <div className={`max-w-[90%] p-3 rounded-2xl text-[10px] leading-relaxed relative ${
                     msg.role === 'user' 
                       ? 'bg-primary-600 text-white font-bold rounded-tr-none shadow-lg' 
                       : 'bg-surface border border-black/5 dark:border-white/5 rounded-tl-none'
@@ -169,7 +169,7 @@ export default function AIChat() {
             </div>
 
             {/* Suggestions & Input */}
-            <div className="p-6 space-y-4 bg-surface-muted/30 border-t border-black/5 dark:border-white/5">
+            <div className="p-4 space-y-3 bg-surface-muted/30 border-t border-black/5 dark:border-white/5">
               {!messages.some(m => m.role === 'user') && (
                  <div className="flex flex-wrap gap-2">
                     {SUGGESTIONS.map((s, i) => (
@@ -187,8 +187,8 @@ export default function AIChat() {
               <form onSubmit={handleSend} className="relative">
                 <input
                   type="text"
-                  placeholder="ESCRIBE TU CONSULTA AQUÍ..."
-                  className="w-full bg-surface border border-white/10 rounded-2xl py-4 pl-6 pr-14 text-[10px] font-black uppercase tracking-widest outline-none focus:border-primary-500/50 transition-all placeholder:text-gray-800"
+                  placeholder="CONSULTAR..."
+                  className="w-full bg-surface border border-white/10 rounded-xl py-3 pl-4 pr-12 text-[9px] font-black uppercase tracking-widest outline-none focus:border-primary-500/50 transition-all placeholder:text-gray-800"
                   style={{ color: 'rgb(var(--color-text))' }}
                   value={input}
                   onChange={(e) => setInput(e.target.value)}

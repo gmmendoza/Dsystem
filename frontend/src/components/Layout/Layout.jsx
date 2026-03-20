@@ -209,7 +209,7 @@ export default function Layout() {
              </button>
              
              {/* Search Bar SaaS Style */}
-             <div className="hidden md:flex items-center gap-3 bg-white/5 border border-white/5 px-4 py-2.5 rounded-xl w-80 group focus-within:border-primary-500/50 transition-all">
+             <div className="hidden md:flex items-center gap-3 bg-surface-subtle border border-black/5 dark:border-white/5 px-4 py-2.5 rounded-xl w-80 group focus-within:border-primary-500/50 transition-all">
                 <Search size={16} className="text-gray-600 group-focus-within:text-primary-500" />
                 <input 
                   type="text" 
@@ -220,7 +220,7 @@ export default function Layout() {
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyDown={handleSearch}
                 />
-                <span className="text-[10px] px-1.5 py-0.5 bg-white/5 rounded border border-white/10 text-gray-700 font-black">⌘K</span>
+                <span className="text-[10px] px-1.5 py-0.5 bg-surface-muted rounded border border-black/5 dark:border-white/10 text-gray-700 font-black">⌘K</span>
              </div>
           </div>
           
