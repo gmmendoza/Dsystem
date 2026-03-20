@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { cursoAPI, planificacionAPI, alumnoAPI } from '../services/api'
 import PlanningTimeline from '../components/Aula/PlanningTimeline'
 import Asistencia from '../components/Aula/Asistencia'
+import { AlumnoModal } from '../components/Aula/AlumnoModal'
 import { 
   ChevronLeft, 
   Calendar, 
@@ -61,6 +62,13 @@ export default function AulaWorkspace() {
   const [showAISuggestion, setShowAISuggestion] = useState(true)
   const [recursoFilter, setRecursoFilter] = useState({ materia: 'todas', nivel: 'todos', tipo: 'todos' })
   const [recursoSort, setRecursoSort] = useState('recientes')
+
+  // Student CRUD State
+  const [isAlumnoModalOpen, setIsAlumnoModalOpen] = useState(false)
+  const [selectedAlumno, setSelectedAlumno] = useState(null)
+  
+  // Resource Preview State
+  const [previewResource, setPreviewResource] = useState(null)
 
   const steps = [
     { title: "Analizando actividades recientes", icon: Sparkles },
@@ -124,6 +132,24 @@ export default function AulaWorkspace() {
     })
   }
 
+  const handleDeleteAlumno = (alumnoId) => {
+    setConfirm({
+      open: true,
+      title: '¿Eliminar Estudiante?',
+      message: '¿Estás seguro de que deseas eliminar este estudiante del aula? Esta acción no se puede deshacer.',
+      onConfirm: async () => {
+        try {
+          await alumnoAPI.delete(alumnoId)
+          setToast({ message: 'Estudiante eliminado con éxito', type: 'success' })
+          fetchWorkspaceData()
+        } catch (err) {
+          setToast({ message: 'Error al eliminar', type: 'error' })
+        }
+        setConfirm({ ...confirm, open: false })
+      }
+    })
+  }
+
   const handleUploadRecurso = async () => {
     setToast({ message: 'Subiendo recurso al banco...', type: 'info' })
     const mockRecurso = {
@@ -150,9 +176,56 @@ export default function AulaWorkspace() {
     }
   }
 
-  const handleAddSuggestedActivity = () => {
-    setToast({ message: 'Actividad sugerida añadida a tu planificación actual', type: 'success' })
-    setShowAISuggestion(false)
+
+  const handleSaveAlumno = async (formData) => {
+    try {
+      if (selectedAlumno) {
+        await alumnoAPI.update(selectedAlumno.id, formData)
+        setToast({ message: 'Estudiante actualizado con éxito', type: 'success' })
+      } else {
+        await alumnoAPI.create(formData)
+        setToast({ message: 'Estudiante registrado correctamente', type: 'success' })
+      }
+      setIsAlumnoModalOpen(false)
+      setSelectedAlumno(null)
+      fetchWorkspaceData()
+    } catch (err) {
+      setToast({ message: 'Error al procesar el registro', type: 'error' })
+    }
+  }
+
+  const handleEditAlumno = (a) => {
+    setSelectedAlumno(a)
+    setIsAlumnoModalOpen(true)
+  }
+
+  const handleAddSuggestedActivity = async () => {
+    if (planes.length === 0) {
+      setToast({ message: 'Crea una planificación primero para añadir la actividad', type: 'error' })
+      return
+    }
+
+    const firstPlan = planes[0]
+    const newActivity = {
+      id: Date.now(),
+      titulo: 'Exploración 3D: Célula Animal',
+      tipo: 'Interactivo',
+      duracion: '40 min',
+      completado: false
+    }
+
+    const updatedPlan = {
+      ...firstPlan,
+      actividades: [...(firstPlan.actividades || []), newActivity]
+    }
+
+    try {
+      await planificacionAPI.save(updatedPlan)
+      setToast({ message: '¡IA: Actividad "Célula Animal 3D" añadida a tu secuencia!', type: 'success' })
+      fetchWorkspaceData()
+    } catch (err) {
+      setToast({ message: 'Error al vincular actividad', type: 'error' })
+    }
   }
 
   const handleUseResource = (titulo) => {
@@ -311,7 +384,21 @@ export default function AulaWorkspace() {
             )}
 
             {activeTab === 'alumnos' && (
-              <div className="card bg-surface-subtle/20 border-white/5 rounded-[2.5rem] overflow-hidden">
+              <div className="space-y-6">
+                <div className="flex justify-between items-center px-4">
+                   <div className="space-y-1">
+                      <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-600">Gestión de Estudiantes</h3>
+                      <p className="text-[9px] font-bold text-gray-700 uppercase tracking-widest">{alumnos.length} registrados en el aula</p>
+                   </div>
+                   <button 
+                     onClick={() => { setSelectedAlumno(null); setIsAlumnoModalOpen(true); }}
+                     className="px-6 py-3 bg-primary-600 hover:bg-primary-500 text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-primary-900/20 flex items-center gap-3"
+                   >
+                     <Plus size={16} /> Registrar Alumno
+                   </button>
+                </div>
+
+                <div className="card bg-surface-subtle/20 border-white/5 rounded-[2.5rem] overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left">
                       <thead>
@@ -363,18 +450,29 @@ export default function AulaWorkspace() {
                                </div>
                             </td>
                             <td className="px-8 py-6 text-right">
-                               <button 
-                                 onClick={() => setToast({ message: `Abriendo ficha de ${a.nombre}...`, type: 'info' })}
-                                 className="p-3 bg-white/5 hover:bg-primary-600 hover:text-white text-gray-500 rounded-xl transition-all border border-white/5"
-                               >
-                                 <ExternalLink size={16} />
-                               </button>
-                            </td>
+                               <div className="flex justify-end gap-2">
+                                 <button 
+                                   onClick={() => handleEditAlumno(a)}
+                                   className="p-3 bg-white/5 hover:bg-primary-600/20 hover:text-primary-400 text-gray-500 rounded-xl transition-all border border-white/5"
+                                   title="Editar Alumno"
+                                 >
+                                   <ExternalLink size={16} />
+                                 </button>
+                                 <button 
+                                   onClick={() => handleDeleteAlumno(a.id)}
+                                   className="p-3 bg-white/5 hover:bg-red-500/20 hover:text-red-500 text-gray-500 rounded-xl transition-all border border-white/5"
+                                   title="Eliminar del Aula"
+                                 >
+                                   <Trash2 size={16} />
+                                 </button>
+                               </div>
+                             </td>
                           </tr>
                         ))}
                       </tbody>
                     </table>
                   </div>
+                </div>
               </div>
             )}
 
@@ -398,7 +496,11 @@ export default function AulaWorkspace() {
                        </p>
                     </div>
                     <div className="flex gap-4 shrink-0 relative z-10">
-                       <button onClick={() => setToast({ message: 'Abriendo recurso...', type: 'info' })} className="btn-secondary">Previsualizar</button>
+                       <button onClick={() => setPreviewResource({
+                         titulo: 'Célula Animal 3D',
+                         tipo: 'Modelo Interactivo',
+                         url: 'https://images.unsplash.com/photo-1530210124550-912dc1381cb8?q=80&w=1000'
+                       })} className="btn-secondary">Previsualizar</button>
                        <button onClick={handleAddSuggestedActivity} className="btn-primary">Añadir al Plan</button>
                     </div>
                  </div>
@@ -638,6 +740,63 @@ export default function AulaWorkspace() {
         {...confirm} 
         onCancel={() => setConfirm({ ...confirm, open: false })} 
       />
+
+      <AlumnoModal 
+        isOpen={isAlumnoModalOpen}
+        onClose={() => { setIsAlumnoModalOpen(false); setSelectedAlumno(null); }}
+        onSave={handleSaveAlumno}
+        alumno={selectedAlumno}
+      />
+
+      {/* Resource Preview Modal */}
+      <AnimatePresence>
+        {previewResource && (
+          <div className="fixed inset-0 z-[120] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              onClick={() => setPreviewResource(null)}
+              className="absolute inset-0 bg-black/90 backdrop-blur-xl"
+            />
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
+              className="relative bg-surface-subtle border border-white/10 rounded-[2.5rem] overflow-hidden max-w-4xl w-full shadow-2xl"
+            >
+              <div className="aspect-video bg-black relative group">
+                <img src={previewResource.url} className="w-full h-full object-cover opacity-80" alt="Preview" />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="w-20 h-20 bg-primary-600 rounded-full flex items-center justify-center text-white shadow-2xl animate-pulse">
+                    <Play size={32} fill="currentColor" />
+                  </div>
+                </div>
+                <button 
+                  onClick={() => setPreviewResource(null)}
+                  className="absolute top-6 right-6 p-3 bg-black/50 hover:bg-black backdrop-blur-md rounded-2xl text-white transition-all"
+                >
+                  <X size={24} />
+                </button>
+              </div>
+              <div className="p-10 space-y-6">
+                <div className="flex justify-between items-start">
+                  <div className="space-y-2">
+                    <h3 className="text-3xl font-black italic uppercase text-white tracking-tighter">{previewResource.titulo}</h3>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-primary-500">{previewResource.tipo}</p>
+                  </div>
+                  <button 
+                    onClick={() => { handleAddSuggestedActivity(); setPreviewResource(null); }}
+                    className="btn-primary px-10"
+                  >
+                    Vincular al Plan
+                  </button>
+                </div>
+                <p className="text-sm text-gray-500 leading-relaxed uppercase font-bold tracking-tight">
+                  Este recurso permitirá observar las organelas citoplasmáticas en tiempo real. 
+                  IA de DocenTico estima una mejora sustancial en la comprensión del tema.
+                </p>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

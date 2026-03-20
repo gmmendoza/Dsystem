@@ -55,19 +55,36 @@ export default function AIChat() {
     // Simulate AI Response logic
     setTimeout(() => {
         let aiContent = "Estoy procesando tu solicitud basándome en los datos del aula..."
+        let canCopyToPlan = false
         const prompt = input.toLowerCase()
         
         if (prompt.includes('asistencia')) {
             aiContent = "La asistencia promedio de **3° A** es del **88%**. He notado un patrón de inasistencias los viernes (78%). ¿Quieres que redacte un aviso para los padres?"
         } else if (prompt.includes('geometría') || prompt.includes('recurso')) {
             aiContent = "Para **Geometría**, te sugiero el recurso 'Cuerpos Platónicos 3D' disponible en tu banco. Los alumnos de 4° B están mostrando un interés alto en contenido visual este mes."
+            canCopyToPlan = true
         } else if (prompt.includes('participación') || prompt.includes('alumnos')) {
             aiContent = "Pedro Rodríguez y Lucas Sánchez han bajado su participación un **15%** esta semana. Recomiendo una actividad de gamificación para reintegrarlos."
+            canCopyToPlan = true
+        } else if (prompt.includes('planificaci') || prompt.includes('clase')) {
+            aiContent = "He generado una propuesta de **3 actividades** para tu próxima clase de Ciencias Naturales sobre el sistema solar. ¿Deseas ver el detalle?"
+            canCopyToPlan = true
         }
 
-        setMessages(prev => [...prev, { id: Date.now() + 1, role: 'assistant', content: aiContent }])
+        setMessages(prev => [...prev, { 
+            id: Date.now() + 1, 
+            role: 'assistant', 
+            content: aiContent,
+            canCopy: canCopyToPlan
+        }])
         setIsTyping(false)
     }, 1500)
+  }
+
+  const handleCopyToPlan = (content) => {
+    // In a real app, this would dispatch an action or call an API
+    // For now, we simulate success
+    alert("IA: Sugerencia copiada a tu borrador de planificación actual.")
   }
 
   return (
@@ -119,6 +136,20 @@ export default function AIChat() {
                         <div className="absolute -top-4 -left-1 text-[8px] font-black uppercase tracking-widest text-primary-500 bg-surface px-2 py-0.5 rounded border border-white/5">AI Response</div>
                     )}
                     <p dangerouslySetInnerHTML={{ __html: msg.content.replace(/\*\*(.*?)\*\*/g, '<b class="text-white">$1</b>') }} />
+                    
+                    {msg.role === 'assistant' && msg.canCopy && (
+                        <div className="mt-4 pt-3 border-t border-white/5 flex gap-2">
+                            <button 
+                              onClick={() => handleCopyToPlan(msg.content)}
+                              className="px-3 py-1.5 bg-primary-600/20 hover:bg-primary-600 text-[8px] font-black uppercase tracking-widest text-primary-400 hover:text-white rounded-lg transition-all flex items-center gap-1.5"
+                            >
+                                <Plus size={10} /> Copiar al Plan
+                            </button>
+                            <button className="px-3 py-1.5 bg-white/5 hover:bg-white/10 text-[8px] font-black uppercase tracking-widest text-gray-500 hover:text-white rounded-lg transition-all">
+                                <RotateCcw size={10} /> Regenerar
+                            </button>
+                        </div>
+                    )}
                   </div>
                 </motion.div>
               ))}

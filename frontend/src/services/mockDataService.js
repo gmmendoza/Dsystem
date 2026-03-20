@@ -40,6 +40,23 @@ export const mockDataService = {
   // Alumnos
   getAlumnos: () => getLS(KEYS.ALUMNOS, initialAlumnos),
   getAlumnoById: (id) => mockDataService.getAlumnos().find(a => a.id === Number(id)),
+  saveAlumno: (data) => {
+    const students = mockDataService.getAlumnos();
+    const newStudent = { ...data, id: Date.now(), asistencia: data.asistencia || 100, participacion: data.participacion || 100 };
+    setLS(KEYS.ALUMNOS, [newStudent, ...students]);
+    return newStudent;
+  },
+  updateAlumno: (id, data) => {
+    const students = mockDataService.getAlumnos();
+    const updated = students.map(s => s.id === Number(id) ? { ...s, ...data } : s);
+    setLS(KEYS.ALUMNOS, updated);
+    return updated.find(s => s.id === Number(id));
+  },
+  deleteAlumno: (id) => {
+    const students = mockDataService.getAlumnos();
+    const filtered = students.filter(s => s.id !== Number(id));
+    setLS(KEYS.ALUMNOS, filtered);
+  },
 
   // Cursos
   getCursos: () => getLS(KEYS.CURSOS, initialCursos),
