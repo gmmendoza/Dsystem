@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from './context/AuthContext'
+import LandingPage from './pages/LandingPage'
 import LoginPage from './pages/LoginPage'
 import Layout from './components/Layout/Layout'
 import Dashboard from './pages/Dashboard'
@@ -15,22 +16,30 @@ function ProtectedRoute({ children }) {
 export default function App() {
   return (
     <Routes>
+      {/* Ruta Principal de Introducción */}
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/Dsystem" element={<Navigate to="/" replace />} />
+      
       <Route path="/login" element={<LoginPage />} />
+
+      {/* Rutas Protegidas (Dashboard) */}
       <Route
-        path="/"
+        path="/app"
         element={
           <ProtectedRoute>
             <Layout />
           </ProtectedRoute>
         }
       >
-        <Route index element={<Navigate to="/dashboard" replace />} />
+        <Route index element={<Navigate to="dashboard" replace />} />
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="mi-aula" element={<MiAula />} />
         <Route path="agenda" element={<Agenda />} />
         <Route path="planificador" element={<Planificador />} />
       </Route>
-      <Route path="*" element={<Navigate to="/dashboard" replace />} />
+
+      {/* Redirección por defecto */}
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )
 }
