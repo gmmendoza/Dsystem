@@ -71,6 +71,34 @@ export const mockDataService = {
   // Cursos
   getCursos: () => getLS(KEYS.CURSOS, initialCursos),
   getCursoById: (id) => mockDataService.getCursos().find(c => c.id === Number(id)),
+  saveCurso: (data) => {
+    const courses = mockDataService.getCursos();
+    const isUpdate = data.id && courses.some(c => c.id === Number(data.id));
+    
+    let updatedCourses;
+    let savedItem;
+
+    if (isUpdate) {
+      savedItem = { ...courses.find(c => c.id === Number(data.id)), ...data };
+      updatedCourses = courses.map(c => c.id === Number(data.id) ? savedItem : c);
+    } else {
+      savedItem = { 
+        ...data, 
+        id: Date.now(),
+        alumnos: [],
+        lastModified: new Date().toISOString()
+      };
+      updatedCourses = [savedItem, ...courses];
+    }
+    
+    setLS(KEYS.CURSOS, updatedCourses);
+    return savedItem;
+  },
+  deleteCurso: (id) => {
+    const courses = mockDataService.getCursos();
+    const filtered = courses.filter(c => c.id !== Number(id));
+    setLS(KEYS.CURSOS, filtered);
+  },
 
   // Materias
   getMaterias: () => getLS(KEYS.MATERIAS, initialMaterias),

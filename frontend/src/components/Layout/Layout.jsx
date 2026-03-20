@@ -118,7 +118,7 @@ export default function Layout() {
           </div>
           <button 
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="hidden lg:flex p-2 bg-white/5 hover:bg-white/10 rounded-lg text-gray-500 hover:text-white transition-colors border border-white/5"
+            className="hidden lg:flex p-2 bg-surface-subtle hover:bg-surface-muted rounded-lg text-gray-500 hover:text-primary-500 transition-colors border border-black/5 dark:border-white/5"
           >
             {isCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
           </button>
@@ -203,7 +203,7 @@ export default function Layout() {
           <div className="flex items-center gap-6">
              <button 
                onClick={() => setSidebarOpen(true)}
-               className="lg:hidden p-3 text-gray-400 hover:text-white bg-white/5 rounded-xl border border-white/10"
+               className="lg:hidden p-3 text-gray-500 hover:text-primary-500 bg-surface-subtle rounded-xl border border-black/5 dark:border-white/10"
              >
                <Menu size={20} />
              </button>
@@ -225,17 +225,10 @@ export default function Layout() {
           </div>
           
           <div className="flex items-center gap-3 md:gap-5">
-            <div 
-              onClick={() => window.dispatchEvent(new CustomEvent('toggle-ai-chat'))}
-              className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-accent-rose/10 border border-accent-rose/20 rounded-lg cursor-pointer hover:bg-accent-rose/20 transition-all active:scale-95"
-            >
-               <Sparkles size={12} className="text-accent-rose" />
-               <span className="text-[9px] font-black uppercase tracking-widest text-accent-rose">IA Aktiva</span>
-            </div>
 
             <button 
               onClick={() => handleHeaderAction('notifications')}
-              className="relative w-11 h-11 flex items-center justify-center text-gray-500 hover:text-white hover:bg-white/5 rounded-xl border border-transparent hover:border-white/10 transition-all"
+              className="relative w-11 h-11 flex items-center justify-center text-gray-500 hover:text-primary-500 hover:bg-surface-subtle rounded-xl border border-transparent hover:border-black/5 dark:hover:border-white/10 transition-all"
             >
               <Bell size={20} />
               <span className="absolute top-3 right-3 w-2 h-2 bg-primary-500 rounded-full border-2 border-surface animate-pulse" />
@@ -243,17 +236,17 @@ export default function Layout() {
             
             <button 
               onClick={toggleTheme}
-              className="w-11 h-11 flex items-center justify-center text-gray-500 hover:text-primary-500 hover:bg-white/5 rounded-xl border border-transparent hover:border-white/10 transition-all"
+              className="w-11 h-11 flex items-center justify-center text-gray-500 hover:text-primary-500 hover:bg-surface-subtle rounded-xl border border-transparent hover:border-black/5 dark:hover:border-white/10 transition-all"
               title={theme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
             >
               {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
             </button>
             
-            <div className="h-8 w-[1px] bg-white/5 mx-1" />
+            <div className="h-8 w-[1px] bg-black/5 dark:bg-white/5 mx-1" />
             
             <div 
               onClick={() => window.dispatchEvent(new CustomEvent('toggle-ai-chat'))}
-              className="w-10 h-10 rounded-xl bg-surface-subtle border border-white/10 flex items-center justify-center text-primary-400 shadow-lg cursor-pointer hover:border-primary-500 transition-all active:scale-95"
+              className="w-10 h-10 rounded-xl bg-surface-subtle border border-black/5 dark:border-white/10 flex items-center justify-center text-primary-500 dark:text-primary-400 shadow-lg cursor-pointer hover:border-primary-500 transition-all active:scale-95"
             >
                <Zap size={20} />
             </div>
@@ -266,7 +259,8 @@ export default function Layout() {
               initial={{ opacity: 0, y: -20, x: '-50%' }}
               animate={{ opacity: 1, y: 0, x: '-50%' }}
               exit={{ opacity: 0, y: -20, x: '-50%' }}
-              className="fixed top-24 left-1/2 -translate-x-1/2 z-[100] px-6 py-3 bg-surface-subtle/90 border border-primary-500/30 text-white text-[10px] font-black uppercase tracking-widest rounded-2xl backdrop-blur-xl shadow-2xl flex items-center gap-3"
+              className="fixed top-24 left-1/2 -translate-x-1/2 z-[100] px-6 py-3 bg-surface-subtle/90 border border-primary-500/30 text-gray-900 dark:text-white text-[10px] font-black uppercase tracking-widest rounded-2xl backdrop-blur-xl shadow-2xl flex items-center gap-3"
+              style={{ color: 'rgb(var(--color-text))' }}
             >
                <Sparkles className="text-primary-500" size={16} />
                {headerToast}

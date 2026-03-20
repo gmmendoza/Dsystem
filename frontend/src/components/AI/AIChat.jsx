@@ -98,7 +98,7 @@ export default function AIChat() {
             initial={{ opacity: 0, scale: 0.9, y: 20, filter: 'blur(10px)' }}
             animate={{ opacity: 1, scale: 1, y: 0, filter: 'blur(0px)' }}
             exit={{ opacity: 0, scale: 0.9, y: 20, filter: 'blur(10px)' }}
-            className="absolute bottom-20 right-0 w-[400px] h-[600px] bg-surface-subtle/95 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] shadow-2xl flex flex-col overflow-hidden transition-colors duration-300"
+            className="absolute bottom-20 right-0 w-[400px] h-[600px] bg-surface-subtle/95 backdrop-blur-2xl border border-black/5 dark:border-white/10 rounded-[2.5rem] shadow-2xl flex flex-col overflow-hidden transition-colors duration-300"
           >
             {/* AI Header */}
             <div className="p-6 bg-gradient-to-r from-primary-600/20 to-indigo-600/20 border-b border-white/5 flex items-center justify-between">
@@ -116,7 +116,7 @@ export default function AIChat() {
                    <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Inteligencia Pedagógica</p>
                 </div>
               </div>
-              <button onClick={() => setIsOpen(false)} className="p-2 text-gray-500 hover:text-white transition-colors">
+              <button onClick={() => setIsOpen(false)} className="p-2 text-gray-500 hover:text-primary-500 transition-colors">
                 <X size={20} />
               </button>
             </div>
@@ -133,22 +133,22 @@ export default function AIChat() {
                   <div className={`max-w-[85%] p-4 rounded-2xl text-[11px] leading-relaxed relative ${
                     msg.role === 'user' 
                       ? 'bg-primary-600 text-white font-bold rounded-tr-none shadow-lg' 
-                      : 'bg-surface border border-white/5 rounded-tl-none'
+                      : 'bg-surface border border-black/5 dark:border-white/5 rounded-tl-none'
                   }`} style={msg.role !== 'user' ? { color: 'rgb(var(--color-text))' } : {}}>
                     {msg.role === 'assistant' && (
-                        <div className="absolute -top-4 -left-1 text-[8px] font-black uppercase tracking-widest text-primary-500 bg-surface px-2 py-0.5 rounded border border-white/5">AI Response</div>
+                        <div className="absolute -top-4 -left-1 text-[8px] font-black uppercase tracking-widest text-primary-500 bg-surface px-2 py-0.5 rounded border border-black/5 dark:border-white/5">AI Response</div>
                     )}
-                    <p dangerouslySetInnerHTML={{ __html: msg.content.replace(/\*\*(.*?)\*\*/g, '<b style="color: rgb(var(--color-primary))">$1</b>') }} />
+                    <p dangerouslySetInnerHTML={{ __html: (msg.content || '').toString().replace(/\*\*(.*?)\*\*/g, '<b style="color: rgb(var(--color-primary))">$1</b>') }} />
                     
                     {msg.role === 'assistant' && msg.canCopy && (
-                        <div className="mt-4 pt-3 border-t border-white/5 flex gap-2">
+                        <div className="mt-4 pt-3 border-t border-black/5 dark:border-white/5 flex gap-2">
                             <button 
                               onClick={() => handleCopyToPlan(msg.content)}
                               className="px-3 py-1.5 bg-primary-600/20 hover:bg-primary-600 text-[8px] font-black uppercase tracking-widest text-primary-400 hover:text-white rounded-lg transition-all flex items-center gap-1.5"
                             >
                                 <Plus size={10} /> Copiar al Plan
                             </button>
-                            <button className="px-3 py-1.5 bg-white/5 hover:bg-white/10 text-[8px] font-black uppercase tracking-widest text-gray-500 hover:text-white rounded-lg transition-all">
+                            <button className="px-3 py-1.5 bg-surface-subtle hover:bg-surface-muted text-[8px] font-black uppercase tracking-widest text-gray-500 hover:text-primary-500 rounded-lg transition-all border border-black/5 dark:border-white/5 shadow-sm">
                                 <RotateCcw size={10} /> Regenerar
                             </button>
                         </div>
@@ -158,10 +158,10 @@ export default function AIChat() {
               ))}
               {isTyping && (
                 <div className="flex justify-start">
-                   <div className="bg-white/5 border border-white/5 p-4 rounded-2xl rounded-tl-none flex gap-1.5">
-                      <div className="w-1.5 h-1.5 bg-gray-600 rounded-full animate-bounce" />
-                      <div className="w-1.5 h-1.5 bg-gray-600 rounded-full animate-bounce [animation-delay:0.2s]" />
-                      <div className="w-1.5 h-1.5 bg-gray-600 rounded-full animate-bounce [animation-delay:0.4s]" />
+                   <div className="bg-surface-subtle border border-black/5 dark:border-white/5 p-4 rounded-2xl rounded-tl-none flex gap-1.5 shadow-sm">
+                      <div className="w-1.5 h-1.5 bg-primary-500/40 rounded-full animate-bounce" />
+                      <div className="w-1.5 h-1.5 bg-primary-500/40 rounded-full animate-bounce [animation-delay:0.2s]" />
+                      <div className="w-1.5 h-1.5 bg-primary-500/40 rounded-full animate-bounce [animation-delay:0.4s]" />
                    </div>
                 </div>
               )}
@@ -169,7 +169,7 @@ export default function AIChat() {
             </div>
 
             {/* Suggestions & Input */}
-            <div className="p-6 space-y-4 bg-surface-muted/30 border-t border-white/5">
+            <div className="p-6 space-y-4 bg-surface-muted/30 border-t border-black/5 dark:border-white/5">
               {!messages.some(m => m.role === 'user') && (
                  <div className="flex flex-wrap gap-2">
                     {SUGGESTIONS.map((s, i) => (
@@ -215,9 +215,9 @@ export default function AIChat() {
         {isOpen ? <X size={28} /> : <Bot size={28} />}
         {!isOpen && (
             <motion.div 
-              animate={{ scale: [1, 1.2, 1] }} 
+              animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }} 
               transition={{ duration: 2, repeat: Infinity }}
-              className="absolute -top-1 -right-1 w-5 h-5 bg-accent-rose rounded-full border-4 border-surface flex items-center justify-center"
+              className="absolute -top-1 -right-1 w-5 h-5 bg-accent-rose rounded-full border-4 border-surface flex items-center justify-center shadow-lg"
             >
                <div className="w-1.5 h-1.5 bg-white rounded-full" />
             </motion.div>

@@ -29,11 +29,18 @@ export const cursoAPI = {
     return { data: mockDataService.getCursoById(id) };
   },
   update: async (id, data) => {
-      // Logic would be in mockDataService
-      return { data: mockDataService.getCursoById(id) };
+      return { data: mockDataService.saveCurso({ ...data, id }) };
+  },
+  create: async (data) => {
+      await new Promise(r => setTimeout(r, 600));
+      return { data: mockDataService.saveCurso(data) };
+  },
+  delete: async (id) => {
+      await new Promise(r => setTimeout(r, 400));
+      mockDataService.deleteCurso(id);
+      return { data: null };
   },
   addRecurso: async (cursoId, recurso) => {
-    // This could also be moved to mockDataService
     return { data: mockDataService.getCursoById(cursoId) };
   }
 };

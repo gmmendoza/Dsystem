@@ -18,6 +18,7 @@ import {
 } from 'lucide-react'
 import { CardSkeleton } from '../components/Common/LoadingSkeleton'
 import { Toast } from '../components/Common/Toast'
+import CursoModal from '../components/Aulas/CursoModal'
 
 export default function MiAula() {
   const navigate = useNavigate()
@@ -27,6 +28,8 @@ export default function MiAula() {
   const [loading, setLoading] = useState(true)
   const [toast, setToast] = useState(null)
   const [searchTerm, setSearchTerm] = useState('')
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [editingCurso, setEditingCurso] = useState(null)
 
   useEffect(() => {
     fetchData()
@@ -45,6 +48,23 @@ export default function MiAula() {
       setPlanes(resPlanes.data)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleSaveCurso = async (data) => {
+    try {
+      if (editingCurso) {
+        await cursoAPI.update(editingCurso.id, data)
+        setToast({ message: 'Workspace actualizado con éxito', type: 'success' })
+      } else {
+        await cursoAPI.create(data)
+        setToast({ message: 'Nuevo Workspace creado con éxito', type: 'success' })
+      }
+      setIsModalOpen(false)
+      setEditingCurso(null)
+      fetchData()
+    } catch (err) {
+      setToast({ message: 'Error al procesar la solicitud', type: 'error' })
     }
   }
 
@@ -124,7 +144,7 @@ export default function MiAula() {
         </div>
         
         <button 
-          onClick={() => setToast({ message: 'Funcionalidad PRO de creación desbloqueada.', type: 'info' })}
+          onClick={() => { setEditingCurso(null); setIsModalOpen(true); }}
           className="btn-primary flex items-center gap-3 self-start md:self-end"
         >
           <Plus size={18} /> Nuevo Workspace
@@ -186,7 +206,7 @@ export default function MiAula() {
                           <span>{curso.alumnos?.length || 0}</span>
                         </div>
                       </div>
-                      <div className="w-[1px] h-6 bg-white/5" />
+                      <div className="w-[1px] h-6 bg-black/5 dark:bg-white/5" />
                       <div className="flex flex-col">
                         <span className="text-[8px] font-black text-gray-700 uppercase mb-1">Estado</span>
                         <div className="flex items-center gap-1.5 font-black uppercase tracking-widest text-[10px] text-green-500">
@@ -195,7 +215,7 @@ export default function MiAula() {
                         </div>
                       </div>
                     </div>
-                    <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-gray-700 group-hover:bg-primary-600 group-hover:text-white transition-all">
+                    <div className="w-12 h-12 bg-surface-subtle dark:bg-white/5 rounded-2xl flex items-center justify-center text-gray-700 group-hover:bg-primary-600 group-hover:text-white transition-all border border-black/5 dark:border-white/5 shadow-sm">
                        <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
                     </div>
                   </div>
@@ -211,7 +231,7 @@ export default function MiAula() {
             {/* Empty State / Add Card */}
                <motion.div 
               variants={itemVariants}
-              onClick={() => setToast({ message: 'Iniciando asistente de creación...', type: 'info' })}
+              onClick={() => { setEditingCurso(null); setIsModalOpen(true); }}
               className="group border-2 border-dashed border-black/5 dark:border-white/5 rounded-[2.5rem] p-10 flex flex-col items-center justify-center text-center gap-6 hover:border-primary-500/30 hover:bg-primary-500/[0.02] transition-all cursor-pointer min-h-[400px]"
             >
                <div className="w-20 h-20 bg-white/[0.03] rounded-3xl flex items-center justify-center text-gray-800 group-hover:text-primary-500 group-hover:bg-primary-500/10 transition-all">
@@ -225,6 +245,13 @@ export default function MiAula() {
           </>
         )}
       </motion.div>
+
+      <CursoModal 
+        isOpen={isModalOpen}
+        onClose={() => { setIsModalOpen(false); setEditingCurso(null); }}
+        onSave={handleSaveCurso}
+        curso={editingCurso}
+      />
     </div>
   )
 }
