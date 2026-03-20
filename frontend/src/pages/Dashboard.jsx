@@ -19,7 +19,8 @@ import {
   Plus,
   ArrowRight,
   Layers,
-  LayoutDashboard
+  LayoutDashboard,
+  X
 } from 'lucide-react'
 import { CardSkeleton } from '../components/Common/LoadingSkeleton'
 
@@ -29,6 +30,7 @@ export default function Panel() {
   const [cursos, setCursos] = useState([])
   const [recentPlans, setRecentPlans] = useState([])
   const [loading, setLoading] = useState(true)
+  const [showReport, setShowReport] = useState(false)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -277,7 +279,10 @@ export default function Panel() {
                 </div>
              </div>
 
-             <button className="w-full py-4 bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl text-[9px] font-black uppercase tracking-widest text-gray-500 transition-all">
+             <button 
+                onClick={() => setShowReport(true)}
+                className="w-full py-4 bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl text-[9px] font-black uppercase tracking-widest text-gray-500 transition-all active:scale-95"
+             >
                 Ver reporte detallado
              </button>
           </div>

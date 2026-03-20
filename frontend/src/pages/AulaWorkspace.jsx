@@ -24,6 +24,7 @@ import {
 } from 'lucide-react'
 import { CardSkeleton, TableSkeleton } from '../components/Common/LoadingSkeleton'
 import { Toast } from '../components/Common/Toast'
+import { ConfirmModal } from '../components/Common/ConfirmModal'
 
 export default function AulaWorkspace() {
   const { id } = useParams()
@@ -34,6 +35,7 @@ export default function AulaWorkspace() {
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('planes')
   const [toast, setToast] = useState(null)
+  const [confirm, setConfirm] = useState({ open: false, onConfirm: null, title: '', message: '' })
 
   useEffect(() => {
     fetchWorkspaceData()
@@ -54,6 +56,40 @@ export default function AulaWorkspace() {
       setAlumnos(cursoAlumnos)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleDeletePlan = (planId) => {
+    setConfirm({
+      open: true,
+      title: '¿Eliminar Planificación?',
+      message: 'Esta acción no se puede deshacer. Se borrarán todos los datos asociados.',
+      onConfirm: async () => {
+        try {
+          await planificacionAPI.delete(planId)
+          setToast({ message: 'Planificación eliminada con éxito', type: 'success' })
+          fetchWorkspaceData()
+        } catch (err) {
+          setToast({ message: 'Error al eliminar', type: 'error' })
+        }
+        setConfirm({ ...confirm, open: false })
+      }
+    })
+  }
+
+  const handleUploadRecurso = async () => {
+    setToast({ message: 'Subiendo recurso al banco...', type: 'info' })
+    const mockRecurso = {
+        titulo: 'Nuevo material pedagógico',
+        tipo: 'image',
+        url: 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?q=80&w=800'
+    }
+    try {
+        await cursoAPI.addRecurso(id, mockRecurso)
+        setToast({ message: '¡Recurso agregado correctamente!', type: 'success' })
+        fetchWorkspaceData()
+    } catch (err) {
+        setToast({ message: 'Error al subir recurso', type: 'error' })
     }
   }
 
@@ -201,6 +237,13 @@ export default function AulaWorkspace() {
                        >
                          <MoreVertical size={16} />
                        </button>
+                       <button 
+                         onClick={() => handleDeletePlan(plan.id)}
+                         className="p-3 bg-white/[0.03] hover:bg-red-500/10 text-gray-500 hover:text-red-500 rounded-xl transition-all border border-white/5"
+                         title="Eliminar"
+                       >
+                         <Trash2 size={16} />
+                       </button>
                     </div>
                  </div>
                ))
@@ -257,7 +300,7 @@ export default function AulaWorkspace() {
         {activeTab === 'recursos' && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
              <div 
-               onClick={() => setToast({ message: 'El banco de recursos se sincroniza con tu nube docente', type: 'info' })}
+               onClick={handleUploadRecurso}
                className="group border-2 border-dashed border-white/5 rounded-2xl p-6 flex flex-col items-center justify-center text-center gap-3 hover:border-primary-500/30 hover:bg-primary-500/[0.02] transition-all cursor-pointer min-h-[200px]"
              >
                 <Plus size={24} className="text-gray-700 group-hover:text-primary-500 transition-colors" />
@@ -330,6 +373,12 @@ export default function AulaWorkspace() {
           </div>
         )}
       </div>
+
+      <ConfirmModal 
+        isOpen={confirm.open} 
+        {...confirm} 
+        onCancel={() => setConfirm({ ...confirm, open: false })} 
+      />
     </div>
   )
 }

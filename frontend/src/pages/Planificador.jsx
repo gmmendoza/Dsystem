@@ -210,6 +210,12 @@ export default function Planificador() {
       {/* ── HEADER DE ACCIÓN ── */}
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 sticky top-0 z-30 py-4 bg-[#050505]/80 backdrop-blur-xl border-b border-white/5">
         <div className="flex items-center gap-4">
+          <button 
+            onClick={handleBack}
+            className="p-3 bg-white/5 hover:bg-white/10 rounded-xl border border-white/5 text-gray-400 hover:text-white transition-all mr-2"
+          >
+            <ChevronLeft size={20} />
+          </button>
           <div className="w-12 h-12 bg-primary-600 rounded-2xl flex items-center justify-center shadow-lg shadow-primary-900/20 rotate-3">
             <Sparkles className="text-white" size={24} />
           </div>
@@ -531,6 +537,11 @@ export default function Planificador() {
            evaluacion: evaluation
          }}
          cursoName={cursos.find(c => c.id == cursoId)?.nombre || 'Curso no seleccionado'}
+      />
+      <ConfirmModal 
+        isOpen={confirm.open} 
+        {...confirm} 
+        onCancel={() => setConfirm({ ...confirm, open: false })} 
       />
     </div>
   )
