@@ -110,7 +110,39 @@ export default function Panel() {
         {/* ── SECCIÓN IZQUIERDA: RESUMEN Y AULAS ── */}
         <div className="xl:col-span-8 space-y-12">
           
-          {/* STATS RAPIDAS */}
+          {/* ESTA SEMANA (ESTADÍSTICAS PEDAGÓGICAS) */}
+          <section className="space-y-6">
+            <div className="flex items-center justify-between px-2">
+               <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-600 flex items-center gap-3">
+                  <Activity className="text-primary-500" size={16} /> Resumen Semanal
+               </h3>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+               <div className="bg-[#0A0A0A] border border-white/5 p-6 rounded-3xl space-y-4">
+                  <div className="flex items-center gap-3 text-primary-500">
+                     <BookOpen size={18} />
+                     <span className="text-[9px] font-black uppercase tracking-widest">Planificaciones</span>
+                  </div>
+                  <p className="text-3xl font-black italic text-white">{stats.planificaciones} <span className="text-[10px] text-gray-600 not-italic">Creadas</span></p>
+               </div>
+               <div className="bg-[#0A0A0A] border border-white/5 p-6 rounded-3xl space-y-4">
+                  <div className="flex items-center gap-3 text-amber-500">
+                     <Calendar size={18} />
+                     <span className="text-[9px] font-black uppercase tracking-widest">Clases hoy</span>
+                  </div>
+                  <p className="text-3xl font-black italic text-white">4 <span className="text-[10px] text-gray-600 not-italic">Programadas</span></p>
+               </div>
+               <div className="bg-[#0A0A0A] border border-white/5 p-6 rounded-3xl space-y-4">
+                  <div className="flex items-center gap-3 text-red-500">
+                     <Activity size={18} />
+                     <span className="text-[9px] font-black uppercase tracking-widest">Pendientes</span>
+                  </div>
+                  <p className="text-3xl font-black italic text-white">1 <span className="text-[10px] text-gray-600 not-italic">Evaluación</span></p>
+               </div>
+            </div>
+          </section>
+
+          {/* STATS RAPIDAS (ANTERIORES) */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {loading ? (
               [...Array(3)].map((_, i) => <CardSkeleton key={i} />)

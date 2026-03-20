@@ -13,6 +13,7 @@ import PreviewModal from '../components/Modals/PreviewModal'
 import ActivityList from '../components/Editor/ActivityList'
 import SuggestionBox from '../components/Editor/SuggestionBox'
 import { MultimediaBlock } from '../components/Editor/EditorBlocks'
+import { Toast } from '../components/Common/Toast'
 
 // Datos de ejemplo para el sistema
 const examplePlanning = {
@@ -158,8 +159,13 @@ export default function Planificador() {
     setResources([...resources, newRes])
   }
 
+  const [toast, setToast] = useState(null)
+
   const handleSave = async () => {
-    if (!title) return alert('Por favor ingresa un título')
+    if (!title) {
+        setToast({ message: 'Por favor ingresa un título', type: 'error' })
+        return
+    }
     setLoading(true)
     const payload = {
       titulo: title,
@@ -180,10 +186,10 @@ export default function Planificador() {
     try {
       if (editId) await planificacionAPI.update(editId, payload)
       else await planificacionAPI.create(payload)
-      alert('¡Planificación guardada con éxito!')
-      navigate('/historial')
+      setToast({ message: '¡Planificación guardada con éxito!', type: 'success' })
+      setTimeout(() => navigate('/historial'), 1500)
     } catch (err) {
-      alert('Error al guardar')
+      setToast({ message: 'Error al guardar', type: 'error' })
     } finally {
       setLoading(false)
     }
@@ -193,6 +199,7 @@ export default function Planificador() {
 
   return (
     <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-700 pb-20">
+      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
       
       {/* ── HEADER DE ACCIÓN ── */}
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 sticky top-0 z-30 py-4 bg-[#050505]/80 backdrop-blur-xl border-b border-white/5">

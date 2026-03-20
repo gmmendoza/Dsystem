@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react'
 import { 
   Folder, FolderOpen, ChevronRight, Search, 
   Calendar, FileText, Filter, MoreHorizontal,
-  Clock, Download
+  Clock, Download, ExternalLink
 } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 import { planificacionAPI } from '../services/api'
 
 export default function Historial() {
+  const navigate = useNavigate()
   const [planes, setPlanes] = useState([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')

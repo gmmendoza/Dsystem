@@ -148,8 +148,20 @@ export default function AulaWorkspace() {
                    <div className="h-[1px] flex-1 bg-white/5 mx-6" />
                 </div>
              {planes.length === 0 ? (
-               <div className="py-20 text-center border-2 border-dashed border-white/5 rounded-[2rem]">
-                  <p className="text-xs font-black uppercase tracking-widest text-gray-700">No hay planificaciones en esta aula</p>
+               <div className="py-20 text-center border-2 border-dashed border-white/5 rounded-[3rem] space-y-6 bg-white/[0.01]">
+                  <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto text-gray-700">
+                    <FileText size={32} />
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-sm font-black uppercase italic text-gray-400">¿Empezamos con la primera?</p>
+                    <p className="text-[9px] font-bold text-gray-700 uppercase tracking-widest">Organizá tu aula creando tu primer plan docente.</p>
+                  </div>
+                  <button 
+                    onClick={() => navigate(`/planificador?cursoId=${id}`)}
+                    className="px-6 py-3 bg-white/5 hover:bg-white/10 text-[9px] font-black uppercase tracking-widest text-white rounded-xl border border-white/5 transition-all"
+                  >
+                    + Crear Planificación
+                  </button>
                </div>
              ) : (
                planes.map(plan => (

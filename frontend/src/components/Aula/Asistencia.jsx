@@ -9,13 +9,14 @@ import {
   Loader2,
   Users
 } from 'lucide-react';
-import { asistenciaAPI } from '../../services/api';
+import { Toast } from '../Common/Toast';
 
 export default function Asistencia({ cursoId, alumnos }) {
   const [fecha, setFecha] = useState(new Date().toISOString().split('T')[0]);
   const [registros, setRegistros] = useState({});
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [toast, setToast] = useState(null);
 
   useEffect(() => {
     fetchAsistencia();
@@ -43,7 +44,9 @@ export default function Asistencia({ cursoId, alumnos }) {
     setSaving(true);
     try {
       await asistenciaAPI.save(cursoId, fecha, registros);
-      alert('¡Asistencia guardada correctamente!');
+      setToast({ message: '¡Asistencia guardada correctamente!', type: 'success' });
+    } catch (err) {
+      setToast({ message: 'Error al guardar asistencia', type: 'error' });
     } finally {
       setSaving(false);
     }
@@ -57,6 +60,7 @@ export default function Asistencia({ cursoId, alumnos }) {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
+      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
       
       {/* ── HEADER ASISTENCIA ── */}
       <div className="flex flex-col md:flex-row justify-between items-center bg-black/40 border border-white/5 p-8 rounded-[2rem] gap-6">
