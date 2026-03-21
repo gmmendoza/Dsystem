@@ -18,12 +18,18 @@ const initialMaterias = [
 ];
 
 const getLS = (key, initial) => {
-  const saved = localStorage.getItem(key);
-  if (!saved) {
+  try {
+    const saved = localStorage.getItem(key);
+    if (!saved) {
+      localStorage.setItem(key, JSON.stringify(initial));
+      return initial;
+    }
+    return JSON.parse(saved);
+  } catch (err) {
+    console.warn(`Error parsing LS key ${key}, resetting to initial`, err);
     localStorage.setItem(key, JSON.stringify(initial));
     return initial;
   }
-  return JSON.parse(saved);
 };
 
 const setLS = (key, data) => localStorage.setItem(key, JSON.stringify(data));

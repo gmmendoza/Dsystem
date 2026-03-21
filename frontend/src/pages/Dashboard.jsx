@@ -18,7 +18,9 @@ import {
   Trophy,
   Activity,
   ChevronRight,
-  Bot
+  Bot,
+  Layout,
+  FileText
 } from 'lucide-react'
 import { useAI } from '../context/AIContext'
 import { mockDataService } from '../services/mockDataService'
@@ -255,7 +257,7 @@ export default function Dashboard() {
                 </span>
              </div>
              <div className="space-y-2">
-                {suggestions.filter(s => s.type === 'danger').slice(0, 2).map((s, i) => (
+                {(suggestions || []).filter(s => s.type === 'danger').slice(0, 2).map((s, i) => (
                    <div key={i} className="flex items-center justify-between p-3 bg-white dark:bg-slate-900/50 border border-black/5 dark:border-white/5 rounded-xl group/item">
                       <div className="flex items-center gap-3">
                          <div className="w-8 h-8 bg-red-500/10 rounded-lg flex items-center justify-center text-red-500 text-[10px] font-black">
