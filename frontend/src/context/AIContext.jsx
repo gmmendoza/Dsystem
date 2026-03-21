@@ -10,34 +10,30 @@ function buildSystemPrompt() {
   const alumnos = mockDataService.getAlumnos()
   const cursos  = mockDataService.getCursos()
 
-  const lowAtt  = alumnos.filter(a => a.asistencia < 80)
+  const lowAtt  = alumnos.filter(a => (a.asistencia || 0) < 80)
   const atRisk  = alumnos.filter(a => {
-    if (!a.notas) return false
-    const vals = Object.values(a.notas)
-    const avg  = vals.reduce((s, v) => s + v, 0) / vals.length
+    const vals = Object.values(a.notas || {})
+    if (vals.length === 0) return false
+    const avg  = vals.reduce((s, v) => s + (Number(v) || 0), 0) / vals.length
     return avg < 6
   })
-  const avgAtt = alumnos.length
-    ? (alumnos.reduce((s, a) => s + a.asistencia, 0) / alumnos.length).toFixed(1)
-    : '0'
+  const attendanceSum = alumnos.reduce((s, a) => s + (Number(a.asistencia) || 0), 0)
+  const avgAtt = alumnos.length ? (attendanceSum / alumnos.length).toFixed(1) : '0'
 
-  return `Eres DocenTico, el asistente de inteligencia artificial integrado en DSystem, una plataforma SaaS de gestión educativa.
-Tu objetivo es ayudar al docente Prof. Mendoza a gestionar sus aulas, planificaciones y estudiantes de forma eficiente.
+  return `Eres DocenTico, el asistente de inteligencia artificial experto en pedagogía integrado en DSystem.
+Tu objetivo es ayudar al Prof. Mendoza a optimizar su labor docente.
 
-📊 DATOS DEL SISTEMA (actualizado en tiempo real):
-- Total de alumnos: ${alumnos.length}
-- Asistencia promedio: ${avgAtt}%
-- Alumnos con asistencia < 80%: ${lowAtt.length} (${lowAtt.map(a => `${a.nombre} ${a.apellido}`).join(', ') || 'ninguno'})
-- Alumnos en riesgo académico (promedio < 6): ${atRisk.length} (${atRisk.map(a => `${a.nombre} ${a.apellido}`).join(', ') || 'ninguno'})
-- Aulas activas: ${cursos.length}
+📊 ESTADO DEL AULA:
+- Alumnos: ${alumnos.length}
+- Asistencia: ${avgAtt}%
+- En riesgo académico: ${atRisk.length} (${atRisk.map(a => `${a.nombre}`).join(', ')})
+- Alumnos destacados (mejora > 10% asistencia): ${alumnos.filter(a => (a.asistencia || 0) > 95).length}
 
-📌 INSTRUCCIONES:
-- Responde siempre en español, de forma concisa y directa.
-- Usa datos reales del sistema cuando corresponda.
-- Termina las sugerencias con UNA acción concreta y específica.
-- Si detectas un problema urgente (asistencia < 70% o promedio < 5), marqualo como URGENTE.
-- Usa negritas para valores importantes.
-- No inventes datos que no estén en el contexto.`
+📌 NORMAS:
+- Sugiere ACCIONES ASISTIDAS (ej: "Crear plan de refuerzo", "Enviar felicitación").
+- Sé proactivo: si ves que falta planificación en un aula, coméntalo.
+- Usa un tono profesional pero motivador.
+- Limita tus respuestas a 2-3 párrafos cortos.`
 }
 
 export function AIProvider({ children }) {
@@ -50,7 +46,7 @@ export function AIProvider({ children }) {
     const alumnos = mockDataService.getAlumnos()
     const generated = []
 
-    alumnos.filter(a => a.asistencia < 75).forEach(a => {
+    alumnos.filter(a => (a.asistencia || 0) < 75).forEach(a => {
       generated.push({
         id: `att-${a.id}`, type: 'warning', priority: 'high',
         title: 'Alerta de Inasistencia',
@@ -60,9 +56,9 @@ export function AIProvider({ children }) {
     })
 
     alumnos.filter(a => {
-      if (!a.notas) return false
-      const vals = Object.values(a.notas)
-      return (vals.reduce((s, v) => s + v, 0) / vals.length) < 6
+      const vals = Object.values(a.notas || {})
+      if (vals.length === 0) return false
+      return (vals.reduce((s, v) => s + (Number(v) || 0), 0) / vals.length) < 6
     }).forEach(a => {
       generated.push({
         id: `risk-${a.id}`, type: 'danger', priority: 'high',
@@ -72,11 +68,32 @@ export function AIProvider({ children }) {
       })
     })
 
+    alumnos.filter(a => (a.asistencia || 0) > 97).forEach(a => {
+      generated.push({
+        id: `congrat-${a.id}`, type: 'success', priority: 'medium',
+        title: 'Excelente Asistencia',
+        message: `${a.nombre} tiene asistencia perfecta (100%). ¿Querés enviarle una felicitación a sus padres?`,
+        action: { label: 'Enviar WhatsApp', path: `https://wa.me/5491100000000?text=Felicitaciones%20por%20la%20asistencia%20de%20${a.nombre}` }
+      })
+    })
+
+    const courses = mockDataService.getCursos()
+    courses.forEach(c => {
+      if (!c.metrics?.rendimientoMaterias?.find(m => m.materia === 'Geometría')) {
+       generated.push({
+         id: `gap-geo-${c.id}`, type: 'info', priority: 'low',
+         title: 'Brecha Curricular',
+         message: `En ${c.nombre} no se han planificado contenidos de Geometría este trimestre.`,
+         action: { label: 'Planificar ahora', path: `/planificador?cursoId=${c.id}&suggested=refuerzo-geometria` }
+       })
+      }
+    })
+
     generated.push({
       id: 'pattern-monday', type: 'info', priority: 'medium',
-      title: 'Patrón Detectado',
-      message: 'El curso 3°A registra 40% más inasistencias los lunes. Considerá revisar actividades de inicio de semana.',
-      action: { label: 'Ver estadísticas', path: '/aula/1?tab=progreso' }
+      title: 'Decisión Asistida',
+      message: 'Detecté que los lunes hay 40% más faltas en 3°A. ¿Querés mover el examen del lunes al miércoles?',
+      action: { label: 'Reprogramar', path: '/calendario' }
     })
 
     const sorted = generated.sort((a, b) => a.priority === 'high' ? -1 : 1)
@@ -84,9 +101,8 @@ export function AIProvider({ children }) {
     setUnreadCount(sorted.filter(s => s.priority === 'high').length)
 
     const alumnos2 = mockDataService.getAlumnos()
-    const avg = alumnos2.length
-      ? (alumnos2.reduce((s, a) => s + a.asistencia, 0) / alumnos2.length).toFixed(1)
-      : '0'
+    const attSum = alumnos2.reduce((s, a) => s + (Number(a.asistencia) || 0), 0)
+    const avg = alumnos2.length ? (attSum / alumnos2.length).toFixed(1) : '0'
     setDailySummary({
       greeting: `Buen día, Prof. Mendoza`,
       status: `Hoy tenés ${sorted.filter(s => s.priority === 'high').length} alertas urgentes y ${sorted.length} sugerencias activas.`,
@@ -147,8 +163,38 @@ export function AIProvider({ children }) {
     return mockAIResponse(userMessage)
   }, [])
 
+  /**
+   * Specifically for generating lesson plan content.
+   */
+  const generateSmartFill = useCallback(async (subject, title, onChunk) => {
+    const prompt = `Actúa como un experto pedagogo. Genera una propuesta de planificación docente para la materia "${subject}" con el título "${title}". 
+      
+      IMPORTANTE: Responde ÚNICAMENTE con un objeto JSON válido con esta estructura:
+      {
+        "titulo": "Título optimizado",
+        "objetivos": ["Objetivo 1", "Objetivo 2", "Objetivo 3"],
+        "actividades": ["Actividad 1", "Actividad 2", "Actividad 3"],
+        "evaluacion": "Descripción de la evaluación"
+      }
+      
+      No incluyas explicaciones adicionales, solo el JSON.`
+
+    const result = await callAI(prompt, [], (chunk, full) => {
+      if (onChunk) onChunk(chunk, full)
+    })
+
+    try {
+      // Extract JSON if AI wrapped it in markdown code blocks
+      const jsonMatch = result.match(/\{[\s\S]*\}/)
+      return jsonMatch ? JSON.parse(jsonMatch[0]) : JSON.parse(result)
+    } catch (err) {
+      console.error('Failed to parse AI Smart Fill JSON', err)
+      return null
+    }
+  }, [callAI])
+
   return (
-    <AIContext.Provider value={{ suggestions, dailySummary, unreadCount, refreshSuggestions, callAI }}>
+    <AIContext.Provider value={{ suggestions, dailySummary, unreadCount, refreshSuggestions, callAI, generateSmartFill }}>
       {children}
     </AIContext.Provider>
   )
@@ -166,15 +212,18 @@ function mockAIResponse(prompt) {
   const alumnos = mockDataService.getAlumnos()
 
   if (p.includes('asistencia')) {
-    const low = alumnos.filter(a => a.asistencia < 80)
-    const avg = alumnos.length
-      ? (alumnos.reduce((s, a) => s + a.asistencia, 0) / alumnos.length).toFixed(1) : '0'
-    const names = low.map(a => `**${a.nombre} ${a.apellido}** (${a.asistencia}%)`).join(', ')
+    const low = alumnos.filter(a => (a.asistencia || 0) < 80)
+    const attSum = alumnos.reduce((s, a) => s + (Number(a.asistencia) || 0), 0)
+    const avg = alumnos.length ? (attSum / alumnos.length).toFixed(1) : '0'
+    const names = low.map(a => `**${a.nombre} ${a.apellido}** (${a.asistencia || 0}%)`).join(', ')
     return `La asistencia promedio es **${avg}%**.\n\n${low.length > 0 ? `⚠️ ${low.length} alumno${low.length > 1 ? 's' : ''} por debajo del 80%: ${names}.\n\n**Acción recomendada:** Enviá una notificación a los tutores esta semana.` : '✅ Todos los alumnos mantienen buena asistencia.'}`
   }
 
   if (p.includes('riesgo') || p.includes('bajo rendimiento')) {
-    const at = alumnos.filter(a => { if (!a.notas) return false; const v = Object.values(a.notas); return v.reduce((s, n) => s + n, 0) / v.length < 6 })
+    const at = alumnos.filter(a => { 
+      const v = Object.values(a.notas || {}); 
+      return v.length > 0 && (v.reduce((s, n) => s + (Number(n) || 0), 0) / v.length < 6) 
+    })
     return at.length
       ? `Detecté **${at.length} alumnos en riesgo académico**: ${at.map(a => `**${a.nombre} ${a.apellido}**`).join(', ')}.\n\n**Sugerencia:** Creá un plan de refuerzo personalizado desde el Planificador para estos estudiantes.`
       : '✅ Todos los alumnos tienen rendimiento aceptable actualmente.'
@@ -185,8 +234,12 @@ function mockAIResponse(prompt) {
   }
 
   if (p.includes('resumen') || p.includes('semana')) {
-    const avg = alumnos.length ? (alumnos.reduce((s, a) => s + a.asistencia, 0) / alumnos.length).toFixed(1) : '0'
-    const at = alumnos.filter(a => { if (!a.notas) return false; const v = Object.values(a.notas); return v.reduce((s, n) => s + n, 0) / v.length < 6 }).length
+    const attSum = alumnos.length ? alumnos.reduce((s, a) => s + (Number(a.asistencia) || 0), 0) : 0
+    const avg = alumnos.length ? (attSum / alumnos.length).toFixed(1) : '0'
+    const at = alumnos.filter(a => { 
+      const v = Object.values(a.notas || {}); 
+      return v.length > 0 && (v.reduce((s, n) => s + (Number(n) || 0), 0) / v.length < 6) 
+    }).length
     return `**Resumen de la semana:**\n\n📊 Asistencia general: **${avg}%**\n⚠️ Alumnos en riesgo: **${at}**\n📋 Planes activos: **12**\n\n**Prioridad esta semana:** Hacer seguimiento de alumnos con inasistencia y crear planes de refuerzo antes del viernes.`
   }
 

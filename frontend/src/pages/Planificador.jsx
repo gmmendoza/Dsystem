@@ -31,6 +31,7 @@ import {
 } from 'lucide-react'
 import { planificacionAPI, cursoAPI } from '../services/api'
 import { Toast } from '../components/Common/Toast'
+import { useAI } from '../context/AIContext'
 
 export default function Planificador() {
   const [searchParams] = useSearchParams()
@@ -41,6 +42,8 @@ export default function Planificador() {
   const [cursos, setCursos] = useState([])
   const [saveStatus, setSaveStatus] = useState('saved') // 'saved', 'saving', 'unsaved'
   const [lastSaved, setLastSaved] = useState(null)
+  const [aiStatus, setAiStatus] = useState(null) // 'analyzing', 'connecting', 'synthesizing'
+  const { generateSmartFill } = useAI()
   
   const [formData, setFormData] = useState({
     titulo: '',
@@ -70,7 +73,10 @@ export default function Planificador() {
     if (cursoIdParam) setFormData(prev => ({ ...prev, cursoId: cursoIdParam }))
     
     if (suggested === 'refuerzo-geometria') {
-       handleSmartFill('geometría')
+       // Automatic Smart Fill trigger for specific suggestions
+       setTimeout(() => {
+          if (formData.materia && formData.titulo) handleSmartFill()
+       }, 500)
     }
   }, [searchParams])
 
@@ -116,34 +122,50 @@ export default function Planificador() {
     }
   }
 
-  const handleSmartFill = async (topic = 'general') => {
-    setIsSmartFilling(true)
-    setToast({ message: 'DocenTico está analizando el currículum...', type: 'info' })
-    
-    await new Promise(r => setTimeout(r, 2000))
-    
-    const subject = formData.materia || 'General'
-    const title = formData.titulo || 'Nueva Unidad'
-
-    const aiProposal = {
-        titulo: title.includes('Nueva') ? `Unidad: ${subject} Avanzado` : title,
-        objetivos: [
-            `Analizar conceptos fundamentales de ${subject}`,
-            `Aplicar metodologías activas en el aula de ${formData.nivel || 'Primaria'}`,
-            `Desarrollar competencias críticas mediante el uso de recursos digitales`
-        ],
-        actividades: [
-            `Sesión introductoria: Debate sobre ${subject} en la actualidad`,
-            `Taller práctico: Resolución de casos reales vinculados a ${subject}`,
-            `Presentación colectiva de resultados y co-evaluación`
-        ],
-        evaluacion: `Rúbrica de desempeño basada en la participación, el trabajo colaborativo y la comprensión técnica de ${subject}.`,
-        materia: subject
+  const handleSmartFill = async () => {
+    if (!formData.materia || !formData.titulo) {
+       setToast({ message: 'Escribe al menos un título y materia para que la IA tenga contexto.', type: 'info' })
+       return
     }
 
-    setFormData(prev => ({ ...prev, ...aiProposal }))
-    setIsSmartFilling(false)
-    setToast({ message: 'Propuesta generada con éxito', type: 'success' })
+    setIsSmartFilling(true)
+    setAiStatus('analyzing')
+    setToast({ message: 'DocenTico está analizando el currículum...', type: 'info' })
+    
+    try {
+      // Step 1: Analyzing
+      await new Promise(r => setTimeout(r, 1200))
+      setAiStatus('connecting')
+      
+      // Step 2: Generating real content
+      const proposal = await generateSmartFill(formData.materia, formData.titulo)
+      
+      if (!proposal) throw new Error('AI returned null')
+      
+      setAiStatus('synthesizing')
+      await new Promise(r => setTimeout(r, 1000))
+
+      setFormData(prev => ({ 
+        ...prev, 
+        ...proposal,
+        objetivos: proposal.objetivos?.length ? proposal.objetivos : prev.objetivos,
+        actividades: proposal.actividades?.length ? proposal.actividades : prev.actividades
+      }))
+      
+      setToast({ message: 'Propuesta pedagógica generada con éxito', type: 'success' })
+    } catch (err) {
+      console.error(err)
+      setToast({ message: 'Error al conectar con la IA. Usando borrador local.', type: 'error' })
+      // Fallback
+      setFormData(prev => ({
+        ...prev,
+        objetivos: [`Explorar fundamentos de ${prev.materia}`, `Aplicar casos prácticos de ${prev.titulo}`],
+        actividades: [`Debate inicial sobre ${prev.titulo}`, `Resolución de problemas en clase`]
+      }))
+    } finally {
+      setIsSmartFilling(false)
+      setAiStatus(null)
+    }
   }
 
   const handleDownloadPDF = () => {
@@ -255,12 +277,16 @@ export default function Planificador() {
 
            <div className="flex items-center gap-3">
                <button 
-                 onClick={() => handleSmartFill()}
+                 onClick={handleSmartFill}
                  disabled={isSmartFilling}
-                 className="btn-secondary py-2.5 px-4 text-[10px] flex items-center gap-2 border-primary-500/20 text-primary-600 dark:text-primary-400 hover:border-primary-500/50 group"
+                 className={`btn-secondary py-2.5 px-4 text-[10px] flex items-center gap-2 border-primary-500/20 text-primary-600 dark:text-primary-400 hover:border-primary-500/50 group ${isSmartFilling ? 'animate-pulse' : ''}`}
                >
-                 <Bot size={16} className="group-hover:scale-110 transition-transform" /> 
-                 {isSmartFilling ? 'Analizando...' : 'Smart Fill IA'}
+                 <Bot size={16} className={`${isSmartFilling ? 'animate-spin' : 'group-hover:scale-110'} transition-all`} /> 
+                 {isSmartFilling ? (
+                    aiStatus === 'analyzing' ? 'Analizando...' :
+                    aiStatus === 'connecting' ? 'Conectando...' :
+                    'Sintetizando...'
+                 ) : 'Smart Fill IA'}
                </button>
               <button 
                 onClick={handleSubmit}

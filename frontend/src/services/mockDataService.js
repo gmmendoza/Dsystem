@@ -56,8 +56,8 @@ export const mockDataService = {
     const updated = students.map(s => s.id === Number(id) ? { 
       ...s, 
       ...data,
-      asistencia: Number(data.asistencia) || s.asistencia || 100,
-      participacion: Number(data.participacion) || s.participacion || 100
+      asistencia: Number(data.asistencia) || s.asistencia || 90,
+      participacion: Number(data.participacion) || s.participacion || 90
     } : s);
     setLS(KEYS.ALUMNOS, updated);
     return updated.find(s => s.id === Number(id));
