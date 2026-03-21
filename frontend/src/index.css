@@ -4,243 +4,99 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ─── LIGHT MODE TOKENS ─────────────────────────────────────── */
+/* ─── PREMIUM SAAS TOKENS ───────────────────────────────────── */
 :root {
-  --color-surface:          250 250 250;   /* zinc-50 */
-  --color-surface-subtle:   244 244 245;   /* zinc-100 */
-  --color-surface-muted:    228 228 231;   /* zinc-200 */
-  --color-surface-elevated: 255 255 255;   /* white */
-  --color-primary:          99 102 241;    /* indigo-500 */
-  --color-text:             15 23 42;      /* slate-900 */
-  --color-text-muted:       100 116 139;   /* slate-500 */
-  --color-border:           226 232 240;   /* slate-200 */
-  --color-border-strong:    203 213 225;   /* slate-300 */
+  --color-surface:          255 255 255;
+  --color-surface-subtle:   248 250 252;
+  --color-surface-muted:    241 245 249;
+  --color-surface-elevated: 255 255 255;
+  --color-primary:          99 102 241;
+  --color-text:             15 23 42;
+  --color-text-muted:       100 116 139;
+  --color-border:           226 232 240;
+  --color-border-strong:    203 213 225;
 
   --sidebar-width: 260px;
   --sidebar-collapsed: 72px;
   --header-height: 64px;
 }
 
-/* ─── DARK MODE TOKENS ──────────────────────────────────────── */
-.dark {
-  --color-surface:          9 9 11;        /* zinc-950 */
-  --color-surface-subtle:   18 18 22;      /* custom dark */
-  --color-surface-muted:    30 30 38;      /* custom dark-2 */
-  --color-surface-elevated: 24 24 30;      /* custom dark-3 */
-  --color-primary:          129 140 248;   /* indigo-400 */
-  --color-text:             248 250 252;   /* slate-50 */
-  --color-text-muted:       148 163 184;   /* slate-400 */
+[data-theme='dark'] {
+  --color-surface:          15 23 42;
+  --color-surface-subtle:   17 24 39;
+  --color-surface-muted:    31 41 55;
+  --color-surface-elevated: 24 24 30;
+  --color-primary:          129 140 248;
+  --color-text:             248 250 252;
+  --color-text-muted:       148 163 184;
   --color-border:           30 30 38;
   --color-border-strong:    52 52 68;
 }
 
-/* ─── BASE RESET ────────────────────────────────────────────── */
 @layer base {
   *, *::before, *::after {
     @apply transition-colors duration-150;
-    box-sizing: border-box;
   }
-
-  html {
-    scroll-behavior: smooth;
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
-  }
-
   body {
     background-color: rgb(var(--color-surface));
     color: rgb(var(--color-text));
     @apply font-sans antialiased;
-    font-feature-settings: 'cv11', 'ss01', 'ss03';
-  }
-
-  h1, h2, h3, h4, h5, h6 {
-    color: rgb(var(--color-text));
-    font-feature-settings: 'ss01';
-  }
-
-  ::selection {
-    background: rgb(var(--color-primary) / 0.25);
   }
 }
 
-/* ─── COMPONENT UTILITIES ───────────────────────────────────── */
 @layer components {
+  /* Modern SaaS Shadow Tokens */
+  .shadow-premium {
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.02), 0 12px 24px rgba(0,0,0,0.03);
+  }
+  
+  .dark .shadow-premium {
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.05), 0 24px 48px -12px rgba(0,0,0,0.5);
+  }
 
-  /* Buttons */
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 font-semibold text-[13px] tracking-wide
+    @apply inline-flex items-center justify-center gap-2 font-black text-[10px] tracking-widest uppercase
            bg-primary-600 hover:bg-primary-500 text-white
-           py-2.5 px-5 rounded-xl border border-primary-500/30
-           transition-all duration-200 shadow-card hover:shadow-glow-primary
-           active:scale-[0.97] disabled:opacity-50 disabled:cursor-not-allowed;
+           py-4 px-8 rounded-2xl border border-primary-500/30
+           transition-all duration-300 shadow-lg shadow-indigo-600/20
+           active:scale-95 disabled:opacity-50;
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 font-semibold text-[13px] tracking-wide
-           bg-surface-elevated border border-zinc-200 dark:border-zinc-700
-           hover:bg-surface-subtle
-           py-2.5 px-5 rounded-xl
-           transition-all duration-200 shadow-card active:scale-[0.97];
+    @apply inline-flex items-center justify-center gap-2 font-black text-[10px] tracking-widest uppercase
+           bg-surface-subtle border border-black/5 dark:border-white/5
+           hover:bg-surface-muted py-4 px-8 rounded-2xl
+           transition-all duration-300 active:scale-95;
     color: rgb(var(--color-text));
   }
 
-  .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 font-semibold text-[13px]
-           hover:bg-surface-subtle rounded-xl py-2 px-3
-           transition-all duration-150 active:scale-[0.97];
-    color: rgb(var(--color-text-muted));
-  }
-
-  .btn-ghost:hover {
-    color: rgb(var(--color-text));
-  }
-
-  /* Cards */
-  .card {
-    @apply bg-surface-elevated rounded-2xl shadow-card transition-all duration-200 border border-zinc-200 dark:border-zinc-800;
-  }
-
-  .card-hover {
-    @apply card hover:shadow-card-hover hover:-translate-y-[2px] cursor-pointer;
-  }
-
-  .card-glass {
-    @apply rounded-2xl backdrop-blur-xl shadow-card border border-zinc-200 dark:border-zinc-800;
-    background: rgb(var(--color-surface-elevated) / 0.7);
-  }
-
-  /* Inputs */
-  .input-field {
-    @apply w-full font-medium text-sm rounded-xl px-4 py-2.5
-           border bg-surface-elevated
-           outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500/50
-           transition-all duration-200 placeholder:text-slate-400;
-    color: rgb(var(--color-text));
-    border-color: rgb(var(--color-border));
-  }
-
-  .input-field:focus {
-    background: rgb(var(--color-surface-elevated));
-  }
-
-  /* Labels */
-  .label {
-    @apply block text-[11px] font-semibold uppercase tracking-widest mb-1.5;
-    color: rgb(var(--color-text-muted));
-  }
-
-  /* Badges */
-  .badge {
-    @apply inline-flex items-center gap-1.5 px-2.5 py-[3px] rounded-full text-[11px] font-semibold;
-  }
-
-  .badge-primary {
-    @apply badge bg-primary-500/10 text-primary-600 dark:text-primary-400 border border-primary-500/20;
-  }
-
-  .badge-danger {
-    @apply badge bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20;
-  }
-
-  .badge-success {
-    @apply badge bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20;
-  }
-
-  .badge-warning {
-    @apply badge bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20;
-  }
-
-  /* Chips (bigger than badge) */
-  .chip {
-    @apply inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[12px] font-semibold border
-           transition-all duration-200 cursor-pointer;
-  }
-
-  /* Sidebar nav item */
-  .nav-item {
-    @apply flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-semibold
-           transition-all duration-150 cursor-pointer;
-    color: rgb(var(--color-text-muted));
-  }
-
-  .nav-item:hover {
-    background: rgb(var(--color-surface-subtle));
-    color: rgb(var(--color-text));
-  }
-
-  .nav-item.active {
-    @apply bg-primary-500/10 text-primary-600 dark:text-primary-400 border border-primary-500/20;
-  }
-
-  /* KPI metric number */
-  .metric-value {
-    @apply text-3xl font-bold tracking-tight;
-    color: rgb(var(--color-text));
-  }
-
-  .metric-label {
-    @apply text-[12px] font-semibold uppercase tracking-wider;
-    color: rgb(var(--color-text-muted));
-  }
-
-  /* Section heading */
-  .section-title {
-    @apply text-[11px] font-bold uppercase tracking-widest;
-    color: rgb(var(--color-text-muted));
-  }
-
-  /* Divider */
-  .divider {
-    @apply border-t;
-    border-color: rgb(var(--color-border));
-  }
-
-  /* Skeleton shimmer */
-  .skeleton {
-    @apply rounded-lg;
-    background: linear-gradient(
-      90deg,
-      rgb(var(--color-surface-subtle)) 0%,
-      rgb(var(--color-surface-muted)) 50%,
-      rgb(var(--color-surface-subtle)) 100%
-    );
-    background-size: 200% 100%;
-    animation: shimmer 1.6s linear infinite;
-  }
-
-  /* AI glow ring */
-  .ai-ring {
-    @apply rounded-full;
-    box-shadow: 0 0 0 3px rgb(var(--color-primary) / 0.15),
-                0 0 0 6px rgb(var(--color-primary) / 0.07);
-    animation: glow 2s ease-in-out infinite alternate;
-  }
-
-  /* Scrollbar */
-  .custom-scrollbar::-webkit-scrollbar        { width: 4px; height: 4px; }
-  .custom-scrollbar::-webkit-scrollbar-track  { background: transparent; }
-  .custom-scrollbar::-webkit-scrollbar-thumb  {
-    background: rgb(var(--color-border-strong));
-    border-radius: 99px;
-  }
-  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: rgb(var(--color-primary) / 0.6);
+  .card-premium {
+    @apply bg-white dark:bg-slate-900 rounded-[2.5rem] border border-black/5 dark:border-white/5 shadow-premium transition-all duration-500;
   }
 }
 
-/* ─── PAGE TRANSITIONS ───────────────────────────────────────── */
-@keyframes fadeIn   { from { opacity: 0 } to { opacity: 1 } }
-@keyframes slideUp  { from { opacity: 0; transform: translateY(12px) } to { opacity: 1; transform: none } }
-@keyframes shimmer  { from { background-position: -200% 0 } to { background-position: 200% 0 } }
-@keyframes float    { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-6px) } }
-@keyframes glow     { from { box-shadow: 0 0 12px rgb(99 102 241 / 0.2) } to { box-shadow: 0 0 28px rgb(99 102 241 / 0.5) } }
+/* AI Specific Effects */
+.bg-ai-gradient {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #4f46e5 100%);
+}
 
-.page-enter { animation: slideUp 0.35s cubic-bezier(0.4,0,0.2,1) forwards; }
+.ai-shimmer {
+  position: relative;
+  overflow: hidden;
+}
 
-/* Focus visible outline (accessible) */
-*:focus-visible {
-  outline: 2px solid rgb(var(--color-primary) / 0.8);
-  outline-offset: 2px;
-  border-radius: 6px;
+.ai-shimmer::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent 20%, rgba(255,255,255,0.1) 50%, transparent 80%);
+  animation: shimmer-rotation 6s linear infinite;
+}
+
+@keyframes shimmer-rotation {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }

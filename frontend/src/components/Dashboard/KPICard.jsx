@@ -3,65 +3,46 @@ import { TrendingUp, TrendingDown, Minus } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
 /**
- * KPI metric card
- * @param {string}   label   - Metric label
- * @param {string}   value   - Main value
- * @param {string}   delta   - e.g. "+12%" or "-3%"
- * @param {boolean}  deltaPositive - null = neutral
- * @param {Component} icon   - Lucide icon
- * @param {string}   color   - Tailwind text color class for icon
- * @param {string}   bg      - Tailwind bg class for icon container
- * @param {string}   href    - Optional navigation link
- * @param {string}   subtitle - Optional subtitle
+ * KPI metric card - Premium Version
  */
 export default function KPICard({ label, value, delta, deltaPositive, icon: Icon, color, bg, href, subtitle }) {
   const navigate = useNavigate()
 
-  const DeltaIcon = deltaPositive === true
-    ? TrendingUp
-    : deltaPositive === false
-      ? TrendingDown
-      : Minus
-
-  const deltaColor = deltaPositive === true
-    ? 'text-emerald-500'
-    : deltaPositive === false
-      ? 'text-red-500'
-      : 'text-slate-400'
+  const DeltaIcon = deltaPositive === true ? TrendingUp : deltaPositive === false ? TrendingDown : Minus
+  const deltaColor = deltaPositive === true ? 'text-emerald-500' : deltaPositive === false ? 'text-red-500' : 'text-slate-400'
 
   return (
     <motion.div
-      whileHover={href ? { y: -2, boxShadow: '0 8px 30px -4px rgb(0 0 0 / 0.12)' } : {}}
+      whileHover={href ? { y: -4, scale: 1.02 } : { y: -2 }}
       onClick={href ? () => navigate(href) : undefined}
-      className={`card p-6 flex flex-col gap-4 ${href ? 'cursor-pointer' : ''}`}
+      className={`bg-white dark:bg-slate-900 border border-black/5 dark:border-white/5 p-10 rounded-[3rem] shadow-premium transition-all duration-300 ${href ? 'cursor-pointer active:scale-95' : ''}`}
     >
-      {/* Top row */}
-      <div className="flex items-start justify-between">
-        <div className={`w-10 h-10  flex items-center justify-center rounded-xl ${bg || 'bg-primary-500/10'}`}>
-          {Icon && <Icon className={`${color || 'text-primary-500'}`} size={20} />}
+      <div className="flex items-start justify-between mb-8">
+        <div className={`w-14 h-14 flex items-center justify-center rounded-2xl ${bg || 'bg-primary-500/10'}`}>
+          {Icon && <Icon className={`${color || 'text-primary-500'}`} size={24} />}
         </div>
         {delta && (
-          <div className={`flex items-center gap-1 text-[11px] font-semibold ${deltaColor}`}>
-            <DeltaIcon size={13} />
+          <div className={`flex items-center gap-1.5 px-3 py-1 bg-surface-subtle dark:bg-white/5 rounded-full text-[10px] font-black ${deltaColor}`}>
+            <DeltaIcon size={12} />
             <span>{delta}</span>
           </div>
         )}
       </div>
 
-      {/* Value */}
-      <div>
-        <p className="text-2xl font-bold tracking-tight" style={{ color: 'rgb(var(--color-text))' }}>
+      <div className="space-y-1">
+        <div className="text-4xl font-black italic tracking-tighter" style={{ color: 'rgb(var(--color-text))' }}>
           {value}
-        </p>
-        <p className="text-[12px] font-semibold mt-0.5" style={{ color: 'rgb(var(--color-text-muted))' }}>
+        </div>
+        <div className="text-[10px] font-black uppercase tracking-widest" style={{ color: 'rgb(var(--color-text-muted))' }}>
           {label}
-        </p>
-        {subtitle && (
-          <p className="text-[11px] mt-1" style={{ color: 'rgb(var(--color-text-muted))' }}>
-            {subtitle}
-          </p>
-        )}
+        </div>
       </div>
+      
+      {subtitle && (
+        <p className="text-[11px] mt-4 font-medium italic opacity-60">
+          {subtitle}
+        </p>
+      )}
     </motion.div>
   )
 }

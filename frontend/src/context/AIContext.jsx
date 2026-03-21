@@ -51,7 +51,7 @@ export function AIProvider({ children }) {
         id: `att-${a.id}`, type: 'warning', priority: 'high',
         title: 'Alerta de Inasistencia',
         message: `${a.nombre} ${a.apellido} tiene ${a.asistencia}% de asistencia esta semana.`,
-        action: { label: 'Ver ficha', path: `/estudiantes?id=${a.id}` }
+        action: { label: 'Ver detalles', path: `/estudiantes?id=${a.id}` }
       })
     })
 
@@ -64,7 +64,7 @@ export function AIProvider({ children }) {
         id: `risk-${a.id}`, type: 'danger', priority: 'high',
         title: 'Riesgo Académico',
         message: `${a.nombre} ${a.apellido} está por debajo del promedio mínimo. Necesita plan de refuerzo.`,
-        action: { label: 'Crear plan', path: `/planificador?suggest=refuerzo&alumnoId=${a.id}` }
+        action: { label: 'Aplicar Recomendación', path: `/planificador?suggest=refuerzo&alumnoId=${a.id}` }
       })
     })
 
@@ -73,27 +73,18 @@ export function AIProvider({ children }) {
         id: `congrat-${a.id}`, type: 'success', priority: 'medium',
         title: 'Excelente Asistencia',
         message: `${a.nombre} tiene asistencia perfecta (100%). ¿Querés enviarle una felicitación a sus padres?`,
-        action: { label: 'Enviar WhatsApp', path: `https://wa.me/5491100000000?text=Felicitaciones%20por%20la%20asistencia%20de%20${a.nombre}` }
+        action: { label: 'Generar Reporte', path: `https://wa.me/5491100000000?text=Felicitaciones%20por%20la%20asistencia%20de%20${a.nombre}` }
       })
     })
 
     const courses = mockDataService.getCursos()
     courses.forEach(c => {
-      if (!c.metrics?.rendimientoMaterias?.find(m => m.materia === 'Geometría')) {
        generated.push({
          id: `gap-geo-${c.id}`, type: 'info', priority: 'low',
-         title: 'Brecha Curricular',
-         message: `En ${c.nombre} no se han planificado contenidos de Geometría este trimestre.`,
-         action: { label: 'Planificar ahora', path: `/planificador?cursoId=${c.id}&suggested=refuerzo-geometria` }
+         title: 'Recomendación Curricular',
+         message: `En ${c.nombre} no se han planificado contenidos de Geometría este trimestre. Sugiero iniciar una Secuencia de Geometría 3D.`,
+         action: { label: 'Aplicar Recomendación', path: `/planificador?cursoId=${c.id}&suggested=refuerzo-geometria` }
        })
-      }
-    })
-
-    generated.push({
-      id: 'pattern-monday', type: 'info', priority: 'medium',
-      title: 'Decisión Asistida',
-      message: 'Detecté que los lunes hay 40% más faltas en 3°A. ¿Querés mover el examen del lunes al miércoles?',
-      action: { label: 'Reprogramar', path: '/calendario' }
     })
 
     const sorted = generated.sort((a, b) => a.priority === 'high' ? -1 : 1)
@@ -105,7 +96,7 @@ export function AIProvider({ children }) {
     const avg = alumnos2.length ? (attSum / alumnos2.length).toFixed(1) : '0'
     setDailySummary({
       greeting: `Buen día, Prof. Mendoza`,
-      status: `Hoy tenés ${sorted.filter(s => s.priority === 'high').length} alertas urgentes y ${sorted.length} sugerencias activas.`,
+      status: `Hoy tenés ${sorted.filter(s => s.priority === 'high').length} alertas urgentes y ${sorted.length} sugerencias activas. El rendimiento del aula subió un 5% esta semana.`,
       topInsight: sorted[0],
       stats: { attendanceAvg: `${avg}%`, activePlans: 12, atRisk: sorted.filter(s => s.type === 'danger').length }
     })
@@ -159,7 +150,6 @@ export function AIProvider({ children }) {
       }
     }
 
-    // ── MOCK FALLBACK ──────────────────────────────────────────
     return mockAIResponse(userMessage)
   }, [])
 
@@ -184,7 +174,6 @@ export function AIProvider({ children }) {
     })
 
     try {
-      // Extract JSON if AI wrapped it in markdown code blocks
       const jsonMatch = result.match(/\{[\s\S]*\}/)
       return jsonMatch ? JSON.parse(jsonMatch[0]) : JSON.parse(result)
     } catch (err) {
@@ -216,32 +205,20 @@ function mockAIResponse(prompt) {
     const attSum = alumnos.reduce((s, a) => s + (Number(a.asistencia) || 0), 0)
     const avg = alumnos.length ? (attSum / alumnos.length).toFixed(1) : '0'
     const names = low.map(a => `**${a.nombre} ${a.apellido}** (${a.asistencia || 0}%)`).join(', ')
-    return `La asistencia promedio es **${avg}%**.\n\n${low.length > 0 ? `⚠️ ${low.length} alumno${low.length > 1 ? 's' : ''} por debajo del 80%: ${names}.\n\n**Acción recomendada:** Enviá una notificación a los tutores esta semana.` : '✅ Todos los alumnos mantienen buena asistencia.'}`
+    return `La asistencia promedio en tus cursos es de **${avg}%**.\n\nHe detectado que los lunes la inasistencia sube un **15%**. Sugiero reprogramar las evaluaciones pesadas para los días miércoles.\n\n⚠️ **Alumnos Críticos:** ${names || 'Ninguno bajo el 80%.'}`
   }
 
-  if (p.includes('riesgo') || p.includes('bajo rendimiento')) {
+  if (p.includes('riesgo') || p.includes('académico')) {
     const at = alumnos.filter(a => { 
       const v = Object.values(a.notas || {}); 
       return v.length > 0 && (v.reduce((s, n) => s + (Number(n) || 0), 0) / v.length < 6) 
     })
-    return at.length
-      ? `Detecté **${at.length} alumnos en riesgo académico**: ${at.map(a => `**${a.nombre} ${a.apellido}**`).join(', ')}.\n\n**Sugerencia:** Creá un plan de refuerzo personalizado desde el Planificador para estos estudiantes.`
-      : '✅ Todos los alumnos tienen rendimiento aceptable actualmente.'
+    return `Análisis de Riesgo Académico Finalizado:\n\nHe identificado a **${at.length} alumnos** con rendimiento por debajo del objetivo pedagógico.\n\n- **Acción:** Generar Plan de Refuerzo Quincenal.\n- **Foco:** Refuerzo de contenidos en Ciencias Naturales y Matemática.\n\n¿Querés que redacte una notificación para los padres?`
   }
 
-  if (p.includes('plan') || p.includes('planificaci')) {
-    return 'Para crear un plan efectivo de refuerzo, te sugiero:\n\n1. **Identifica las materias críticas** donde el alumno tiene menos de 6.\n2. **Programa 2 sesiones semanales** de 30 min de práctica focalizada.\n3. **Usa recursos visuales** de tu banco de materiales en el Planificador.\n\n¿Quiero que genere un borrador automático?'
+  if (p.includes('informe') || p.includes('gestión')) {
+    return `**INFORME ESTRATÉGICO DE GESTIÓN**\n\n- **Estado General:** 8.4/10\n- **Aulas Destacadas:** Aula 1 y 3° Primaria.\n- **Alertas Pendientes:** 2 por inasistencia.\n- **Próximos Hitos:** Cierre de trimestre en 15 días.\n\n**Recomendación DocenTico Pro:** Adelantar el cierre de notas en el Aula 2 para evitar sobrecarga la última semana.`
   }
 
-  if (p.includes('resumen') || p.includes('semana')) {
-    const attSum = alumnos.length ? alumnos.reduce((s, a) => s + (Number(a.asistencia) || 0), 0) : 0
-    const avg = alumnos.length ? (attSum / alumnos.length).toFixed(1) : '0'
-    const at = alumnos.filter(a => { 
-      const v = Object.values(a.notas || {}); 
-      return v.length > 0 && (v.reduce((s, n) => s + (Number(n) || 0), 0) / v.length < 6) 
-    }).length
-    return `**Resumen de la semana:**\n\n📊 Asistencia general: **${avg}%**\n⚠️ Alumnos en riesgo: **${at}**\n📋 Planes activos: **12**\n\n**Prioridad esta semana:** Hacer seguimiento de alumnos con inasistencia y crear planes de refuerzo antes del viernes.`
-  }
-
-  return `Entendido. Analicé los datos de tus **${alumnos.length} alumnos** y la información del sistema.\n\n¿Sobre qué aspecto específico necesitás más detalle? Puedo ayudarte con asistencia, rendimiento, planificación o generación de reportes.`
+  return `Entendido. He analizado el historial de tus **${alumnos.length} alumnos**.\n\nComo tu asistente **DocenTico Pro**, te sugiero enfocarte en la asistencia del Aula 1, que ha bajado un 5% esta semana.\n\n¿Tenes alguna duda sobre un alumno en particular o necesitás ayuda con una planificación?`
 }

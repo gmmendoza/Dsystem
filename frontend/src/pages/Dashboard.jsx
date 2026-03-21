@@ -1,334 +1,255 @@
-import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { alumnoAPI, cursoAPI, planificacionAPI } from '../services/api'
+import { useState, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { 
   Users, 
-  BookOpen, 
   Calendar, 
-  Clock, 
-  CheckCircle2,
-  TrendingUp,
-  Activity,
-  GraduationCap as GradIcon,
+  TrendingUp, 
+  AlertCircle, 
+  Plus, 
+  ArrowRight, 
+  Sparkles, 
+  Zap, 
+  CheckCircle2, 
+  Clock,
+  MoreHorizontal,
+  FileText,
+  Bot,
   ChevronRight,
-  Trophy,
-  Target,
-  Zap,
-  Star,
-  Plus,
-  ArrowRight,
-  Layers,
-  LayoutDashboard
+  TrendingDown,
+  Layout,
+  BookOpen,
+  PieChart,
+  MessageSquare
 } from 'lucide-react'
-import { CardSkeleton } from '../components/Common/LoadingSkeleton'
 import { useAI } from '../context/AIContext'
-import DashboardHero from '../components/Dashboard/DashboardHero'
+import { mockDataService } from '../services/mockDataService'
+import KPICard from '../components/Dashboard/KPICard'
+import { useNavigate } from 'react-router-dom'
 
-export default function Panel() {
+/**
+ * DASHBOARD PRO: AI AS THE PROTAGONIST
+ * Focuses on a Hero Greeting, Actionable AI Cards, and Premium SaaS design.
+ */
+export default function Dashboard() {
+  const { suggestions, dailySummary, refreshSuggestions } = useAI()
   const navigate = useNavigate()
-  const { dailySummary: aiSummary } = useAI()
-  const [stats, setStats] = useState({ alumnos: 0, cursos: 0, planificaciones: 0, inicial: 0, primaria: 0 })
-  const [cursos, setCursos] = useState([])
-  const [recentPlans, setRecentPlans] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [stats, setStats] = useState({ alumnos: 0, cursos: 0, asistencia: '0%', riesgo: 0 })
 
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true)
-      try {
-        const [alumnos, resCursos, plans] = await Promise.all([
-          alumnoAPI.getAll(),
-          cursoAPI.getAll(),
-          planificacionAPI.getAll()
-        ])
-        
-        setCursos(resCursos.data)
-        
-        const inicialCount = plans.data.filter(p => 
-           p.nivel === 'Inicial' || 
-           (resCursos.data.find(c => c.id === Number(p.cursoId))?.nivel === 'Inicial')
-        ).length;
+    refreshSuggestions()
+    const alumnos = mockDataService.getAlumnos()
+    const cursos = mockDataService.getCursos()
+    const avgAtt = alumnos.length ? (alumnos.reduce((s, a) => s + (Number(a.asistencia) || 0), 0) / alumnos.length).toFixed(1) : 0
+    const risk = alumnos.filter(a => (a.asistencia || 0) < 75).length
+    
+    setStats({ alumnos: alumnos.length, cursos: cursos.length, asistencia: `${avgAtt}%`, riesgo: risk })
+  }, [refreshSuggestions])
 
-        setStats({
-          alumnos: alumnos.data.length,
-          cursos: resCursos.data.length,
-          planificaciones: plans.data.length,
-          inicial: inicialCount,
-          primaria: plans.data.length - inicialCount
-        })
-
-        const sorted = plans.data.sort((a, b) => new Date(b.lastModified || b.fechaInicio) - new Date(a.lastModified || a.fechaInicio))
-        setRecentPlans(sorted.slice(0, 3))
-      } catch (err) {
-        console.error(err)
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchData()
-  }, [])
-
-  const statCards = [
-    { label: 'Impacto en Alumnos', value: stats.alumnos, icon: Users, color: 'text-primary-600', bg: 'bg-primary-500/10' },
-    { label: 'Proyectos Inicial', value: stats.inicial, icon: Star, color: 'text-amber-500', bg: 'bg-amber-500/10' },
-    { label: 'Proyectos Primaria', value: stats.primaria, icon: Target, color: 'text-indigo-500', bg: 'bg-indigo-500/10' },
-  ]
+  const handleApplyRecommendation = (id) => {
+    console.log('Applying recommendation:', id)
+    // Logic to auto-fix or navigate
+  }
 
   return (
-    <div className="space-y-12 animate-fade-in pb-20">
+    <div className="space-y-12 pb-24 max-w-[1600px] mx-auto animate-in fade-in duration-1000">
       
-      {/* ── HEADER PANEL ── */}
-      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 lg:gap-10">
-        <div className="space-y-4">
-          <div className="flex items-center gap-3">
-             <div className="w-10 h-10 bg-primary-600 rounded-xl flex items-center justify-center text-white shadow-xl shadow-primary-900/20 rotate-3">
-                <LayoutDashboard size={20} />
-             </div>
-             <div>
-                <span className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-800 dark:text-gray-400 block">Licencia Profesional</span>
-                <span className="text-[9px] font-bold text-gray-900 dark:text-gray-200 uppercase tracking-widest leading-none">Centro de Control Académico</span>
-             </div>
-          </div>
-          <h2 className="text-4xl md:text-6xl font-black uppercase italic tracking-tighter leading-tight">
-             Panel del <br className="hidden md:block" /> <span className="text-primary-500">Docente</span>.
-          </h2>
-          <p className="text-gray-900 dark:text-gray-400 text-xs md:text-sm font-bold uppercase tracking-widest max-w-xl opacity-90">
-             Bienvenido, Prof. Mendoza. Aquí tienes el resumen de tu ciclo lectivo 2026.
-          </p>
-        </div>
+      {/* ── SECTION 0: AI HERO ───────────────────────────────────── */}
+      <section className="relative overflow-hidden group">
+        <div className="absolute inset-0 bg-ai-gradient rounded-[3.5rem] shadow-2xl shadow-indigo-500/20" />
         
-        <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
-          <button 
-            onClick={() => navigate('/planificador')}
-            className="group w-full sm:w-auto px-8 py-4 bg-primary-600 hover:bg-primary-500 text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-2xl transition-all shadow-2xl shadow-primary-900/40 flex items-center justify-center gap-3 hover:-translate-y-1"
-          >
-            <Plus size={16} /> Nueva Planificación
-          </button>
-        </div>
-      </div>
-
-      {aiSummary && <DashboardHero summary={aiSummary} />}
-
-      <div className="grid grid-cols-1 xl:grid-cols-12 gap-10">
+        {/* Animated Orbs */}
+        <div className="absolute -top-24 -right-24 w-96 h-96 bg-white/10 rounded-full blur-[100px] animate-pulse" />
+        <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-indigo-400/20 rounded-full blur-[100px]" />
         
-        {/* ── SECCIÓN IZQUIERDA: RESUMEN Y AULAS ── */}
-        <div className="xl:col-span-8 space-y-12">
-          
-          {/* ESTA SEMANA */}
-          <section className="space-y-6">
-            <div className="flex items-center justify-between px-2">
-               <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-900 dark:text-gray-400 flex items-center gap-3">
-                  <Activity className="text-primary-500" size={16} /> Resumen Semanal
-               </h3>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-               <div className="bg-surface-subtle border border-black/10 dark:border-white/5 p-6 rounded-3xl space-y-4 shadow-sm hover:shadow-md transition-shadow">
-                  <div className="flex items-center gap-3 text-primary-600 dark:text-primary-400">
-                     <BookOpen size={18} />
-                     <span className="text-[9px] font-black uppercase tracking-widest opacity-80">Planificaciones</span>
-                  </div>
-                  <p className="text-3xl font-black italic">{stats.planificaciones} <span className="text-[10px] text-gray-900 dark:text-gray-500 not-italic uppercase tracking-widest">Creadas</span></p>
-               </div>
-               <div className="bg-surface-subtle border border-black/10 dark:border-white/5 p-6 rounded-3xl space-y-4 shadow-sm hover:shadow-md transition-shadow">
-                  <div className="flex items-center gap-3 text-amber-600 dark:text-amber-500">
-                     <Calendar size={18} />
-                     <span className="text-[9px] font-black uppercase tracking-widest opacity-80">Clases hoy</span>
-                  </div>
-                  <p className="text-3xl font-black italic">4 <span className="text-[10px] text-gray-900 dark:text-gray-500 not-italic uppercase tracking-widest">Programadas</span></p>
-               </div>
-               <div className="bg-surface-subtle border border-black/10 dark:border-white/5 p-6 rounded-3xl space-y-4 shadow-sm hover:shadow-md transition-shadow">
-                  <div className="flex items-center gap-3 text-red-600 dark:text-red-500">
-                     <Activity size={18} />
-                     <span className="text-[9px] font-black uppercase tracking-widest opacity-80">Pendientes</span>
-                  </div>
-                  <p className="text-3xl font-black italic">1 <span className="text-[10px] text-gray-900 dark:text-gray-500 not-italic uppercase tracking-widest">Evaluación</span></p>
-               </div>
-            </div>
-          </section>
-
-          {/* STATS RAPIDAS */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {loading ? (
-              [...Array(3)].map((_, i) => <CardSkeleton key={i} />)
-            ) : (
-              statCards.map((card, i) => (
-                <div key={i} className="group relative bg-surface-subtle border border-white/5 p-6 rounded-3xl overflow-hidden hover:border-white/10 transition-all hover:bg-surface-muted/50">
-                    <div className="flex justify-between items-start mb-8">
-                      <div className={`p-4 rounded-xl ${card.bg} border border-white/5`}>
-                        <card.icon className={card.color} size={24} />
-                      </div>
-                    </div>
-                    <div>
-                      <p className="text-[9px] font-black uppercase tracking-[0.3em] text-gray-700 mb-1">{card.label}</p>
-                      <p className="text-4xl font-black italic tracking-tighter">{card.value}</p>
-                    </div>
-                </div>
-              ))
-            )}
-          </div>
-
-          {/* MIS AULAS */}
-          <section className="space-y-6">
-            <div className="flex items-center justify-between px-2">
-               <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-900 dark:text-gray-400 flex items-center gap-3">
-                  <Layers className="text-primary-500" size={16} /> Mis Aulas Activas
-               </h3>
-               <button onClick={() => navigate('/mi-aula')} className="text-[9px] font-black uppercase tracking-widest text-primary-600 dark:text-primary-400 hover:text-primary-500 transition-all">Ver todas</button>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-               {loading ? (
-                 [...Array(2)].map((_, i) => <div key={i} className="h-44 bg-white/5 rounded-3xl animate-pulse" />)
-               ) : (
-                 cursos.map(curso => (
-                   <div 
-                     key={curso.id} 
-                     onClick={() => navigate(`/aula/${curso.id}`)}
-                     className="group cursor-pointer bg-surface-subtle border border-black/10 dark:border-white/5 hover:border-primary-500/30 p-8 rounded-[2.5rem] transition-all relative overflow-hidden active:scale-95 hover:bg-primary-500/[0.02] shadow-sm"
-                   >
-                     <div className="relative z-10 space-y-4">
-                        <div className="flex items-center gap-2">
-                           <span className="px-2 py-0.5 bg-primary-500/10 text-[8px] font-black uppercase tracking-widest text-primary-700 dark:text-primary-400 rounded-full border border-primary-500/10">{curso.nivel}</span>
-                           <div className="h-[1px] w-4 bg-gray-300 dark:bg-gray-800" />
-                           <span className="text-[8px] font-bold text-gray-900 dark:text-gray-400 uppercase tracking-widest">{curso.alumnos?.length || 0} Alumnos</span>
-                        </div>
-                        <h4 className="text-2xl font-black uppercase italic tracking-tighter text-gray-900 dark:text-white group-hover:text-primary-500 transition-colors">{curso.nombre}</h4>
-                        <div className="flex items-center gap-2 text-primary-600 dark:text-primary-400 text-[10px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all translate-x-[-10px] group-hover:translate-x-0">
-                           Entrar al Aula <ArrowRight size={14} />
-                        </div>
-                     </div>
-                     <div className="absolute -right-4 -bottom-4 opacity-[0.03] group-hover:opacity-[0.08] transition-all duration-700">
-                        <GradIcon size={120} />
-                     </div>
-                   </div>
-                 ))
-               )}
-            </div>
-          </section>
-
-          {/* HISTORIAL RECIENTE */}
-          <section className="space-y-6">
-             <div className="flex items-center justify-between px-2">
-               <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-600 flex items-center gap-3">
-                  <Clock className="text-amber-500" size={16} /> Editado recientemente
-               </h3>
-             </div>
+        <div className="relative z-10 px-12 py-16 lg:px-20 lg:py-24 flex flex-col lg:flex-row items-center justify-between gap-16 text-white">
+          <div className="max-w-2xl space-y-8">
+            <motion.div 
+               initial={{ opacity: 0, y: 10 }}
+               animate={{ opacity: 1, y: 0 }}
+               className="inline-flex items-center gap-3 px-5 py-2.5 bg-white/10 backdrop-blur-xl rounded-full border border-white/20 text-[10px] font-black uppercase tracking-[0.2em]"
+            >
+               <Bot size={16} className="text-white" />
+               DocenTico Inteligente Activado
+            </motion.div>
             
-            <div className="grid grid-cols-1 gap-4">
-               {recentPlans.map(plan => (
-                 <div 
-                   key={plan.id}
-                   onClick={() => navigate(`/planificador?edit=${plan.id}`)}
-                   className="group bg-surface-subtle/40 dark:bg-black/40 border border-black/5 dark:border-white/5 hover:border-primary-500/20 p-6 rounded-3xl flex items-center gap-6 transition-all cursor-pointer shadow-sm hover:shadow-md"
-                 >
-                    <div className="w-12 h-12 bg-surface-subtle border border-white/5 rounded-2xl flex items-center justify-center text-gray-700 group-hover:text-amber-500 transition-colors">
-                       <BookOpen size={20} />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                       <h4 className="text-sm font-black uppercase italic tracking-tighter truncate text-gray-900 dark:text-gray-100">{plan.titulo}</h4>
-                       <div className="flex items-center gap-3 mt-1">
-                          <span className="text-[9px] font-bold uppercase tracking-widest text-primary-700 dark:text-primary-400">{plan.materia}</span>
-                          <div className="w-1 h-1 rounded-full bg-gray-400" />
-                          <span className="text-[9px] font-bold uppercase tracking-widest text-gray-900 dark:text-gray-500">Sincronizado {new Date(plan.lastModified).toLocaleDateString()}</span>
+            <motion.h1 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.1 }}
+              className="text-6xl lg:text-7xl font-black italic tracking-tighter leading-none"
+            >
+              {dailySummary?.greeting || 'Hola Mendoza'}, <br/>
+              <span className="text-white/50">hoy tenés {suggestions.length} prioridades.</span>
+            </motion.h1>
+
+            <motion.p 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              className="text-xl text-white/70 font-medium leading-relaxed max-w-[500px]"
+            >
+              {dailySummary?.status || 'Analicé el rendimiento de tus aulas. Hay 3 alumnos que necesitan refuerzo inmediato.'}
+            </motion.p>
+            
+            <div className="flex flex-wrap gap-5 pt-4">
+               <button onClick={() => navigate('/planificador')} className="bg-white text-primary-600 px-10 py-5 rounded-2xl font-black text-xs uppercase tracking-widest shadow-2xl shadow-black/10 hover:scale-105 active:scale-95 transition-all">
+                  Generar Plan IA
+               </button>
+               <button onClick={() => navigate('/estudiantes')} className="px-10 py-5 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 font-black text-xs uppercase tracking-widest hover:bg-white/20 transition-all flex items-center gap-3">
+                  Checkeo de Alumnos <ArrowRight size={18} />
+               </button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-6 lg:w-[450px]">
+             <div className="bg-white/10 backdrop-blur-2xl p-10 rounded-[3rem] border border-white/10 flex flex-col justify-between aspect-square group/tile hover:bg-white/20 transition-all cursor-pointer shadow-lg">
+                <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center">
+                   <Users size={24} />
+                </div>
+                <div>
+                   <span className="text-[10px] font-black uppercase tracking-widest text-white/50">Total Alumnos</span>
+                   <div className="text-4xl font-black italic">{stats.alumnos}</div>
+                </div>
+             </div>
+             <div className="bg-white/10 backdrop-blur-2xl p-10 rounded-[3rem] border border-white/10 flex flex-col justify-between aspect-square group/tile hover:bg-white/20 transition-all cursor-pointer shadow-lg">
+                <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center">
+                   <TrendingUp size={24} />
+                </div>
+                <div>
+                   <span className="text-[10px] font-black uppercase tracking-widest text-white/50">Asistencia</span>
+                   <div className="text-4xl font-black italic">{stats.asistencia}</div>
+                </div>
+             </div>
+             <div className="col-span-2 bg-white/5 backdrop-blur-md p-10 rounded-[3rem] border border-white/10 flex items-center justify-between group hover:bg-white/10 transition-all cursor-pointer">
+                <div className="space-y-1">
+                   <span className="text-[10px] font-black uppercase tracking-widest text-white/40">Estado Crítico</span>
+                   <div className="text-2xl font-black italic">{stats.riesgo} Alumnos en riesgo</div>
+                </div>
+                <div className="w-14 h-14 bg-red-500/20 text-red-200 rounded-full flex items-center justify-center animate-pulse">
+                   <AlertCircle size={28} />
+                </div>
+             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── SECTION 1: AI ACTIONABLE GRID (THE CARDS) ─────────────── */}
+      <section className="space-y-10 px-6 lg:px-0">
+        <div className="flex items-center justify-between">
+           <div className="flex items-center gap-4">
+              <div className="w-2 h-7 bg-primary-600 rounded-full" />
+              <h2 className="text-[12px] font-black uppercase tracking-[0.4em] text-gray-500 dark:text-gray-400">Recomendaciones del Asistente</h2>
+           </div>
+           <button onClick={() => navigate('/asistente')} className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-primary-500 hover:tracking-[0.2em] transition-all">
+               Panel de IA Completo <ChevronRight size={14} />
+           </button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+           <AnimatePresence mode="popLayout">
+              {suggestions.map((s, idx) => (
+                <motion.div 
+                  key={s.id}
+                  layout
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: idx * 0.1, duration: 0.5, ease: "easeOut" }}
+                  className="bg-white dark:bg-slate-900 border border-black/5 dark:border-white/5 p-10 rounded-[3.5rem] shadow-premium hover:shadow-2xl hover:border-primary-500/30 transition-all group flex flex-col justify-between min-h-[460px]"
+                >
+                  <div className="space-y-10">
+                    <div className="flex items-center justify-between">
+                       <div className={`w-16 h-16 rounded-[1.5rem] flex items-center justify-center ${
+                          s.type === 'danger' ? 'bg-red-500/10 text-red-600' :
+                          s.type === 'warning' ? 'bg-amber-500/10 text-amber-600' :
+                          'bg-primary-500/10 text-primary-600'
+                       }`}>
+                          {s.type === 'danger' ? <AlertCircle size={28} /> : s.type === 'warning' ? <Zap size={28} /> : <CheckCircle2 size={28} />}
+                       </div>
+                       <div className="flex gap-1">
+                          {[1,2,3].map(i => <div key={i} className="w-1.5 h-1.5 rounded-full bg-black/5 dark:bg-white/10" />)}
                        </div>
                     </div>
-                    <ChevronRight size={18} className="text-gray-800 dark:text-gray-400 transition-all transform group-hover:translate-x-1" />
-                 </div>
-               ))}
-            </div>
-          </section>
 
+                    <div className="space-y-4">
+                       <h3 className="text-2xl font-black italic leading-tight uppercase tracking-tight group-hover:text-primary-600 transition-colors">
+                          {s.title}
+                       </h3>
+                       <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed font-medium">
+                          {s.message}
+                       </p>
+                    </div>
+                  </div>
+
+                  <div className="pt-10 mt-10 border-t border-black/5 dark:border-white/5 space-y-4">
+                     {/* PRIMARY ACTION */}
+                     <button 
+                       onClick={() => navigate(s.action?.path || '/')}
+                       className="w-full bg-primary-600 text-white py-5 rounded-[1.5rem] font-black text-[10px] uppercase tracking-widest shadow-xl shadow-indigo-600/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3"
+                     >
+                        <Zap size={16} /> {s.action?.label || 'Atender Ahora'}
+                     </button>
+                     
+                     {/* SECONDARY ACTIONS */}
+                     <div className="grid grid-cols-2 gap-4">
+                        <button className="bg-surface-subtle dark:bg-white/5 text-gray-700 dark:text-gray-400 py-4 rounded-[1.2rem] font-black text-[9px] uppercase tracking-widest border border-black/5 dark:border-white/5 hover:bg-gray-100 dark:hover:bg-white/10 transition-all flex items-center justify-center gap-2">
+                           <FileText size={14} /> Reporte
+                        </button>
+                        <button 
+                          onClick={() => handleApplyRecommendation(s.id)}
+                          className="bg-surface-subtle dark:bg-white/5 text-gray-700 dark:text-gray-400 py-4 rounded-[1.2rem] font-black text-[9px] uppercase tracking-widest border border-black/5 dark:border-white/5 hover:border-primary-500/20 hover:text-primary-600 transition-all flex items-center justify-center gap-2"
+                        >
+                           <Check size={14} /> Aplicar
+                        </button>
+                     </div>
+                  </div>
+                </motion.div>
+              ))}
+           </AnimatePresence>
         </div>
+      </section>
 
-        {/* ── SECCIÓN DERECHA: PROGRESO Y LOGROS ── */}
-        <div className="xl:col-span-4 space-y-10">
-          
-          {/* TARJETA DE PROGRESO MAESTRO */}
-          <div className="bg-gradient-to-br from-surface to-surface-muted dark:from-[#0A0A0A] dark:to-black border border-black/5 dark:border-white/5 p-10 rounded-[3rem] space-y-8 relative overflow-hidden shadow-2xl">
-             <div className="absolute top-0 right-0 p-6 opacity-[0.02]">
-                <Trophy size={100} />
-             </div>
-             
-             <div className="space-y-2">
-                <p className="text-[10px] font-black uppercase tracking-widest text-primary-500">Progreso Maestro</p>
-                <h3 className="text-3xl font-black uppercase italic tracking-tighter leading-none">Módulo de <span className="text-primary-500">Avance</span></h3>
-             </div>
+      {/* ── SECTION 2: METRIC CARDS ROLL ─────────────────────────── */}
+      <section className="px-6 lg:px-0 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+         <KPICard 
+           label="Planificaciones" 
+           value="12" 
+           delta="+2" 
+           deltaPositive={true} 
+           icon={BookOpen} 
+           bg="bg-indigo-500/10" 
+           color="text-indigo-600" 
+         />
+         <KPICard 
+           label="Rendimiento Prom." 
+           value="7.8" 
+           delta="+0.4" 
+           deltaPositive={true} 
+           icon={PieChart} 
+           bg="bg-emerald-500/10" 
+           color="text-emerald-600" 
+         />
+         <KPICard 
+           label="Mensajes Tutores" 
+           value="5" 
+           icon={MessageSquare} 
+           bg="bg-amber-500/10" 
+           color="text-amber-600" 
+         />
+         <KPICard 
+           label="Materias Cubiertas" 
+           value="85%" 
+           delta="-5%" 
+           deltaPositive={false} 
+           icon={Layout} 
+           bg="bg-violet-500/10" 
+           color="text-violet-600" 
+         />
+      </section>
 
-             <div className="space-y-6">
-                <div className="space-y-3">
-                   <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
-                      <span className="text-gray-600">Temas Dictados vs Planificados</span>
-                      <span className="text-primary-500">72%</span>
-                   </div>
-                   <div className="h-2 bg-white/5 rounded-full overflow-hidden p-[1px] border border-white/5">
-                      <div className="h-full bg-primary-600 w-[72%] rounded-full shadow-[0_0_15px_rgba(59,130,246,0.5)]" />
-                   </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                   <div className="bg-white/[0.02] border border-white/5 p-4 rounded-2xl text-center space-y-2">
-                      <div className="w-10 h-10 bg-green-500/10 rounded-full flex items-center justify-center text-green-500 mx-auto">
-                         <CheckCircle2 size={18} />
-                      </div>
-                      <p className="text-[8px] font-black uppercase tracking-widest text-gray-600 leading-tight">85 Objetivos <br/>Cumplidos</p>
-                   </div>
-                   <div className="bg-white/[0.02] border border-white/5 p-4 rounded-2xl text-center space-y-2">
-                      <div className="w-10 h-10 bg-amber-500/10 rounded-full flex items-center justify-center text-amber-500 mx-auto">
-                         <TrendingUp size={18} />
-                      </div>
-                      <p className="text-[8px] font-black uppercase tracking-widest text-gray-600 leading-tight">Rendimiento <br/>+12% vs 2025</p>
-                   </div>
-                </div>
-             </div>
-          </div>
-
-          {/* ALUMNOS EN RIESGO */}
-          <div className="bg-red-500/5 border border-red-500/10 p-8 rounded-[2rem] space-y-6 shadow-sm">
-             <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                   <Activity size={18} className="text-red-500" />
-                   <h4 className="text-[10px] font-black uppercase tracking-widest">Alumnos en Riesgo (IA)</h4>
-                </div>
-                <span className="px-2 py-0.5 bg-red-500/10 text-red-500 text-[8px] font-black uppercase tracking-widest rounded-full border border-red-500/20">2 Alertas</span>
-             </div>
-             <div className="space-y-3">
-                <div className="flex items-center justify-between p-3 bg-red-500/5 border border-red-500/10 rounded-xl">
-                   <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-red-500/10 rounded-lg flex items-center justify-center text-red-500 font-black text-[10px]">PR</div>
-                      <div>
-                         <p className="text-[11px] font-black uppercase tracking-tighter">Pedro Rodríguez</p>
-                         <p className="text-[8px] font-bold text-gray-500 uppercase">Promedio: 5.8</p>
-                      </div>
-                   </div>
-                   <button className="p-2 hover:bg-white/5 rounded-lg text-gray-600 transition-all"><ArrowRight size={14} /></button>
-                </div>
-                <div className="flex items-center justify-between p-3 bg-red-500/5 border border-red-500/10 rounded-xl">
-                   <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-red-500/10 rounded-lg flex items-center justify-center text-red-500 font-black text-[10px]">LS</div>
-                      <div>
-                         <p className="text-[11px] font-black uppercase tracking-tighter">Lucas Sánchez</p>
-                         <p className="text-[8px] font-bold text-gray-500 uppercase">Promedio: 5.2</p>
-                      </div>
-                   </div>
-                   <button className="p-2 hover:bg-white/5 rounded-lg text-gray-600 transition-all"><ArrowRight size={14} /></button>
-                </div>
-             </div>
-          </div>
-
-          {/* TIP PEDAGÓGICO */}
-          <div className="bg-primary-600/5 border border-primary-500/10 p-8 rounded-[2rem] space-y-6">
-             <div className="flex items-center gap-3">
-                <Zap size={18} className="text-primary-500" />
-                <h4 className="text-[10px] font-black uppercase tracking-widest">Tip Pedagógico</h4>
-             </div>
-             <p className="text-[11px] font-bold text-gray-600 leading-relaxed uppercase tracking-tight">
-                El Nivel Inicial responde mejor a la repetición rítmica. Prueba usar la misma canción de cierre durante toda la semana.
-             </p>
-          </div>
-
-        </div>
-
-      </div>
     </div>
   )
+}
+
+function Check({ size, className }) {
+   return <CheckCircle2 size={size} className={className} />
 }
