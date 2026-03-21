@@ -4,7 +4,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ─── PREMIUM SAAS TOKENS ───────────────────────────────────── */
+/* ─── PREMIUM SAAS TOKENS (SCALED DOWN) ─────────────────────── */
 :root {
   --color-surface:          255 255 255;
   --color-surface-subtle:   248 250 252;
@@ -40,38 +40,38 @@
   body {
     background-color: rgb(var(--color-surface));
     color: rgb(var(--color-text));
-    @apply font-sans antialiased;
+    @apply font-sans antialiased text-[13px]; /* Slightly smaller base text */
   }
 }
 
 @layer components {
   /* Modern SaaS Shadow Tokens */
   .shadow-premium {
-    box-shadow: 0 0 0 1px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.02), 0 12px 24px rgba(0,0,0,0.03);
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.02), 0 10px 20px rgba(0,0,0,0.04);
   }
   
   .dark .shadow-premium {
-    box-shadow: 0 0 0 1px rgba(255,255,255,0.05), 0 24px 48px -12px rgba(0,0,0,0.5);
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.05), 0 20px 40px -12px rgba(0,0,0,0.5);
   }
 
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 font-black text-[10px] tracking-widest uppercase
+    @apply inline-flex items-center justify-center gap-2 font-bold text-[11px] tracking-wider uppercase
            bg-primary-600 hover:bg-primary-500 text-white
-           py-4 px-8 rounded-2xl border border-primary-500/30
-           transition-all duration-300 shadow-lg shadow-indigo-600/20
+           py-3 px-6 rounded-xl border border-primary-500/30
+           transition-all duration-300 shadow-md shadow-indigo-600/10
            active:scale-95 disabled:opacity-50;
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 font-black text-[10px] tracking-widest uppercase
+    @apply inline-flex items-center justify-center gap-2 font-bold text-[11px] tracking-wider uppercase
            bg-surface-subtle border border-black/5 dark:border-white/5
-           hover:bg-surface-muted py-4 px-8 rounded-2xl
+           hover:bg-surface-muted py-3 px-6 rounded-xl
            transition-all duration-300 active:scale-95;
     color: rgb(var(--color-text));
   }
 
   .card-premium {
-    @apply bg-white dark:bg-slate-900 rounded-[2.5rem] border border-black/5 dark:border-white/5 shadow-premium transition-all duration-500;
+    @apply bg-white dark:bg-slate-900 rounded-3xl border border-black/5 dark:border-white/5 shadow-premium transition-all duration-500;
   }
 }
 
@@ -99,4 +99,15 @@
 @keyframes shimmer-rotation {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
+}
+
+/* Custom Scrollbar Scaling */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  @apply bg-black/10 dark:bg-white/10 rounded-full;
 }
