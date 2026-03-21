@@ -31,7 +31,8 @@ import {
   BrainCircuit,
   Zap,
   ArrowUpRight,
-  Layout
+  Layout,
+  BookOpen
 } from 'lucide-react'
 import { CardSkeleton } from '../components/Common/LoadingSkeleton'
 import { Toast } from '../components/Common/Toast'

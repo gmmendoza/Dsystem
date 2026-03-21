@@ -35,7 +35,7 @@ export default function Dashboard() {
     refreshSuggestions()
     const allAlumnos = mockDataService.getAlumnos()
     const allCursos = mockDataService.getCursos()
-    const allPlanes = mockDataService.getPlanes ? mockDataService.getPlanes() : []
+    const allPlanes = mockDataService.getPlanificaciones()
     
     const avgAtt = allAlumnos.length ? (allAlumnos.reduce((s, a) => s + (Number(a.asistencia) || 0), 0) / allAlumnos.length).toFixed(1) : 0
     const riskCount = allAlumnos.filter(a => (a.asistencia || 0) < 75).length
