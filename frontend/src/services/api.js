@@ -106,5 +106,9 @@ export const recursoAPI = {
   create: async (data) => {
     await new Promise(r => setTimeout(r, 700));
     return { data: mockDataService.saveRecurso(data) };
+  },
+  toggleFavorite: async (id) => {
+    await new Promise(r => setTimeout(r, 300));
+    return { data: mockDataService.toggleFavoriteRecurso(id) };
   }
 };

@@ -10,10 +10,13 @@ const KEYS = {
 };
 
 const initialRecursos = [
-  { id: 1, cursoId: 1, nombre: 'Guía de Polígonos', tipo: 'PDF', url: '#', icon: 'FileText' },
-  { id: 2, cursoId: 1, nombre: 'Video: Newton en 5 min', tipo: 'Video', url: '#', icon: 'Play' },
-  { id: 3, cursoId: 1, nombre: 'Simulador PhET: Energía', tipo: 'Enlace', url: '#', icon: 'ExternalLink' },
-  { id: 4, cursoId: 1, nombre: 'Planilla de Seguimiento', tipo: 'Excel', url: '#', icon: 'FileText' }
+  { id: 1, cursoId: 1, nombre: 'Guía de Polígonos', tipo: 'PDF', url: '#', icon: 'FileText', descripcion: 'Conceptos básicos de polígonos regulares e irregulares.', favorito: false, fecha: '2026-03-01', size: '1.2 MB' },
+  { id: 2, cursoId: 1, nombre: 'Video: Newton en 5 min', tipo: 'Video', url: '#', icon: 'Play', descripcion: 'Resumen animado de las 3 leyes de Newton.', favorito: true, fecha: '2026-03-05', duration: '5:00' },
+  { id: 3, cursoId: 1, nombre: 'Simulador PhET: Energía', tipo: 'Enlace', url: '#', icon: 'ExternalLink', descripcion: 'Simulación interactiva de conservación de energía.', favorito: false, fecha: '2026-03-10' },
+  { id: 4, cursoId: 1, nombre: 'Planilla de Seguimiento', tipo: 'Excel', url: '#', icon: 'FileText', descripcion: 'Formato para registro de desempeño diario.', favorito: false, fecha: '2026-03-12', size: '450 KB' },
+  { id: 5, cursoId: 1, nombre: 'Ecuaciones de 2° Grado', tipo: 'PDF', url: '#', icon: 'FileText', descripcion: 'Ejercicios resueltos paso a paso.', favorito: true, fecha: '2026-03-15', size: '2.5 MB' },
+  { id: 6, cursoId: 1, nombre: 'Podcast: Historia de la Ciencia', tipo: 'Audio', url: '#', icon: 'Mic', descripcion: 'Episodio sobre los grandes descubrimientos.', favorito: false, fecha: '2026-03-18', duration: '12:30' },
+  { id: 7, cursoId: 1, nombre: 'Quiz: Álgebra Básica', tipo: 'Interactivo', url: '#', icon: 'CheckSquare', descripcion: 'Cuestionario de 10 preguntas para repaso.', favorito: false, fecha: '2026-03-20' }
 ];
 
 const initialMaterias = [
@@ -186,5 +189,11 @@ export const mockDataService = {
     };
     setLS(KEYS.RECURSOS, [newItem, ...items]);
     return newItem;
+  },
+  toggleFavoriteRecurso: (id) => {
+    const items = mockDataService.getRecursos();
+    const updated = items.map(r => r.id === Number(id) ? { ...r, favorito: !r.favorito } : r);
+    setLS(KEYS.RECURSOS, updated);
+    return updated.find(r => r.id === Number(id));
   }
 };
