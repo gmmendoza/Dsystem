@@ -250,11 +250,21 @@ export default function Estudiantes() {
                   
                    <AIAssistantSection 
                     title={`Diagnóstico de ${editFormData.nombre}`}
-                    insight={`Rendimiento positivo en ${Object.keys(editFormData.notas || {})[0] || 'materias'}, se observa baja asistencia (${editFormData.asistencia}%).`}
+                    insight={(() => {
+                        const prom = parseFloat(getPromedio(editFormData.notas))
+                        const att = editFormData.asistencia
+                        if (prom < 6 && att < 75) return `Rendimiento crítico y baja asistencia (${att}%). Requiere intervención urgente.`
+                        if (prom < 6) return `Bajo rendimiento académico (Promedio ${prom}). Se sugiere plan de refuerzo inmediato.`
+                        if (att < 75) return `Rendimiento aceptable pero baja asistencia (${att}%). Posible desvinculación.`
+                        return `Rendimiento positivo y asistencia estable. Continuar con el seguimiento actual.`
+                    })()}
                     metrics={[
                        { label: 'Promedio', value: getPromedio(editFormData.notas) },
                        { label: 'Asistencia', value: `${editFormData.asistencia}%` },
-                       { label: 'Riesgo', value: editFormData.asistencia < 75 ? 'ALTO' : 'BAJO' }
+                       { 
+                         label: 'Riesgo', 
+                         value: (parseFloat(getPromedio(editFormData.notas)) < 6 || editFormData.asistencia < 75) ? 'ALTO' : 'BAJO' 
+                       }
                     ]}
                     actions={[
                        { label: 'Generar Reporte', onClick: () => alert('Generado.'), icon: FileText },

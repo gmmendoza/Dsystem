@@ -233,7 +233,7 @@ export default function AulaWorkspace() {
             )}
 
             {activeTab === 'asistencia' && <Asistencia cursoId={id} alumnos={alumnos} />}
-            {activeTab === 'recursos' && <Recursos cursoId={id} />}
+            {activeTab === 'recursos' && <Recursos cursoId={id} setToast={setToast} />}
 
             {activeTab === 'progreso' && (
               <div className="space-y-8">
@@ -246,11 +246,11 @@ export default function AulaWorkspace() {
                     <div className="space-y-8">
                        <AIAssistantSection 
                          title="Estado de Inteligencia de Aula"
-                         insight={`Detecté una mejora del 15% en participación grupal. Se sugiere reforzar contenidos de Geometría.`}
+                         insight={`Análisis finalizado: ${alumnos.filter(a => (Object.values(a.notas || {}).reduce((s,v)=>s+v,0)/Object.values(a.notas || {}).length) < 6).length} alumnos en riesgo académico detectados en ${curso.nombre}.`}
                          metrics={[
-                            { label: 'Rendimiento', value: '8.4', trend: 5 },
-                            { label: 'Asistencia', value: '96.8%' },
-                            { label: 'Riesgo', value: '3 Alumnos', trend: -20 }
+                            { label: 'Rendimiento', value: (alumnos.reduce((acc, al) => acc + parseFloat(Object.values(al.notas || {}).reduce((s,v)=>s+v,0)/Object.values(al.notas || {}).length || 0), 0) / alumnos.length || 0).toFixed(1), trend: 5 },
+                            { label: 'Asistencia', value: `${(alumnos.reduce((acc, al) => acc + (al.asistencia || 0), 0) / alumnos.length || 0).toFixed(1)}%` },
+                            { label: 'Riesgo', value: `${alumnos.filter(a => a.asistencia < 75 || (Object.values(a.notas || {}).reduce((s,v)=>s+v,0)/Object.values(a.notas || {}).length) < 6).length} Alumnos`, trend: -20 }
                          ]}
                          actions={[
                             { 

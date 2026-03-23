@@ -24,7 +24,7 @@ import {
 } from 'lucide-react'
 import { recursoAPI } from '../../services/api'
 
-export default function Recursos({ cursoId }) {
+export default function Recursos({ cursoId, setToast }) {
   const [recursos, setRecursos] = useState([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('Todos')
@@ -32,6 +32,7 @@ export default function Recursos({ cursoId }) {
   const [selectedRecurso, setSelectedRecurso] = useState(null)
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [newRecurso, setNewRecurso] = useState({ nombre: '', tipo: 'PDF', descripcion: '', cursoId })
+  const [isActionLoading, setIsActionLoading] = useState(false)
 
   useEffect(() => {
     fetchRecursos()
@@ -59,6 +60,23 @@ export default function Recursos({ cursoId }) {
     setRecursos([res.data, ...recursos])
     setIsAddModalOpen(false)
     setNewRecurso({ nombre: '', tipo: 'PDF', descripcion: '', cursoId })
+  }
+
+  const handleDownload = async (e, r) => {
+    e.stopPropagation()
+    setIsActionLoading(true)
+    if (setToast) setToast({ message: `Iniciando descarga de: ${r.nombre}...`, type: 'info' })
+    await new Promise(res => setTimeout(res, 1500))
+    if (setToast) setToast({ message: `¡${r.nombre} descargado con éxito!`, type: 'success' })
+    setIsActionLoading(false)
+  }
+
+  const handleOpenLink = async (e, r) => {
+    e.stopPropagation()
+    if (setToast) setToast({ message: `Abriendo material interactivo...`, type: 'info' })
+    await new Promise(res => setTimeout(res, 800))
+    // window.open(r.url, '_blank') // MOCK
+    setToast({ message: `Redirigiendo a: ${r.nombre}`, type: 'success' })
   }
 
   const getIconByType = (tipo) => {
@@ -167,9 +185,19 @@ export default function Recursos({ cursoId }) {
                  </div>
 
                  <div className="flex items-center gap-3 relative z-10 pt-2">
-                    <button className="flex-1 h-11 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl text-[9px] font-black uppercase tracking-widest hover:opacity-90 transition-all flex items-center justify-center gap-2 shadow-lg shadow-black/5 dark:shadow-white/5">
-                       {r.tipo === 'Enlace' || r.tipo === 'Interactivo' ? <ExternalLink size={14} /> : <Download size={14} />}
-                       {r.tipo === 'Enlace' || r.tipo === 'Interactivo' ? 'Abrir Material' : 'Descargar'}
+                    <button 
+                      onClick={(e) => r.tipo === 'Enlace' || r.tipo === 'Interactivo' ? handleOpenLink(e, r) : handleDownload(e, r)}
+                      disabled={isActionLoading}
+                      className="flex-1 h-11 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl text-[9px] font-black uppercase tracking-widest hover:opacity-90 transition-all flex items-center justify-center gap-2 shadow-lg shadow-black/5 dark:shadow-white/5 disabled:opacity-50"
+                    >
+                       {isActionLoading ? (
+                          <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                       ) : (
+                          <>
+                            {r.tipo === 'Enlace' || r.tipo === 'Interactivo' ? <ExternalLink size={14} /> : <Download size={14} />}
+                            {r.tipo === 'Enlace' || r.tipo === 'Interactivo' ? 'Abrir Material' : 'Descargar'}
+                          </>
+                       )}
                     </button>
                     <button className="w-11 h-11 bg-surface-subtle dark:bg-slate-950 border border-black/5 dark:border-white/10 rounded-2xl text-gray-400 hover:text-white transition-colors flex items-center justify-center">
                        <MoreVertical size={16} />
@@ -265,16 +293,24 @@ export default function Recursos({ cursoId }) {
                         </div>
 
                         <div className="space-y-6">
-                           <div className="p-6 bg-primary-500/5 dark:bg-primary-500/10 rounded-[2.5rem] border border-primary-500/10 space-y-5">
+                           <div className="p-6 bg-primary-500/5 dark:bg-primary-500/10 rounded-[2.5rem] border border-primary-500/10 space-y-4">
                               <p className="text-[10px] font-black uppercase tracking-widest text-primary-600 dark:text-primary-400 flex items-center gap-2"><Zap size={16} /> Sugerencia DocenTico</p>
                               <p className="text-[11px] font-bold text-slate-700 dark:text-slate-300 leading-relaxed">
                                  Recomiendo usar este recurso en el inicio de la clase para despertar curiosidad e indagación previa.
                               </p>
-                              <button className="w-full py-3 bg-primary-600 text-white rounded-2xl text-[9px] font-black uppercase tracking-widest shadow-lg shadow-primary-900/20 active:scale-95 transition-all">Integrar a Clase</button>
+                              <button 
+                                onClick={(e) => selectedRecurso.tipo === 'Enlace' ? handleOpenLink(e, selectedRecurso) : handleDownload(e, selectedRecurso)}
+                                className="w-full py-3 bg-primary-600 text-white rounded-2xl text-[9px] font-black uppercase tracking-widest shadow-lg shadow-primary-900/20 active:scale-95 transition-all"
+                              >
+                                 Integrar a Clase
+                              </button>
                            </div>
                            
                            <div className="flex gap-3">
-                              <button className="flex-1 py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl text-[9px] font-black uppercase tracking-widest flex items-center justify-center gap-2 active:scale-95 transition-all">
+                              <button 
+                                onClick={(e) => selectedRecurso.tipo === 'Enlace' ? handleOpenLink(e, selectedRecurso) : handleDownload(e, selectedRecurso)}
+                                className="flex-1 py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl text-[9px] font-black uppercase tracking-widest flex items-center justify-center gap-2 active:scale-95 transition-all"
+                              >
                                  {selectedRecurso.tipo === 'Enlace' ? <ExternalLink size={14} /> : <Download size={14} />}
                                  {selectedRecurso.tipo === 'Enlace' ? 'Ir al Enlace' : 'Descargar'}
                               </button>
