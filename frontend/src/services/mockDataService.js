@@ -5,8 +5,16 @@ const KEYS = {
   CURSOS: 'dsystem_cursos',
   PLANIFICACIONES: 'dsystem_planificaciones',
   ASISTENCIA: 'dsystem_asistencia',
-  MATERIAS: 'dsystem_materias'
+  MATERIAS: 'dsystem_materias',
+  RECURSOS: 'dsystem_recursos'
 };
+
+const initialRecursos = [
+  { id: 1, cursoId: 1, nombre: 'Guía de Polígonos', tipo: 'PDF', url: '#', icon: 'FileText' },
+  { id: 2, cursoId: 1, nombre: 'Video: Newton en 5 min', tipo: 'Video', url: '#', icon: 'Play' },
+  { id: 3, cursoId: 1, nombre: 'Simulador PhET: Energía', tipo: 'Enlace', url: '#', icon: 'ExternalLink' },
+  { id: 4, cursoId: 1, nombre: 'Planilla de Seguimiento', tipo: 'Excel', url: '#', icon: 'FileText' }
+];
 
 const initialMaterias = [
   { id: 1, nombre: 'Matemática', area: 'Exactas' },
@@ -41,6 +49,7 @@ export const mockDataService = {
     getLS(KEYS.CURSOS, initialCursos);
     getLS(KEYS.PLANIFICACIONES, initialPlanificaciones);
     getLS(KEYS.MATERIAS, initialMaterias);
+    getLS(KEYS.RECURSOS, initialRecursos);
   },
 
   // Alumnos
@@ -161,5 +170,21 @@ export const mockDataService = {
     all[`${cursoId}_${fecha}`] = data;
     setLS(KEYS.ASISTENCIA, all);
     return data;
+  },
+
+  // Recursos
+  getRecursos: () => getLS(KEYS.RECURSOS, initialRecursos),
+  getRecursosByCurso: (cursoId) => {
+    return mockDataService.getRecursos().filter(r => r.cursoId === Number(cursoId));
+  },
+  saveRecurso: (data) => {
+    const items = mockDataService.getRecursos();
+    const newItem = {
+      ...data,
+      id: Date.now(),
+      cursoId: Number(data.cursoId)
+    };
+    setLS(KEYS.RECURSOS, [newItem, ...items]);
+    return newItem;
   }
 };

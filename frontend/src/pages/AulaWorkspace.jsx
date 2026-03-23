@@ -4,7 +4,9 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { cursoAPI, planificacionAPI, alumnoAPI } from '../services/api'
 import PlanningTimeline from '../components/Aula/PlanningTimeline'
 import Asistencia from '../components/Aula/Asistencia'
+import Recursos from '../components/Aula/Recursos'
 import { AlumnoModal } from '../components/Aula/AlumnoModal'
+import { useAI } from '../context/AIContext'
 import { 
   X,
   ChevronLeft, 
@@ -45,6 +47,8 @@ export default function AulaWorkspace() {
   const [curso, setCurso] = useState(null)
   const [planes, setPlanes] = useState([])
   const [alumnos, setAlumnos] = useState([])
+  const { suggestSolution } = useAI()
+  const [aiSolution, setAiSolution] = useState(null)
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('planes')
   const [toast, setToast] = useState(null)
@@ -229,6 +233,7 @@ export default function AulaWorkspace() {
             )}
 
             {activeTab === 'asistencia' && <Asistencia cursoId={id} alumnos={alumnos} />}
+            {activeTab === 'recursos' && <Recursos cursoId={id} />}
 
             {activeTab === 'progreso' && (
               <div className="space-y-8">
@@ -248,10 +253,65 @@ export default function AulaWorkspace() {
                             { label: 'Riesgo', value: '3 Alumnos', trend: -20 }
                          ]}
                          actions={[
-                            { label: 'Sugerir Actividad', onClick: () => alert('Sugerida'), icon: Sparkles, primary: true },
+                            { 
+                              label: 'Sugerir Actividad', 
+                              onClick: async () => {
+                                const sol = await suggestSolution('actividad', { nombre: curso.nombre });
+                                setAiSolution(sol);
+                              }, 
+                              icon: Sparkles, 
+                              primary: true 
+                            },
                             { label: 'Exportar Reporte', onClick: () => alert('Exportando'), icon: FileText }
                          ]}
                        />
+
+                       {/* IA GENERATED SOLUTION */}
+                       <AnimatePresence>
+                          {aiSolution && (
+                             <motion.div 
+                               initial={{ opacity: 0, height: 0 }}
+                               animate={{ opacity: 1, height: 'auto' }}
+                               exit={{ opacity: 0, height: 0 }}
+                               className="bg-indigo-600/10 border border-indigo-500/20 p-6 rounded-[2rem] space-y-4 overflow-hidden shadow-sm"
+                             >
+                                <div className="flex items-center justify-between">
+                                   <div className="flex items-center gap-3">
+                                      <div className="w-8 h-8 bg-indigo-500/10 rounded-lg flex items-center justify-center text-indigo-500"><Zap size={16} /></div>
+                                      <h4 className="text-sm font-black uppercase italic tracking-tighter text-indigo-600 dark:text-indigo-400">{aiSolution.titulo}</h4>
+                                   </div>
+                                   <button onClick={() => setAiSolution(null)} className="text-gray-400 hover:text-indigo-500 transition-colors"><X size={16} /></button>
+                                </div>
+                                <p className="text-[11px] font-medium text-slate-600 dark:text-slate-400 leading-relaxed italic border-l-2 border-indigo-500 pl-4">{aiSolution.descripcion}</p>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+                                   <div className="space-y-3">
+                                      <p className="text-[8px] font-black uppercase tracking-widest text-slate-500">Pasos Sugeridos</p>
+                                      <ul className="space-y-2">
+                                         {aiSolution.pasos.map((p, i) => (
+                                            <li key={i} className="flex items-start gap-3 text-[10px] font-bold text-slate-700 dark:text-slate-300">
+                                               <span className="w-5 h-5 bg-indigo-500/10 rounded-full flex items-center justify-center text-[8px] text-indigo-500 shrink-0">{i+1}</span>
+                                               <span className="pt-0.5">{p}</span>
+                                            </li>
+                                         ))}
+                                      </ul>
+                                   </div>
+                                   <div className="bg-white dark:bg-slate-950 p-5 rounded-2xl border border-black/5 dark:border-white/10 flex flex-col justify-between">
+                                      <div>
+                                         <p className="text-[8px] font-black uppercase tracking-widest text-slate-500 mb-4">Material Vinculado</p>
+                                         <div className="flex items-center gap-3">
+                                            <div className="w-10 h-10 bg-indigo-500/10 rounded-xl flex items-center justify-center text-indigo-500"><FileText size={18} /></div>
+                                            <div>
+                                               <p className="text-[10px] font-black uppercase tracking-tight text-slate-800 dark:text-white">{aiSolution.recursoRelacionado.nombre}</p>
+                                               <p className="text-[8px] font-bold text-slate-500 uppercase">{aiSolution.recursoRelacionado.tipo}</p>
+                                            </div>
+                                         </div>
+                                      </div>
+                                      <button className="w-full py-2.5 bg-indigo-600 text-white rounded-xl text-[8px] font-black uppercase tracking-widest mt-4 shadow-lg shadow-indigo-900/20 hover:scale-[1.02] transition-all">Usar este Recurso</button>
+                                   </div>
+                                </div>
+                             </motion.div>
+                          )}
+                       </AnimatePresence>
                        
                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                           <div className="lg:col-span-2 bg-white dark:bg-slate-900 border border-black/5 dark:border-white/10 p-6 rounded-3xl shadow-sm">

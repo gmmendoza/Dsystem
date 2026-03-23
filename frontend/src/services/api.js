@@ -96,3 +96,15 @@ export const asistenciaAPI = {
     return { data: mockDataService.saveAsistencia(cursoId, fecha, data) };
   }
 };
+
+export const recursoAPI = {
+  getAll: async () => ({ data: mockDataService.getRecursos() }),
+  getByCursoId: async (cursoId) => {
+    await new Promise(r => setTimeout(r, 500));
+    return { data: mockDataService.getRecursosByCurso(cursoId) };
+  },
+  create: async (data) => {
+    await new Promise(r => setTimeout(r, 700));
+    return { data: mockDataService.saveRecurso(data) };
+  }
+};

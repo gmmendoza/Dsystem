@@ -200,8 +200,41 @@ export function AIProvider({ children }) {
     }
   }, [callAI])
 
+  /**
+   * Generates a concrete pedagogical solution (material, guide, etc.)
+   */
+  const suggestSolution = useCallback(async (type, data) => {
+    // Simulated AI material generation
+    await new Promise(r => setTimeout(r, 1500));
+    
+    const solutions = {
+      'refuerzo': {
+        titulo: 'Guía de Refuerzo Personalizada',
+        descripcion: `Material diseñado específicamente para ${data?.nombre || 'el alumno'} enfocándose en las brechas detectadas en la última evaluación.`,
+        pasos: [
+          'Repaso de conceptos básicos de la unidad.',
+          'Ejercicios prácticos con andamiaje visual.',
+          'Autoevaluación de metacoognición.'
+        ],
+        recursoRelacionado: { nombre: 'Guía Completa PDF', tipo: 'PDF' }
+      },
+      'actividad': {
+        titulo: 'Propuesta de Actividad Adaptada',
+        descripcion: 'Secuencia didáctica dinámica para trabajar contenidos curriculares con gamificación.',
+        pasos: [
+          'Inicio: Problematización de la realidad.',
+          'Desarrollo: Trabajo grupal por estaciones.',
+          'Cierre: Puesta en común digital.'
+        ],
+        recursoRelacionado: { nombre: 'Presentación de Apoyo', tipo: 'Enlace' }
+      }
+    };
+
+    return solutions[type] || solutions['actividad'];
+  }, []);
+
   return (
-    <AIContext.Provider value={{ suggestions, dailySummary, unreadCount, refreshSuggestions, callAI, generateSmartFill }}>
+    <AIContext.Provider value={{ suggestions, dailySummary, unreadCount, refreshSuggestions, callAI, generateSmartFill, suggestSolution }}>
       {children}
     </AIContext.Provider>
   )
