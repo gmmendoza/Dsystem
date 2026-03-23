@@ -114,67 +114,67 @@ export default function AIChat() {
   }
 
   return (
-    <div className="fixed bottom-10 right-10 z-[200] flex flex-col items-end gap-4 font-sans">
+    <div className="fixed bottom-8 right-8 z-[200] flex flex-col items-end gap-3 font-sans">
       <AnimatePresence>
         {isOpen && (
           <motion.div
             initial={{ opacity: 0, scale: 0.9, y: 40 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 40 }}
-            className="w-[450px] bg-white dark:bg-slate-950 rounded-[3.5rem] shadow-2xl overflow-hidden border border-black/5 dark:border-white/5 flex flex-col h-[750px]"
+            className="w-[380px] bg-white dark:bg-slate-950 rounded-[2rem] shadow-2xl overflow-hidden border border-black/5 dark:border-white/10 flex flex-col h-[600px]"
           >
             {/* Header Premium */}
-            <div className="px-10 py-8 bg-surface-subtle/50 border-b border-black/5 dark:border-white/5 flex items-center justify-between shrink-0">
-               <div className="flex items-center gap-5">
-                  <div className="w-14 h-14 bg-primary-600 rounded-[1.2rem] flex items-center justify-center text-white shadow-xl shadow-indigo-600/30 rotate-3">
-                     <Bot size={28} />
+            <div className="px-6 py-5 bg-surface-subtle/50 border-b border-black/5 dark:border-white/5 flex items-center justify-between shrink-0">
+               <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 bg-primary-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-primary-950/20 rotate-3">
+                     <Bot size={20} />
                   </div>
                   <div>
-                     <h3 className="text-xl font-black uppercase italic tracking-tighter leading-none">DocenTico <span className="text-primary-500">Pro</span></h3>
+                     <h3 className="text-lg font-black uppercase italic tracking-tighter leading-none">DocenTico <span className="text-primary-500">Pro</span></h3>
                      <div className="flex items-center gap-2 mt-1">
                         <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                        <span className="text-[10px] font-black uppercase tracking-widest text-gray-500">Mente Artificial Educativa</span>
+                        <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">Mente Artificial Educativa</span>
                      </div>
                   </div>
                </div>
-               <button onClick={() => setIsOpen(false)} className="p-4 text-gray-400 hover:text-white transition-all">
-                  <X size={24} />
+               <button onClick={() => setIsOpen(false)} className="p-2 text-slate-400 hover:text-primary-500 transition-all">
+                  <X size={20} />
                </button>
             </div>
 
             {/* Chat Content */}
-            <div className="flex-1 overflow-y-auto custom-scrollbar p-10 space-y-10">
+            <div className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-6">
                {messages.length === 0 ? (
                   <motion.div 
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="space-y-12"
+                    className="space-y-8"
                   >
-                     <div className="space-y-6">
-                        <h4 className="text-[12px] font-black uppercase tracking-[0.4em] text-gray-400">¿Qué puedo hacer por vos?</h4>
-                        <div className="grid grid-cols-1 gap-5">
+                     <div className="space-y-4">
+                        <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">¿Qué puedo hacer por vos?</h4>
+                        <div className="grid grid-cols-1 gap-3">
                            {CAPABILITIES.map((cap, i) => (
-                              <div key={i} className="flex items-start gap-5 p-6 bg-surface-subtle/40 border border-black/5 dark:border-white/5 rounded-3xl hover:border-primary-500/30 transition-all group">
-                                 <div className={`w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 ${cap.bg} ${cap.color}`}>
-                                    <cap.icon size={22} />
+                              <div key={i} className="flex items-center gap-4 p-4 bg-surface-subtle/40 border border-black/5 dark:border-white/5 rounded-2xl hover:border-primary-500/30 transition-all group">
+                                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${cap.bg} ${cap.color}`}>
+                                    <cap.icon size={18} />
                                  </div>
-                                 <div>
-                                    <p className="text-sm font-black uppercase italic tracking-tight mb-1 group-hover:text-primary-500 transition-colors">{cap.title}</p>
-                                    <p className="text-[11px] font-medium text-gray-500 leading-relaxed">{cap.desc}</p>
+                                 <div className="flex-1">
+                                    <p className="text-[12px] font-black uppercase italic tracking-tight mb-0.5 group-hover:text-primary-500 transition-colors leading-none">{cap.title}</p>
+                                    <p className="text-[10px] font-medium text-slate-500 leading-tight">{cap.desc}</p>
                                  </div>
                               </div>
                            ))}
                         </div>
                      </div>
 
-                     <div className="space-y-6">
-                        <h4 className="text-[12px] font-black uppercase tracking-[0.4em] text-gray-400">Probá con estos prompts</h4>
-                        <div className="flex flex-wrap gap-3">
+                     <div className="space-y-4">
+                        <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Probá con estos prompts</h4>
+                        <div className="flex flex-wrap gap-2">
                            {EXAMPLE_PROMPTS.map((ex, i) => (
                               <button 
                                 key={i} 
                                 onClick={() => handleSend(ex.prompt)}
-                                className="px-6 py-3 bg-white dark:bg-white/5 border border-black/5 dark:border-white/5 rounded-2xl text-[10px] font-bold uppercase tracking-widest hover:border-primary-500/40 hover:text-primary-500 transition-all active:scale-95"
+                                className="px-4 py-2 bg-white dark:bg-white/5 border border-black/5 dark:border-white/5 rounded-xl text-[9px] font-bold uppercase tracking-widest hover:border-primary-500/40 hover:text-primary-500 transition-all active:scale-95 text-slate-600 dark:text-slate-300"
                               >
                                 {ex.label}
                               </button>
@@ -187,19 +187,19 @@ export default function AIChat() {
                      {messages.map((msg, idx) => (
                         <motion.div
                           key={msg.id}
-                          initial={{ opacity: 0, x: msg.role === 'user' ? 20 : -20 }}
+                          initial={{ opacity: 0, x: msg.role === 'user' ? 15 : -15 }}
                           animate={{ opacity: 1, x: 0 }}
-                          className={`flex items-start gap-5 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}
+                          className={`flex items-start gap-4 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}
                         >
-                           <div className={`w-10 h-10 rounded-[1rem] flex items-center justify-center flex-shrink-0 shadow-lg ${
+                           <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 shadow-md ${
                              msg.role === 'user' ? 'bg-primary-600 text-white' : 'bg-surface-subtle dark:bg-white/10 text-primary-500'
                            }`}>
-                              {msg.role === 'user' ? <User size={18} /> : <Bot size={18} />}
+                              {msg.role === 'user' ? <User size={14} /> : <Bot size={14} />}
                            </div>
-                           <div className={`max-w-[85%] p-8 rounded-[2.5rem] text-sm font-medium leading-[1.8] ${
+                           <div className={`max-w-[85%] p-4 rounded-2xl text-[12px] font-medium leading-[1.6] ${
                              msg.role === 'user' 
-                               ? 'bg-primary-600 text-white rounded-tr-none shadow-xl shadow-indigo-600/20' 
-                               : 'bg-surface-subtle dark:bg-white/5 rounded-tl-none border border-black/5 dark:border-white/5'
+                               ? 'bg-primary-600 text-white rounded-tr-none shadow-lg shadow-primary-950/20' 
+                               : 'bg-surface-subtle dark:bg-white/5 rounded-tl-none border border-black/5 dark:border-white/10 text-slate-700 dark:text-slate-300'
                            }`}>
                               {msg.role === 'assistant' ? (
                                 <div dangerouslySetInnerHTML={{ __html: renderMarkdown(msg.content) }} className="markdown-chat" />
@@ -207,7 +207,7 @@ export default function AIChat() {
                                 msg.content
                               )}
                               {msg.streaming && (
-                                <motion.span animate={{ opacity: [1, 0] }} transition={{ duration: 0.5, repeat: Infinity }} className="inline-block w-2 h-4 bg-primary-400 ml-2 rounded-sm align-middle" />
+                                <motion.span animate={{ opacity: [1, 0] }} transition={{ duration: 0.5, repeat: Infinity }} className="inline-block w-1.5 h-3.5 bg-primary-400 ml-1.5 rounded-sm align-middle" />
                               )}
                            </div>
                         </motion.div>
@@ -219,12 +219,12 @@ export default function AIChat() {
             </div>
 
             {/* Input Area */}
-            <div className="p-10 pt-4 bg-surface-subtle/30 border-t border-black/5 dark:border-white/5 shrink-0">
+            <div className="p-6 pt-2 bg-surface-subtle/30 border-t border-black/5 dark:border-white/5 shrink-0">
                <div className="relative group">
                   <input 
                     type="text" 
                     placeholder="Consultá a la Inteligencia..."
-                    className="w-full bg-white dark:bg-slate-900 border border-black/5 dark:border-white/5 rounded-[2rem] py-6 pl-8 pr-20 text-sm font-medium outline-none focus:border-primary-500/50 transition-all shadow-premium"
+                    className="w-full bg-white dark:bg-slate-900 border border-black/5 dark:border-white/10 rounded-2xl py-3.5 pl-5 pr-14 text-[12px] font-medium outline-none focus:border-primary-500/50 transition-all shadow-sm text-slate-800 dark:text-white"
                     value={input}
                     onChange={e => setInput(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleSend()}
@@ -233,12 +233,12 @@ export default function AIChat() {
                   <button 
                     onClick={() => handleSend()}
                     disabled={!input.trim() || isStreaming}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-primary-600 hover:bg-primary-500 text-white rounded-2xl flex items-center justify-center shadow-lg transition-all disabled:opacity-40 active:scale-95"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 bg-primary-600 hover:bg-primary-500 text-white rounded-xl flex items-center justify-center shadow-md transition-all disabled:opacity-40 active:scale-95"
                   >
-                     <Send size={18} />
+                     <Send size={15} />
                   </button>
                </div>
-               <p className="text-[9px] font-black uppercase tracking-[0.3em] text-gray-500 text-center mt-6">Basado en modelos GPT-4o Pedagógicos</p>
+               <p className="text-[8px] font-black uppercase tracking-[0.2em] text-slate-500 text-center mt-4">Basado en modelos GPT-4o Pedagógicos</p>
             </div>
           </motion.div>
         )}
@@ -248,13 +248,13 @@ export default function AIChat() {
         whileHover={{ scale: 1.05, rotate: 2 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(o => !o)}
-        className="w-16 h-16 bg-primary-600 hover:bg-primary-500 rounded-[1.5rem] flex items-center justify-center text-white shadow-2xl shadow-indigo-600/40 relative z-30 transition-all"
+        className="w-14 h-14 bg-primary-600 hover:bg-primary-500 rounded-2xl flex items-center justify-center text-white shadow-2xl shadow-primary-950/30 relative z-30 transition-all"
       >
         <AnimatePresence mode="wait">
-           {isOpen ? <X size={28} key="x" /> : <Sparkles size={28} key="bot" />}
+           {isOpen ? <X size={24} key="x" /> : <Sparkles size={24} key="bot" />}
         </AnimatePresence>
         {!isOpen && unreadCount > 0 && (
-          <div className="absolute -top-2 -right-2 w-7 h-7 bg-red-500 text-white rounded-full flex items-center justify-center text-[10px] font-black border-4 border-surface shadow-lg">
+          <div className="absolute -top-1.5 -right-1.5 w-6 h-6 bg-rose-500 text-white rounded-full flex items-center justify-center text-[9px] font-black border-4 border-slate-950 shadow-lg">
              {unreadCount}
           </div>
         )}
