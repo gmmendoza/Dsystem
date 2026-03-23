@@ -23,18 +23,18 @@
   --header-height: 64px;
 }
 
-[data-theme='dark'] {
-  --color-surface:          15 23 42;
-  --color-surface-subtle:   17 24 39;
-  --color-surface-muted:    31 41 55;
-  --color-surface-elevated: 24 24 30;
+.dark {
+  --color-surface:          11 11 15;
+  --color-surface-subtle:   18 18 24;
+  --color-surface-muted:    25 25 32;
+  --color-surface-elevated: 20 20 28;
   --color-primary:          129 140 248;
   --color-text:             248 250 252;
   --color-text-muted:       148 163 184;
   --color-border:           30 30 38;
   --color-border-strong:    52 52 68;
-  --color-glass:            15 23 42 / 0.7;
-  --color-glass-border:     255 255 255 / 0.05;
+  --color-glass:            20 20 28 / 0.7;
+  --color-glass-border:     255 255 255 / 0.08;
 }
 
 @layer base {

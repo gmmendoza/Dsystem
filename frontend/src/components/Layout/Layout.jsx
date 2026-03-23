@@ -93,14 +93,11 @@ export default function Layout() {
         transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
         className={`
           fixed lg:static inset-y-0 left-0 z-[70] flex flex-col flex-shrink-0
-          overflow-hidden rounded-3xl border shadow-premium
+          overflow-hidden rounded-3xl border border-black/5 dark:border-white/10 
+          bg-surface-elevated shadow-premium
           ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-          transition-transform lg:transition-none duration-300
+          transition-all lg:transition-none duration-300
         `}
-        style={{
-          background: 'rgb(var(--color-surface-elevated))',
-          borderColor: 'rgb(var(--color-border))',
-        }}
       >
         {/* Logo Section */}
         <div className="flex items-center justify-between px-5 py-6 flex-shrink-0">
@@ -133,13 +130,11 @@ export default function Layout() {
           <div className="px-4 mb-6">
             <button
               onClick={() => setCmdOpen(true)}
-              className="w-full flex items-center gap-3 px-4 py-2.5 rounded-2xl border text-left transition-all hover:border-primary-500/30 hover:bg-primary-500/5 group"
-              style={{ background: 'rgb(var(--color-surface-subtle))', borderColor: 'rgb(var(--color-border))' }}
+              className="w-full flex items-center gap-3 px-4 py-2.5 rounded-2xl border border-black/5 dark:border-white/10 bg-surface-subtle text-left transition-all hover:border-primary-500/30 hover:bg-primary-500/5 group shadow-sm"
             >
-              <Search size={14} className="transition-colors group-hover:text-primary-500" style={{ color: 'rgb(var(--color-text-muted))' }} />
-              <span className="text-[13px] flex-1 font-medium" style={{ color: 'rgb(var(--color-text-muted))' }}>Quick search...</span>
-              <kbd className="text-[10px] px-2 py-1 rounded-lg font-mono border shadow-sm group-hover:border-primary-500/20 group-hover:bg-primary-500/10"
-                   style={{ borderColor: 'rgb(var(--color-border))', background: 'rgb(var(--color-surface-muted))', color: 'rgb(var(--color-text-muted))' }}>
+              <Search size={14} className="text-slate-400 dark:text-slate-500 transition-colors group-hover:text-primary-500" />
+              <span className="text-[13px] flex-1 font-medium text-slate-500 dark:text-slate-400">Quick search...</span>
+              <kbd className="text-[10px] px-2 py-1 rounded-lg font-mono border border-black/10 dark:border-white/10 bg-surface-muted text-slate-400 dark:text-slate-500 shadow-sm group-hover:border-primary-500/20 group-hover:bg-primary-500/10 transition-all">
                 ⌘K
               </kbd>
             </button>
@@ -151,7 +146,7 @@ export default function Layout() {
           {NAV_GROUPS.map(group => (
             <div key={group.label}>
               {!isCollapsed && (
-                <p className="text-[10px] font-bold uppercase tracking-[0.15em] px-3 mb-3" style={{ color: 'rgb(var(--color-text-muted) / 0.6)' }}>{group.label}</p>
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] px-3 mb-3 text-slate-400/60 dark:text-slate-500/60">{group.label}</p>
               )}
               <div className="space-y-1.5">
                 {group.items.map(({ to, icon: Icon, label }) => (
@@ -204,10 +199,10 @@ export default function Layout() {
                   <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-[14px] font-bold truncate leading-tight" style={{ color: 'rgb(var(--color-text))' }}>
+                  <p className="text-[14px] font-bold truncate leading-tight text-slate-900 dark:text-white">
                     {user?.username || 'Admin'}
                   </p>
-                  <p className="text-[10px] font-semibold uppercase tracking-wider mt-0.5" style={{ color: 'rgb(var(--color-text-muted))' }}>
+                  <p className="text-[10px] font-bold uppercase tracking-widest mt-1 text-slate-400 dark:text-slate-500">
                     {user?.rol || 'Docente'}
                   </p>
                 </div>
@@ -241,14 +236,12 @@ export default function Layout() {
 
         {/* Header */}
         <header
-          className={`h-20 flex items-center justify-between px-6 md:px-8 flex-shrink-0 z-50 transition-all duration-300 ${scrolled ? 'backdrop-blur-xl border-b' : ''}`}
-          style={{ borderColor: 'rgb(var(--color-border))', background: scrolled ? 'rgb(var(--color-surface-elevated) / 0.8)' : 'transparent' }}
+          className={`h-22 flex items-center justify-between px-6 md:px-10 flex-shrink-0 z-50 transition-all duration-300 ${scrolled ? 'backdrop-blur-xl border-b border-black/5 dark:border-white/5 bg-surface-elevated/80' : 'bg-transparent'}`}
         >
           <div className="flex items-center gap-6">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="lg:hidden w-10 h-10 flex items-center justify-center bg-white dark:bg-slate-800 rounded-2xl border shadow-sm"
-              style={{ borderColor: 'rgb(var(--color-border))' }}
+              className="lg:hidden w-11 h-11 flex items-center justify-center bg-white dark:bg-slate-800 rounded-2xl border border-black/5 dark:border-white/10 shadow-sm"
             >
               <Menu size={20} />
             </button>
@@ -256,22 +249,21 @@ export default function Layout() {
             {/* Collapse toggle for desktop */}
             <button
               onClick={() => setIsCollapsed(!isCollapsed)}
-              className="hidden lg:flex w-9 h-9 items-center justify-center rounded-xl border border-black/5 hover:bg-black/5 dark:border-white/5 dark:hover:bg-white/5 transition-all shadow-sm"
-              style={{ background: 'rgb(var(--color-surface-elevated))' }}
+              className="hidden lg:flex w-10 h-10 items-center justify-center rounded-2xl border border-black/5 dark:border-white/10 bg-surface-elevated hover:bg-surface-subtle transition-all shadow-sm"
             >
               <motion.div animate={{ rotate: isCollapsed ? 180 : 0 }}>
-                <ChevronLeft size={16} />
+                <ChevronLeft size={18} />
               </motion.div>
             </button>
 
             {/* Breadcrumb */}
-            <div className="flex items-center gap-3 text-[13px]">
-              <div className="w-1.5 h-1.5 rounded-full bg-primary-500 shadow-glow-primary" />
-              <span className="font-medium opacity-50" style={{ color: 'rgb(var(--color-text))' }}>DSystem</span>
+            <div className="flex items-center gap-4 text-[13px]">
+              <div className="w-1.5 h-1.5 rounded-full bg-primary-500 shadow-glow-primary animate-pulse" />
+              <span className="font-bold tracking-tight text-slate-400 dark:text-slate-500 italic">DSystem</span>
               {currentLabel && (
                 <>
-                  <ChevronRight size={14} className="opacity-30" />
-                  <span className="font-bold tracking-tight text-[15px]" style={{ color: 'rgb(var(--color-text))' }}>{currentLabel}</span>
+                  <ChevronRight size={14} className="text-slate-300 dark:text-slate-700" />
+                  <span className="font-black tracking-tighter text-[17px] uppercase italic text-slate-900 dark:text-white">{currentLabel}</span>
                 </>
               )}
             </div>
