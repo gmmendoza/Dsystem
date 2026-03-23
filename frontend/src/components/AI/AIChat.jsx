@@ -15,21 +15,24 @@ const CAPABILITIES = [
     desc: 'Detecto alumnos con inasistencias o bajas notas.',
     icon: ShieldAlert,
     color: 'text-red-500',
-    bg: 'bg-red-500/10'
+    bg: 'bg-red-500/10',
+    prompt: 'Hacé un análisis de riesgo académico de mis alumnos ahora.'
   },
   { 
     title: 'Planificación Smart', 
     desc: 'Genero secuencias didácticas en segundos.',
     icon: BookOpen,
     color: 'text-primary-500',
-    bg: 'bg-primary-500/10'
+    bg: 'bg-primary-500/10',
+    prompt: 'Ayudame a planificar una secuencia didáctica innovadora.'
   },
   { 
     title: 'Informes Ejecutivos', 
     desc: 'Resumo el estado de tus aulas para dirección.',
     icon: BarChart2,
     color: 'text-indigo-500',
-    bg: 'bg-indigo-500/10'
+    bg: 'bg-indigo-500/10',
+    prompt: 'Generá un informe ejecutivo del estado de mis aulas para la dirección.'
   }
 ]
 
@@ -157,7 +160,11 @@ export default function AIChat() {
                         <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">¿Qué puedo hacer por vos?</h4>
                         <div className="grid grid-cols-1 gap-3">
                            {CAPABILITIES.map((cap, i) => (
-                              <div key={i} className="flex items-center gap-4 p-4 bg-surface-subtle/40 border border-black/5 dark:border-white/5 rounded-2xl hover:border-primary-500/30 transition-all group">
+                               <div 
+                                 key={i} 
+                                 onClick={() => handleSend(cap.prompt)}
+                                 className="flex items-center gap-4 p-4 bg-surface-subtle/40 border border-black/5 dark:border-white/5 rounded-2xl hover:border-primary-500/30 transition-all group cursor-pointer active:scale-[0.98]"
+                               >
                                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${cap.bg} ${cap.color}`}>
                                     <cap.icon size={18} />
                                  </div>
