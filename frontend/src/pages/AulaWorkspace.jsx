@@ -233,9 +233,9 @@ export default function AulaWorkspace() {
             {activeTab === 'progreso' && (
               <div className="space-y-8">
                  {!showReport && reportLoading ? (
-                    <div className="flex flex-col items-center justify-center py-20">
-                       <motion.div animate={{ rotate: 360 }} transition={{ duration: 3, repeat: Infinity, ease: "linear" }} className="w-16 h-16 border-2 border-primary-500/10 border-t-primary-500 rounded-full mb-6" />
-                       <h3 className="text-sm font-black uppercase italic tracking-tighter">{steps[reportStep].title}</h3>
+                    <div className="flex flex-col items-center justify-center py-12 bg-surface-subtle/20 rounded-3xl border border-black/5 dark:border-white/5">
+                       <motion.div animate={{ rotate: 360 }} transition={{ duration: 2, repeat: Infinity, ease: "linear" }} className="w-10 h-10 border-2 border-primary-500/10 border-t-primary-500 rounded-full mb-4" />
+                       <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-500">{steps[reportStep].title}</h3>
                     </div>
                  ) : showReport ? (
                     <div className="space-y-8">
@@ -254,19 +254,19 @@ export default function AulaWorkspace() {
                        />
                        
                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                          <div className="lg:col-span-2 bg-white dark:bg-slate-900 border border-black/5 dark:border-white/5 p-8 rounded-3xl shadow-sm">
-                              <h4 className="text-[9px] font-black uppercase tracking-widest text-gray-500 mb-6">Métricas por Materia</h4>
-                              <div className="space-y-6">
+                          <div className="lg:col-span-2 bg-white dark:bg-slate-900 border border-black/5 dark:border-white/10 p-6 rounded-3xl shadow-sm">
+                              <h4 className="text-[8px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-5">Métricas por Materia</h4>
+                              <div className="space-y-5">
                                  {[
                                    { label: 'Matemática', val: 82, color: 'bg-indigo-500' },
                                    { label: 'Ciencias Naturales', val: 94, color: 'bg-emerald-500' }
                                  ].map(item => (
-                                   <div key={item.label} className="space-y-2">
+                                   <div key={item.label} className="space-y-1.5">
                                       <div className="flex justify-between items-end">
-                                         <span className="text-[10px] font-black uppercase tracking-widest">{item.label}</span>
-                                         <span className="text-base font-black italic">{item.val}%</span>
+                                         <span className="text-[9px] font-black uppercase tracking-widest text-slate-700 dark:text-slate-300">{item.label}</span>
+                                         <span className="text-sm font-black italic text-slate-900 dark:text-white">{item.val}%</span>
                                       </div>
-                                      <div className="h-2 bg-black/5 dark:bg-white/5 rounded-full p-[1px]">
+                                      <div className="h-1.5 bg-black/5 dark:bg-white/5 rounded-full p-[0.5px]">
                                          <motion.div initial={{ width: 0 }} animate={{ width: `${item.val}%` }} transition={{ duration: 1 }} className={`h-full rounded-full ${item.color}`} />
                                       </div>
                                    </div>
@@ -274,22 +274,22 @@ export default function AulaWorkspace() {
                               </div>
                           </div>
                           
-                          <div className="bg-rose-600 p-8 rounded-3xl text-white shadow-xl relative overflow-hidden flex flex-col justify-between">
+                          <div className="bg-rose-600 p-6 rounded-3xl text-white shadow-xl relative overflow-hidden flex flex-col justify-between">
                               <div className="relative z-10">
-                                 <h4 className="text-[8px] font-black uppercase tracking-widest text-white/50 mb-3">Intervención Requerida</h4>
-                                 <h3 className="text-xl font-black italic tracking-tighter leading-tight mb-6">Contactar tutores por bajo rendimiento detectado.</h3>
-                                 <button onClick={() => alert('Mensaje enviado')} className="w-full py-4 bg-white text-rose-600 rounded-2xl font-black text-[9px] uppercase tracking-widest active:scale-95 transition-all">Notificar Ahora</button>
+                                 <h4 className="text-[7px] font-black uppercase tracking-widest text-white/50 mb-3">Intervención Requerida</h4>
+                                 <h3 className="text-lg font-black italic tracking-tighter leading-tight mb-5">Contactar tutores por bajo rendimiento detectado.</h3>
+                                 <button onClick={() => alert('Mensaje enviado')} className="w-full py-3 bg-white text-rose-600 rounded-2xl font-black text-[8px] uppercase tracking-widest active:scale-95 transition-all">Notificar Ahora</button>
                               </div>
                           </div>
                        </div>
                     </div>
                  ) : (
-                    <div className="flex flex-col items-center justify-center py-20 border-2 border-dashed border-black/5 dark:border-white/5 rounded-3xl bg-surface-subtle/30 text-center gap-6">
-                       <Bot size={40} className="text-primary-500" />
-                       <h3 className="text-xl font-black uppercase italic tracking-tighter">Analizar mi Aula</h3>
-                       <button onClick={generateReport} className="btn-primary py-2.5 px-8 text-[9px]">⚡ Iniciar Análisis IA</button>
+                    <div className="flex flex-col items-center justify-center py-16 border-2 border-dashed border-black/5 dark:border-white/10 rounded-[32px] bg-surface-subtle/30 text-center gap-5">
+                       <Bot size={32} className="text-primary-500/50" />
+                       <h3 className="text-lg font-black uppercase italic tracking-tighter text-slate-400 dark:text-slate-500">Analizar mi Aula</h3>
+                       <button onClick={generateReport} className="btn-primary py-2 px-6 text-[8px] tracking-[0.2em]">⚡ Iniciar Análisis IA</button>
                     </div>
-                 )}
+                  )}
               </div>
             )}
           </motion.div>

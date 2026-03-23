@@ -196,79 +196,79 @@ export default function Dashboard() {
         <div className="lg:col-span-4 space-y-8">
           
           {/* DOCENTICO INSIGHT CARD */}
-          <div className="bg-ai-gradient p-8 rounded-3xl shadow-xl shadow-indigo-600/20 text-white relative overflow-hidden group">
-             <div className="absolute -right-8 -bottom-8 opacity-10 rotate-12 group-hover:scale-110 transition-transform duration-1000">
-                <Bot size={200} />
+          <div className="bg-ai-gradient p-6 rounded-3xl shadow-xl shadow-indigo-600/10 text-white relative overflow-hidden group">
+             <div className="absolute -right-6 -bottom-6 opacity-10 rotate-12 group-hover:scale-110 transition-transform duration-1000">
+                <Bot size={140} />
              </div>
-             <div className="relative z-10 space-y-6">
+             <div className="relative z-10 space-y-4">
                 <div className="flex items-center gap-2">
-                   <Sparkles size={16} className="text-indigo-200" />
-                   <h4 className="text-[10px] font-black uppercase tracking-widest text-white/70">Mente Artificial DocenTico</h4>
+                   <Sparkles size={14} className="text-indigo-200" />
+                   <h4 className="text-[9px] font-black uppercase tracking-widest text-white/70">Mente Artificial DocenTico</h4>
                 </div>
-                <p className="text-[13px] font-bold italic leading-relaxed">
+                <p className="text-[12px] font-bold italic leading-relaxed">
                    &quot;He detectado que el rendimiento en Matemática subió un 5% después de la última secuencia didáctica.&quot;
                 </p>
-                <button onClick={() => navigate('/estudiantes')} className="w-full py-3 bg-white text-primary-600 rounded-xl font-black text-[9px] uppercase tracking-widest shadow-lg hover:scale-[1.02] active:scale-95 transition-all">
+                <button onClick={() => navigate('/estudiantes')} className="w-full py-2.5 bg-white text-primary-600 rounded-xl font-black text-[8px] uppercase tracking-widest shadow-lg hover:scale-[1.02] active:scale-95 transition-all">
                    Ver Análisis Completo
                 </button>
              </div>
           </div>
 
           {/* PROGRESS MODULE */}
-          <div className="bg-white dark:bg-slate-900 border border-black/5 dark:border-white/5 p-8 rounded-3xl shadow-premium space-y-6">
+          <div className="bg-white dark:bg-slate-900 border border-black/5 dark:border-white/10 p-6 rounded-3xl shadow-premium space-y-5">
              <div className="flex items-center justify-between">
-                <h4 className="text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
-                   <Trophy size={16} className="text-amber-500" /> Progreso Maestro
+                <h4 className="text-[9px] font-black uppercase tracking-widest flex items-center gap-2">
+                   <Trophy size={14} className="text-amber-500" /> Progreso Maestro
                 </h4>
-                <span className="text-[10px] font-black text-primary-500 italic">Nivel 4</span>
+                <span className="text-[9px] font-black text-primary-500 italic">Nivel 4</span>
              </div>
              
-             <div className="space-y-3 pt-2">
-                <div className="flex justify-between text-[10px] font-black uppercase tracking-widest mb-1">
-                   <span className="text-gray-400">Currículum Cubierto</span>
-                   <span>72%</span>
+             <div className="space-y-2.5 pt-1">
+                <div className="flex justify-between text-[9px] font-black uppercase tracking-widest mb-1">
+                   <span className="text-slate-400">Currículum Cubierto</span>
+                   <span className="text-slate-900 dark:text-white">72%</span>
                 </div>
-                <div className="h-2 bg-surface-subtle dark:bg-white/5 rounded-full p-[1px] border border-black/5 dark:border-white/5">
-                   <div className="h-full bg-primary-600 w-[72%] rounded-full shadow-[0_0_10px_rgba(99,102,241,0.5)]" />
+                <div className="h-1.5 bg-surface-subtle dark:bg-white/5 rounded-full p-[0.5px] border border-black/5 dark:border-white/5">
+                   <div className="h-full bg-primary-600 w-[72%] rounded-full shadow-[0_0_8px_rgba(99,102,241,0.4)]" />
                 </div>
              </div>
 
-             <div className="grid grid-cols-2 gap-4">
-                <div className="bg-surface-subtle dark:bg-white/5 p-4 rounded-xl text-center space-y-1 border border-black/5 dark:border-white/5">
-                   <div className="text-xl font-black italic tracking-tighter">18</div>
-                   <p className="text-[8px] font-bold text-gray-500 uppercase tracking-widest">Tareas Done</p>
+             <div className="grid grid-cols-2 gap-3">
+                <div className="bg-surface-subtle dark:bg-white/5 p-3 rounded-xl text-center space-y-0.5 border border-black/5 dark:border-white/5">
+                   <div className="text-lg font-black italic tracking-tighter text-slate-900 dark:text-white">18</div>
+                   <p className="text-[7px] font-bold text-slate-400 uppercase tracking-widest">Tareas Done</p>
                 </div>
-                <div className="bg-surface-subtle dark:bg-white/5 p-4 rounded-xl text-center space-y-1 border border-black/5 dark:border-white/5">
-                   <div className="text-xl font-black italic tracking-tighter">8.4</div>
-                   <p className="text-[8px] font-bold text-gray-500 uppercase tracking-widest">Prom. Trim.</p>
+                <div className="bg-surface-subtle dark:bg-white/5 p-3 rounded-xl text-center space-y-0.5 border border-black/5 dark:border-white/5">
+                   <div className="text-lg font-black italic tracking-tighter text-slate-900 dark:text-white">8.4</div>
+                   <p className="text-[7px] font-bold text-slate-400 uppercase tracking-widest">Prom. Trim.</p>
                 </div>
              </div>
           </div>
 
           {/* RISK ALERTS */}
-          <div className="bg-red-500/[0.03] border border-red-500/10 p-8 rounded-3xl space-y-6">
+          <div className="bg-rose-500/[0.03] border border-rose-500/10 p-6 rounded-3xl space-y-5">
              <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                   <Activity size={16} className="text-red-500" />
-                   <h4 className="text-[10px] font-black uppercase tracking-widest">Alertas de Riesgo</h4>
+                   <Activity size={14} className="text-rose-500" />
+                   <h4 className="text-[9px] font-black uppercase tracking-widest text-slate-800 dark:text-slate-200">Alertas de Riesgo</h4>
                 </div>
-                <span className="px-2 py-0.5 bg-red-500/10 text-red-500 text-[8px] font-black uppercase tracking-widest rounded-full border border-red-500/20">
+                <span className="px-2 py-0.5 bg-rose-500/10 text-rose-500 text-[7px] font-black uppercase tracking-widest rounded-full border border-rose-500/20">
                    {stats.riesgo} Alertas
                 </span>
              </div>
              <div className="space-y-2">
                 {(suggestions || []).filter(s => s.type === 'danger').slice(0, 2).map((s, i) => (
-                   <div key={i} className="flex items-center justify-between p-3 bg-white dark:bg-slate-900/50 border border-black/5 dark:border-white/5 rounded-xl group/item">
+                   <div key={i} className="flex items-center justify-between p-2.5 bg-white dark:bg-slate-900/50 border border-black/5 dark:border-white/5 rounded-xl group/item">
                       <div className="flex items-center gap-3">
-                         <div className="w-8 h-8 bg-red-500/10 rounded-lg flex items-center justify-center text-red-500 text-[10px] font-black">
+                         <div className="w-7 h-7 bg-rose-500/10 rounded-lg flex items-center justify-center text-rose-500 text-[9px] font-black">
                             {s.title.charAt(0)}
                          </div>
                          <div className="max-w-[120px]">
-                            <p className="text-[10px] font-black uppercase tracking-tight truncate">{s.title}</p>
-                            <p className="text-[8px] font-bold text-gray-500 uppercase truncate">IA Alert</p>
+                            <p className="text-[9px] font-black uppercase tracking-tight truncate text-slate-800 dark:text-slate-200">{s.title}</p>
+                            <p className="text-[7px] font-bold text-slate-400 uppercase truncate">IA Alert</p>
                          </div>
                       </div>
-                      <button onClick={() => navigate(s.action?.path || '/')} className="p-2 text-gray-400 group-hover/item:text-red-500 transition-colors">
+                      <button onClick={() => navigate(s.action?.path || '/')} className="p-2 text-slate-400 group-hover/item:text-rose-500 transition-colors">
                          <ChevronRight size={14} />
                       </button>
                    </div>
