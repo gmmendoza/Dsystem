@@ -112,6 +112,23 @@ export default function AIChat() {
     setIsStreaming(false)
   }, [input, messages, isStreaming, callAI])
 
+  const getSuggestedActions = (aiContent) => {
+    const content = aiContent.toLowerCase()
+    if (content.includes('asistencia') && content.includes('redacte')) {
+      return [{ label: 'Sí, redactar seguimiento', prompt: 'si, redactá el mensaje' }, { label: 'No por ahora', prompt: 'gracias' }]
+    }
+    if (content.includes('riesgo') && content.includes('generar')) {
+      return [{ label: 'Generar Plan de Refuerzo', prompt: 'si, generá el plan' }, { label: 'Analizar más', prompt: 'dame más detalles' }]
+    }
+    if (content.includes('planificar') || content.includes('secuencia')) {
+      return [{ label: 'Enfoque ABP', prompt: 'prefiero enfoque ABP' }, { label: 'Enfoque Tradicional', prompt: 'mejor tradicional' }]
+    }
+    if (content.includes('objetivos simplificados')) {
+       return [{ label: 'Ver Objetivos', prompt: 'si, mostrame los objetivos' }]
+    }
+    return []
+  }
+
   const renderMarkdown = (text) => {
     return (text || '').toString()
       .replace(/\*\*(.*?)\*\*/g, '<strong class="text-primary-500">$1</strong>')
@@ -220,6 +237,24 @@ export default function AIChat() {
                                 <motion.span animate={{ opacity: [1, 0] }} transition={{ duration: 0.5, repeat: Infinity }} className="inline-block w-1.5 h-3.5 bg-primary-400 ml-1.5 rounded-sm align-middle" />
                               )}
                            </div>
+
+                            {/* Suggested Actions within the flow */}
+                            {!msg.streaming && msg.role === 'assistant' && idx === messages.length - 1 && (
+                               <div className="flex flex-wrap gap-2 mt-2 pl-12">
+                                  {getSuggestedActions(msg.content).map((action, i) => (
+                                     <motion.button
+                                       key={i}
+                                       initial={{ opacity: 0, scale: 0.9 }}
+                                       animate={{ opacity: 1, scale: 1 }}
+                                       transition={{ delay: 0.2 + (i * 0.1) }}
+                                       onClick={() => handleSend(action.prompt)}
+                                       className="px-3 py-1.5 bg-primary-500/10 border border-primary-500/20 rounded-xl text-[10px] font-black uppercase tracking-widest text-primary-600 hover:bg-primary-500 hover:text-white transition-all shadow-sm active:scale-95"
+                                     >
+                                        {action.label}
+                                     </motion.button>
+                                  ))}
+                               </div>
+                            )}
                         </motion.div>
                      ))}
                      {isStreaming && messages[messages.length - 1]?.content === '' && (

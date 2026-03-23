@@ -47,8 +47,9 @@ export default function AulaWorkspace() {
   const [curso, setCurso] = useState(null)
   const [planes, setPlanes] = useState([])
   const [alumnos, setAlumnos] = useState([])
-  const { suggestSolution } = useAI()
+  const { suggestSolution, getWeeklyStrategy } = useAI()
   const [aiSolution, setAiSolution] = useState(null)
+  const [weeklyStrategy, setWeeklyStrategy] = useState(null)
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('planes')
   const [toast, setToast] = useState(null)
@@ -85,6 +86,10 @@ export default function AulaWorkspace() {
     }
     setReportLoading(false)
     setShowReport(true)
+    
+    // Fetch deep strategy
+    const strategy = await getWeeklyStrategy(curso.nombre, alumnos)
+    setWeeklyStrategy(strategy)
   }
 
   const fetchWorkspaceData = async () => {
@@ -312,7 +317,73 @@ export default function AulaWorkspace() {
                              </motion.div>
                           )}
                        </AnimatePresence>
-                       
+
+                        {/* WEEKLY STRATEGY CARD */}
+                        <AnimatePresence>
+                           {weeklyStrategy && (
+                              <motion.div
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                className="grid grid-cols-1 lg:grid-cols-3 gap-6"
+                              >
+                                 <div className="lg:col-span-2 bg-[#020617] border border-primary-500/20 p-8 rounded-[2.5rem] relative overflow-hidden group shadow-2xl">
+                                    <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:rotate-12 transition-transform duration-700">
+                                       <BrainCircuit size={120} className="text-primary-500" />
+                                    </div>
+                                    <div className="relative z-10 space-y-6">
+                                       <div className="flex items-center gap-3">
+                                          <div className="w-10 h-10 bg-primary-600 rounded-xl flex items-center justify-center text-white shadow-lg rotate-3"><Bot size={20} /></div>
+                                          <div>
+                                             <h4 className="text-sm font-black uppercase italic tracking-tighter text-white">Estrategia Semanal DocenTico</h4>
+                                             <p className="text-[8px] font-black uppercase tracking-[0.3em] text-primary-500/70">Co-Piloto Institucional</p>
+                                          </div>
+                                       </div>
+                                       
+                                       <div className="space-y-4">
+                                          <div className="p-5 bg-white/5 rounded-2xl border border-white/5">
+                                             <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">Foco Pedagógico</p>
+                                             <h5 className="text-xl font-black italic tracking-tight text-white">{weeklyStrategy.estrategia}</h5>
+                                          </div>
+                                          
+                                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                             <div className="space-y-3">
+                                                <p className="text-[8px] font-black uppercase tracking-widest text-slate-500">Plan de Acción</p>
+                                                <ul className="space-y-2">
+                                                   {weeklyStrategy.plan.map((item, idx) => (
+                                                      <li key={idx} className="flex gap-3 text-[10px] font-bold text-slate-300">
+                                                         <CheckCircle2 size={12} className="text-primary-500 shrink-0 mt-0.5" />
+                                                         {item}
+                                                      </li>
+                                                   ))}
+                                                </ul>
+                                             </div>
+                                             <div className="p-5 bg-primary-600 rounded-2xl flex flex-col justify-between shadow-xl shadow-primary-950/40">
+                                                <div className="space-y-1">
+                                                   <p className="text-[8px] font-black uppercase tracking-widest text-white/60">Impacto Estimado</p>
+                                                   <p className="text-lg font-black italic leading-none text-white">{weeklyStrategy.impacto}</p>
+                                                </div>
+                                                <div className="flex items-center gap-2 mt-4 pt-4 border-t border-white/10">
+                                                   <Sparkles size={14} className="text-white/80" />
+                                                   <p className="text-[9px] font-bold italic text-white/90">{weeklyStrategy.consejito}</p>
+                                                </div>
+                                             </div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                 </div>
+                                 
+                                 <div className="bg-white dark:bg-slate-900 border border-black/5 dark:border-white/5 p-8 rounded-[2.5rem] flex flex-col justify-between shadow-sm">
+                                    <div className="space-y-4">
+                                       <div className="w-12 h-12 bg-surface-subtle dark:bg-white/5 rounded-2xl flex items-center justify-center text-primary-600"><TrendingUp size={24} /></div>
+                                       <h4 className="text-lg font-black uppercase italic tracking-tighter">Sincronizar Recursos</h4>
+                                       <p className="text-[10px] font-medium text-slate-500 leading-relaxed">DocenTico sugiere asignar el material "Geometría Dinámica" a los alumnos en riesgo para cerrar la brecha conceptual esta semana.</p>
+                                    </div>
+                                    <button className="w-full py-3.5 bg-primary-600 text-white rounded-2xl text-[9px] font-black uppercase tracking-widest shadow-lg shadow-primary-950/20 active:scale-95 transition-all mt-6">Asignar Automáticamente</button>
+                                 </div>
+                              </motion.div>
+                           )}
+                        </AnimatePresence>
+                        
                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                           <div className="lg:col-span-2 bg-white dark:bg-slate-900 border border-black/5 dark:border-white/10 p-6 rounded-3xl shadow-sm">
                               <h4 className="text-[8px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-5">Métricas por Materia</h4>

@@ -152,7 +152,7 @@ export function AIProvider({ children }) {
 
     // Improved Mock Flow with thinking delay
     await new Promise(r => setTimeout(r, 1200))
-    const response = mockAIResponse(userMessage)
+    const response = mockAIResponse(userMessage, history)
     if (onChunk) onChunk(response, response) 
     return response
   }, [])
@@ -187,6 +187,38 @@ export function AIProvider({ children }) {
   }, [callAI])
 
   /**
+   * Generates a weekly strategy for a classroom
+   */
+  const getWeeklyStrategy = useCallback(async (cursoNombre, alumnos) => {
+    await new Promise(r => setTimeout(r, 1500))
+    const low = alumnos.filter(a => (a.asistencia || 0) < 75 || (Object.values(a.notas || {}).reduce((s,v)=>s+v,0)/Math.max(1,Object.values(a.notas || {}).length)) < 6)
+    
+    return {
+      estrategia: "Refuerzo Conceptual Grupal",
+      impacto: "Mejora proyectada del 15% en el próximo examen.",
+      consejito: "He notado que el grupo responde mejor a disparadores visuales los miércoles.",
+      plan: [
+        `Focalizar en los ${low.length} alumnos con rezago.`,
+        "Implementar 'Cápsulas de Repaso' de 10 min al inicio.",
+        "Asignar tutoría de pares entre alumnos destacados y en riesgo."
+      ]
+    }
+  }, [])
+
+  /**
+   * Refines a piece of content (objective or activity)
+   */
+  const refineContent = useCallback(async (content, mode) => {
+    await new Promise(r => setTimeout(r, 1200))
+    const refinements = {
+      'gamify': `[GAMIFICADO] ${content} - Incorporar un sistema de 'Experiencia' (XP) y desafíos por niveles para aumentar la motivación.`,
+      'simplify': `[SIMPLIFICADO] ${content} - Reducir la carga cognitiva enfocándose solo en el concepto núcleo y eliminando tecnicismos secundarios.`,
+      'inclusion': `[INCLUSIVO] ${content} - Adaptar con apoyos visuales y lectura fácil, permitiendo múltiples formas de expresión (dibujo, audio, texto).`
+    }
+    return refinements[mode] || content
+  }, [])
+
+  /**
    * Generates a concrete pedagogical solution (material, guide, etc.)
    */
   const suggestSolution = useCallback(async (type, data) => {
@@ -219,8 +251,38 @@ export function AIProvider({ children }) {
     return solutions[type] || solutions['actividad'];
   }, []);
 
+  /**
+   * Generates a personalized roadmap for a student
+   */
+  const getStudentRoadmap = useCallback(async (alumno) => {
+    await new Promise(r => setTimeout(r, 1800))
+    const prom = (Object.values(alumno.notas || {}).reduce((s,v)=>s+v,0)/Math.max(1,Object.values(alumno.notas || {}).length)).toFixed(1)
+    
+    return {
+      nombre: `Ruta Pro de ${alumno.nombre}`,
+      diagnostico: `Detectamos una brecha en el promedio (${prom}). Su estilo de aprendizaje es pragmático.`,
+      etapas: [
+        { titulo: 'Nivelación Fundamental', desc: 'Repaso de prerrequisitos mediante micro-aprendizajes.' },
+        { titulo: 'Práctica con Andamiaje', desc: 'Ejercicios guiados con feedback inmediato de 1 a 1.' },
+        { titulo: 'Validación de Saberes', desc: 'Evaluación alternativa (proyecto o presentación).' }
+      ],
+      proximaMeta: 'Alcanzar el 7.0 en el cierre de contenidos.'
+    }
+  }, [])
+
   return (
-    <AIContext.Provider value={{ suggestions, dailySummary, unreadCount, refreshSuggestions, callAI, generateSmartFill, suggestSolution }}>
+    <AIContext.Provider value={{ 
+      suggestions, 
+      dailySummary, 
+      unreadCount, 
+      refreshSuggestions, 
+      callAI, 
+      generateSmartFill, 
+      suggestSolution,
+      getWeeklyStrategy,
+      getStudentRoadmap,
+      refineContent
+    }}>
       {children}
     </AIContext.Provider>
   )
@@ -233,11 +295,28 @@ export const useAI = () => {
 }
 
 // ── MOCK RESPONSE ENGINE ────────────────────────────────────────
-function mockAIResponse(prompt) {
+function mockAIResponse(prompt, history = []) {
   const p = prompt.toLowerCase()
   const alumnos = mockDataService.getAlumnos()
-  const low = alumnos.filter(a => (a.asistencia || 0) < 75 || (Object.values(a.notas || {}).reduce((s,v)=>s+v,0)/Object.values(a.notas || {}).length) < 6)
+  const low = alumnos.filter(a => (a.asistencia || 0) < 75 || (Object.values(a.notas || {}).reduce((s,v)=>s+v,0)/Math.max(1,Object.values(a.notas || {}).length)) < 6)
+  
+  // Get last AI message for context
+  const lastAI = [...history].reverse().find(m => m.role === 'assistant')?.content?.toLowerCase() || ''
+  
+  // 1. Contextual Follow-up Detection
+  if (p === 'si' || p === 'claro' || p === 'dale' || p === 'bueno' || p === 'procedé') {
+    if (lastAI.includes('asistencia')) {
+      return `**¡Perfecto!** Redactando informe de seguimiento para los tutores de los alumnos rezagados. \n\n¿Querés que lo envíe automáticamente o preferís revisarlo primero?`
+    }
+    if (lastAI.includes('riesgo') || lastAI.includes('académico')) {
+      return `**Entendido.** He generado una propuesta de **Plan de Refuerzo Personalizado**. \n\n¿Querés ver los objetivos simplificados que propongo para la primera semana?`
+    }
+    if (lastAI.includes('planificar') || lastAI.includes('secuencia')) {
+      return `**Excelente elección.** Vamos a detallar la secuencia didáctica. \n\n¿Preferís que el enfoque sea principalmente **Práctico/Técnico** o más **Investigativo/ABP**?`
+    }
+  }
 
+  // 2. Main Keyword Detection
   if (p.includes('asistencia')) {
     const attSum = alumnos.reduce((s, a) => s + (Number(a.asistencia) || 0), 0)
     const avg = alumnos.length ? (attSum / alumnos.length).toFixed(1) : '0'
@@ -246,7 +325,7 @@ function mockAIResponse(prompt) {
   }
 
   if (p.includes('riesgo') || p.includes('académico')) {
-    const at = low.filter(a => (Object.values(a.notas || {}).reduce((s,v)=>s+v,0)/Object.values(a.notas || {}).length) < 6)
+    const at = low.filter(a => (Object.values(a.notas || {}).reduce((s,v)=>s+v,0)/Math.max(1,Object.values(a.notas || {}).length)) < 6)
     return `**Reporte de Riesgo Académico:**\n\nHe identificado a **${at.length} alumnos** por debajo del umbral de aprobación (6.0).\n\n- **Contenido Afectado:** Principalmente en el eje de Resolución de Problemas.\n- **Sugerencia:** Aplicar técnica de *andamiaje* en las próximas dos clases.\n\n¿Querés que genere una propuesta de refuerzo para **${at[0]?.nombre || 'ellos'}**?`
   }
 
@@ -258,5 +337,10 @@ function mockAIResponse(prompt) {
     return `**INFORME EJECUTIVO DE GESTIÓN (MOCK)**\n\n- **Métricas:** Asistencia ${ (alumnos.reduce((s,a)=>s+a.asistencia,0)/alumnos.length).toFixed(1) }%, Rendimiento 8.2\n- **Intervenciones:** ${low.length} sugeridas esta semana.\n- **Próximos Pasos:** Nivelar el grupo en contenidos de Lectoescritura.\n\nInforme listo para exportar a PDF.`
   }
 
+  if (p.includes('gracias') || p.includes('ok') || p.includes('listo')) {
+     return `¡De nada! Quedo a tu disposición para cualquier otra consulta sobre tus aulas o alumnos. ¡Que tengas una excelente jornada escolar! 🍎`
+  }
+
+  // Fallback / Initial
   return `Entendido. He analizado el historial de tus **${alumnos.length} alumnos**.\n\nComo tu asistente **DocenTico Pro**, detecto que el clima escolar es positivo pero hay una brecha en la entrega de trabajos prácticos en **3° A**. \n\n¿En qué área específica necesitás mi ayuda hoy?`
 }

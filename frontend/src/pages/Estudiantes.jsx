@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Users, Search, ArrowUpRight, GraduationCap, AlertTriangle, TrendingUp, X, Save, Plus, Trash2, Edit2, Clipboard, MessageCircle, Brain, Zap as ZapIcon, FileText } from 'lucide-react'
+import { Users, Search, ArrowUpRight, GraduationCap, AlertTriangle, TrendingUp, X, Save, Plus, Trash2, Edit2, Clipboard, MessageCircle, Brain, Zap as ZapIcon, FileText, CheckCircle2, Flag } from 'lucide-react'
 import { alumnoAPI, cursoAPI } from '../services/api'
 import { CardSkeleton } from '../components/Common/LoadingSkeleton'
 import AIAssistantSection from '../components/AI/AIAssistantSection'
+import { useAI } from '../context/AIContext'
 
 export default function Estudiantes() {
   const [alumnos, setAlumnos] = useState([])
@@ -17,6 +18,11 @@ export default function Estudiantes() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editFormData, setEditFormData] = useState(null)
   const [saving, setSaving] = useState(false)
+  
+  // AI Roadmap State
+  const { getStudentRoadmap } = useAI()
+  const [roadmap, setRoadmap] = useState(null)
+  const [loadingRoadmap, setLoadingRoadmap] = useState(false)
 
   useEffect(() => {
     fetchData()
@@ -57,6 +63,23 @@ export default function Estudiantes() {
       notas: { ...alumno.notas }
     })
     setIsModalOpen(true)
+    
+    // Auto-fetch roadmap if at risk
+    if (alumno.asistencia < 75 || parseFloat(getPromedio(alumno.notas)) < 6) {
+      handleFetchRoadmap(alumno)
+    } else {
+      setRoadmap(null)
+    }
+  }
+
+  const handleFetchRoadmap = async (alumno) => {
+    setLoadingRoadmap(true)
+    try {
+      const rm = await getStudentRoadmap(alumno)
+      setRoadmap(rm)
+    } finally {
+      setLoadingRoadmap(false)
+    }
   }
 
   const handleSave = async (e) => {
@@ -104,7 +127,7 @@ export default function Estudiantes() {
   })
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500 pb-20 max-w-[1200px] mx-auto">
+    <div className="space-y-8 animate-in fade-in duration-500 pb-20 max-w-[1200px] mx-auto px-4">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div className="space-y-3">
@@ -233,7 +256,7 @@ export default function Estudiantes() {
                <div className="p-8 border-b border-black/5 dark:border-white/5 flex items-center justify-between shrink-0">
                   <div className="flex items-center gap-4">
                     <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-lg rotate-2">
-                      <GraduationCap size={20} />
+                       <GraduationCap size={20} />
                     </div>
                     <div>
                       <h2 className="text-xl font-black uppercase italic tracking-tighter leading-none">{editFormData.nombre} {editFormData.apellido}</h2>
@@ -268,9 +291,67 @@ export default function Estudiantes() {
                     ]}
                     actions={[
                        { label: 'Generar Reporte', onClick: () => alert('Generado.'), icon: FileText },
-                       { label: 'Refuerzo IA', onClick: () => alert('Plan iniciado.'), icon: ZapIcon, primary: true }
+                       { label: 'Refuerzo IA', onClick: () => handleFetchRoadmap(editFormData), icon: ZapIcon, primary: true }
                     ]}
-                  />
+                   />
+
+                   {/* AI ROADMAP SECTION */}
+                   <AnimatePresence>
+                     {loadingRoadmap ? (
+                        <div className="flex flex-col items-center py-6 bg-surface-subtle/20 rounded-3xl border border-black/5">
+                           <motion.div animate={{ rotate: 360 }} transition={{ duration: 2, repeat: Infinity, ease: "linear" }} className="w-8 h-8 border-2 border-indigo-500/10 border-t-indigo-500 rounded-full mb-3" />
+                           <p className="text-[8px] font-black uppercase tracking-widest text-slate-500">Trazando Ruta de Nivelación...</p>
+                        </div>
+                     ) : roadmap && (
+                        <motion.div 
+                          initial={{ opacity: 0, scale: 0.95 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          className="bg-[#020617] border border-indigo-500/20 p-8 rounded-[2.5rem] space-y-6 relative overflow-hidden group shadow-2xl"
+                        >
+                           <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:scale-110 transition-transform duration-700">
+                              <Brain size={100} className="text-indigo-400" />
+                           </div>
+                           
+                           <div className="relative z-10 space-y-6">
+                              <div className="flex items-center gap-3">
+                                 <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-lg rotate-3"><ZapIcon size={20} /></div>
+                                 <div>
+                                    <h4 className="text-sm font-black uppercase italic tracking-tighter text-white">{roadmap.nombre}</h4>
+                                    <p className="text-[8px] font-black uppercase tracking-[0.3em] text-indigo-400">Plan de Recuperación Asistido</p>
+                                 </div>
+                              </div>
+
+                              <div className="space-y-4">
+                                 <div className="grid grid-cols-1 gap-4">
+                                    {roadmap.etapas.map((etapa, idx) => (
+                                       <div key={idx} className="flex gap-4 group/item">
+                                          <div className="flex flex-col items-center gap-2">
+                                             <div className="w-6 h-6 rounded-full bg-white/5 border border-indigo-500/20 flex items-center justify-center text-[10px] font-black text-indigo-400 group-hover/item:bg-indigo-600 group-hover/item:text-white transition-all">{idx + 1}</div>
+                                             {idx < roadmap.etapas.length - 1 && <div className="w-[1px] h-full bg-indigo-500/10" />}
+                                          </div>
+                                          <div className="pb-4">
+                                             <h5 className="text-[10px] font-black uppercase tracking-widest text-white mb-1">{etapa.titulo}</h5>
+                                             <p className="text-[9px] font-medium text-slate-400 leading-relaxed italic">{etapa.desc}</p>
+                                          </div>
+                                       </div>
+                                    ))}
+                                 </div>
+                                 
+                                 <div className="p-4 bg-indigo-600 rounded-2xl flex items-center justify-between shadow-xl shadow-indigo-950/40">
+                                    <div className="flex items-center gap-3">
+                                       <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center text-white"><Flag size={14} /></div>
+                                       <div className="space-y-0.5">
+                                          <p className="text-[7px] font-black uppercase tracking-widest text-white/60 leading-none">Próximo Hito</p>
+                                          <p className="text-[10px] font-black italic text-white uppercase tracking-tight">{roadmap.proximaMeta}</p>
+                                       </div>
+                                    </div>
+                                    <CheckCircle2 size={18} className="text-white/40" />
+                                 </div>
+                              </div>
+                           </div>
+                        </motion.div>
+                     )}
+                   </AnimatePresence>
 
                   {/* Grades Management */}
                   <div className="space-y-4">

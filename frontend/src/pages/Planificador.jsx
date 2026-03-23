@@ -27,7 +27,10 @@ import {
   ChevronDown,
   CloudCheck,
   CloudUpload,
-  RefreshCw
+  RefreshCw,
+  Users,
+  Flag,
+  MousePointer2
 } from 'lucide-react'
 import { planificacionAPI, cursoAPI } from '../services/api'
 import { Toast } from '../components/Common/Toast'
@@ -43,7 +46,8 @@ export default function Planificador() {
   const [saveStatus, setSaveStatus] = useState('saved') // 'saved', 'saving', 'unsaved'
   const [lastSaved, setLastSaved] = useState(null)
   const [aiStatus, setAiStatus] = useState(null) // 'analyzing', 'connecting', 'synthesizing'
-  const { generateSmartFill } = useAI()
+  const { generateSmartFill, refineContent } = useAI()
+  const [refiningIdx, setRefiningIdx] = useState({ field: null, index: null })
   
   const [formData, setFormData] = useState({
     titulo: '',
@@ -224,6 +228,20 @@ export default function Planificador() {
     setFormData({ ...formData, [field]: list })
   }
 
+  const handleRefine = async (field, index, mode) => {
+    const original = formData[field][index]
+    if (!original) return
+    
+    setRefiningIdx({ field, index })
+    try {
+      const refined = await refineContent(original, mode)
+      updateItem(field, index, refined)
+      setToast({ message: `Contenido refinado: ${mode}`, type: 'success' })
+    } finally {
+      setRefiningIdx(null)
+    }
+  }
+
   return (
     <div className="min-h-screen pb-32 max-w-[1400px] mx-auto px-6 animate-in fade-in duration-700">
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
@@ -380,7 +398,7 @@ export default function Planificador() {
                     </div>
                  </div>
               </div>
-           </section>
+            </section>
 
            {/* Section 2: Dinamic Lists */}
            <LayoutGroup>
@@ -417,10 +435,14 @@ export default function Planificador() {
                                     onChange={e => updateItem('objetivos', i, e.target.value)}
                                     placeholder="Define un objetivo claro..."
                                  />
-                                <button type="button" onClick={() => removeItem('objetivos', i)} className="pt-4 text-gray-800 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100">
-                                   <Trash2 size={16} />
-                                </button>
-                             </motion.div>
+                                 <button type="button" onClick={() => removeItem('objetivos', i)} className="pt-4 text-gray-800 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100">
+                                    <Trash2 size={16} />
+                                 </button>
+                                 <div className="flex flex-col gap-2 pt-4 opacity-0 group-hover:opacity-100 transition-all">
+                                    <button onClick={() => handleRefine('objetivos', i, 'simplify')} title="Simplificar" className="p-1 hover:text-primary-500"><Zap size={14} /></button>
+                                    <button onClick={() => handleRefine('objetivos', i, 'inclusion')} title="Hacer Inclusivo" className="p-1 hover:text-primary-500"><Users size={14} /></button>
+                                 </div>
+                              </motion.div>
                           ))}
                        </AnimatePresence>
                     </div>
@@ -458,10 +480,14 @@ export default function Planificador() {
                                     onChange={e => updateItem('actividades', i, e.target.value)}
                                     placeholder="Describe la actividad..."
                                  />
-                                <button type="button" onClick={() => removeItem('actividades', i)} className="pt-4 text-gray-800 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100">
-                                   <Trash2 size={16} />
-                                </button>
-                             </motion.div>
+                                 <button type="button" onClick={() => removeItem('actividades', i)} className="pt-4 text-gray-800 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100">
+                                    <Trash2 size={16} />
+                                 </button>
+                                 <div className="flex flex-col gap-2 pt-4 opacity-0 group-hover:opacity-100 transition-all">
+                                    <button onClick={() => handleRefine('actividades', i, 'gamify')} title="Gamificar" className="p-1 hover:text-violet-500"><Sparkles size={14} /></button>
+                                    <button onClick={() => handleRefine('actividades', i, 'inclusion')} title="Hacer Inclusiva" className="p-1 hover:text-violet-500"><Users size={14} /></button>
+                                 </div>
+                              </motion.div>
                           ))}
                        </AnimatePresence>
                     </div>
@@ -524,11 +550,11 @@ export default function Planificador() {
                             {formData.tipo || 'Secuencia'}
                         </span>
                      </div>
-                 </div>
+                  </div>
 
-                 <div className="p-10 flex-1 space-y-10 overflow-y-auto custom-scrollbar max-h-[400px]">
-                    {/* Objetivos Preview */}
-                    <div className="space-y-4">
+                  <div className="p-10 flex-1 space-y-10 overflow-y-auto custom-scrollbar max-h-[400px]">
+                     {/* Objetivos Preview */}
+                     <div className="space-y-4">
                         <div className="flex items-center gap-3">
                            <div className="w-1 h-3 bg-primary-500 rounded-full" />
                            <span className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 dark:text-white/40">Objetivos</span>
@@ -548,10 +574,10 @@ export default function Planificador() {
                              </div>
                           )}
                        </div>
-                    </div>
+                     </div>
 
-                    {/* Actividades Preview */}
-                    <div className="space-y-4">
+                     {/* Actividades Preview */}
+                     <div className="space-y-4">
                         <div className="flex items-center gap-3">
                            <div className="w-1 h-3 bg-violet-500 rounded-full" />
                            <span className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 dark:text-white/40">Secuencia</span>
@@ -570,24 +596,24 @@ export default function Planificador() {
                              </div>
                           )}
                        </div>
-                    </div>
-                 </div>
+                     </div>
+                  </div>
 
-                 <div className="p-8 bg-surface-muted/50 dark:bg-white/5 border-t border-black/5 dark:border-white/5 flex gap-4">
-                    <button 
-                        onClick={handleDownloadPDF}
-                        className="flex-1 p-4 bg-surface-subtle dark:bg-white/5 hover:bg-primary-500/10 rounded-2xl flex items-center justify-center text-gray-500 hover:text-primary-500 transition-all border border-black/5 dark:border-white/5 shadow-inner"
-                    >
-                       <Download size={18} />
-                    </button>
-                    <button 
-                        onClick={handleShare}
-                        className="flex-[2] p-4 bg-surface-subtle dark:bg-white/5 hover:bg-primary-500/10 rounded-2xl flex items-center justify-center text-gray-500 hover:text-primary-500 text-[9px] font-black uppercase border border-black/5 dark:border-white/5 shadow-inner"
-                    >
-                       Compartir PDF
-                    </button>
-                 </div>
-              </div>
+                  <div className="p-8 bg-surface-muted/50 dark:bg-white/5 border-t border-black/5 dark:border-white/5 flex gap-4">
+                     <button 
+                         onClick={handleDownloadPDF}
+                         className="flex-1 p-4 bg-surface-subtle dark:bg-white/5 hover:bg-primary-500/10 rounded-2xl flex items-center justify-center text-gray-500 hover:text-primary-500 transition-all border border-black/5 dark:border-white/5 shadow-inner"
+                     >
+                        <Download size={18} />
+                     </button>
+                     <button 
+                         onClick={handleShare}
+                         className="flex-[2] p-4 bg-surface-subtle dark:bg-white/5 hover:bg-primary-500/10 rounded-2xl flex items-center justify-center text-gray-500 hover:text-primary-500 text-[9px] font-black uppercase border border-black/5 dark:border-white/5 shadow-inner"
+                     >
+                        Compartir PDF
+                     </button>
+                  </div>
+               </div>
            </div>
         </div>
       </div>
