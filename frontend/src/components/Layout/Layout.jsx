@@ -86,52 +86,59 @@ export default function Layout() {
       {/* ── Sidebar ──────────────────────────────────────────── */}
       <motion.aside
         initial={false}
-        animate={{ width: isCollapsed ? 72 : 240 }}
-        transition={{ duration: 0.25, ease: 'easeInOut' }}
+        animate={{ 
+          width: isCollapsed ? 80 : 260,
+          margin: isCollapsed ? '12px 0 12px 12px' : '12px 0 12px 12px'
+        }}
+        transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
         className={`
           fixed lg:static inset-y-0 left-0 z-[70] flex flex-col flex-shrink-0
-          border-r overflow-hidden
+          overflow-hidden rounded-3xl border shadow-premium
           ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-          transition-transform lg:transition-none duration-200
+          transition-transform lg:transition-none duration-300
         `}
         style={{
           background: 'rgb(var(--color-surface-elevated))',
           borderColor: 'rgb(var(--color-border))',
         }}
       >
-        {/* Logo */}
-        <div className="flex items-center justify-between px-4 py-5 border-b flex-shrink-0"
-             style={{ borderColor: 'rgb(var(--color-border))' }}>
+        {/* Logo Section */}
+        <div className="flex items-center justify-between px-5 py-6 flex-shrink-0">
           <div className="flex items-center gap-3 overflow-hidden">
-            <div className="w-8 h-8 bg-primary-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-glow-primary">
-              <GraduationCap className="w-4 h-4 text-white" />
-            </div>
+            <motion.div 
+              whileHover={{ scale: 1.05, rotate: 5 }}
+              className="w-10 h-10 bg-ai-gradient rounded-2xl flex items-center justify-center flex-shrink-0 shadow-glow-primary ai-shimmer"
+            >
+              <GraduationCap className="w-5 h-5 text-white" />
+            </motion.div>
             {!isCollapsed && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="overflow-hidden">
-                <p className="text-[15px] font-bold tracking-tight leading-none" style={{ color: 'rgb(var(--color-text))' }}>DSystem</p>
-                <p className="text-[10px] font-semibold mt-0.5 uppercase tracking-widest text-primary-500">Education SaaS</p>
+              <motion.div 
+                initial={{ opacity: 0, x: -10 }} 
+                animate={{ opacity: 1, x: 0 }} 
+                className="overflow-hidden"
+              >
+                <p className="text-[16px] font-extrabold tracking-tight leading-none" style={{ color: 'rgb(var(--color-text))' }}>
+                  DSystem
+                </p>
+                <p className="text-[9px] font-bold mt-1 uppercase tracking-widest text-primary-500 opacity-80">
+                  Education OS
+                </p>
               </motion.div>
             )}
           </div>
-          <button
-            onClick={() => setIsCollapsed(!isCollapsed)}
-            className="hidden lg:flex btn-ghost p-1.5 rounded-lg"
-          >
-            {isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
-          </button>
         </div>
 
         {/* Search / Command trigger */}
         {!isCollapsed && (
-          <div className="px-3 pt-4 pb-2">
+          <div className="px-4 mb-6">
             <button
               onClick={() => setCmdOpen(true)}
-              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl border text-left transition-all hover:border-primary-500/30 hover:bg-primary-500/5"
+              className="w-full flex items-center gap-3 px-4 py-2.5 rounded-2xl border text-left transition-all hover:border-primary-500/30 hover:bg-primary-500/5 group"
               style={{ background: 'rgb(var(--color-surface-subtle))', borderColor: 'rgb(var(--color-border))' }}
             >
-              <Search size={13} style={{ color: 'rgb(var(--color-text-muted))' }} />
-              <span className="text-[12px] flex-1" style={{ color: 'rgb(var(--color-text-muted))' }}>Buscar...</span>
-              <kbd className="text-[10px] px-1.5 py-0.5 rounded font-mono border"
+              <Search size={14} className="transition-colors group-hover:text-primary-500" style={{ color: 'rgb(var(--color-text-muted))' }} />
+              <span className="text-[13px] flex-1 font-medium" style={{ color: 'rgb(var(--color-text-muted))' }}>Quick search...</span>
+              <kbd className="text-[10px] px-2 py-1 rounded-lg font-mono border shadow-sm group-hover:border-primary-500/20 group-hover:bg-primary-500/10"
                    style={{ borderColor: 'rgb(var(--color-border))', background: 'rgb(var(--color-surface-muted))', color: 'rgb(var(--color-text-muted))' }}>
                 ⌘K
               </kbd>
@@ -140,28 +147,45 @@ export default function Layout() {
         )}
 
         {/* Navigation */}
-        <nav className="flex-1 px-3 py-3 space-y-5 overflow-y-auto custom-scrollbar">
+        <nav className="flex-1 px-4 py-2 space-y-6 overflow-y-auto custom-scrollbar">
           {NAV_GROUPS.map(group => (
             <div key={group.label}>
               {!isCollapsed && (
-                <p className="section-title px-2 mb-2">{group.label}</p>
+                <p className="text-[10px] font-bold uppercase tracking-[0.15em] px-3 mb-3" style={{ color: 'rgb(var(--color-text-muted) / 0.6)' }}>{group.label}</p>
               )}
-              <div className="space-y-0.5">
+              <div className="space-y-1.5">
                 {group.items.map(({ to, icon: Icon, label }) => (
                   <NavLink
                     key={to}
                     to={to}
                     className={({ isActive }) =>
-                      `nav-item ${isActive ? 'active' : ''}`
+                      `flex items-center gap-3 px-3 py-2.5 rounded-2xl transition-all duration-300 group
+                       ${isActive 
+                         ? 'bg-primary-500/10 text-primary-600 shadow-sm' 
+                         : 'hover:bg-primary-500/5 text-slate-500 hover:text-primary-500'}`
                     }
                     onClick={() => setSidebarOpen(false)}
                     title={isCollapsed ? label : undefined}
                   >
-                    <Icon size={18} className="flex-shrink-0" />
+                    <div className={`
+                      flex items-center justify-center w-8 h-8 rounded-xl transition-all duration-300
+                      ${isCollapsed ? 'w-10 h-10' : ''}
+                    `}>
+                      <Icon size={isCollapsed ? 20 : 18} />
+                    </div>
                     {!isCollapsed && (
-                      <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-[13px] font-semibold">
+                      <motion.span 
+                        initial={{ opacity: 0 }} 
+                        animate={{ opacity: 1 }} 
+                        className="text-[14px] font-semibold flex-1"
+                      >
                         {label}
                       </motion.span>
+                    )}
+                    {!isCollapsed && (
+                      <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+                        <ChevronRight size={14} className="text-primary-400" />
+                      </div>
                     )}
                   </NavLink>
                 ))}
@@ -171,32 +195,41 @@ export default function Layout() {
         </nav>
 
         {/* User footer */}
-        <div className="p-3 border-t flex-shrink-0" style={{ borderColor: 'rgb(var(--color-border))' }}>
+        <div className="p-4 flex-shrink-0">
           {!isCollapsed ? (
-            <div className="flex items-center gap-3 px-2 py-2 rounded-xl"
-                 style={{ background: 'rgb(var(--color-surface-subtle))' }}>
-              <div className="w-8 h-8 rounded-xl bg-primary-600 flex items-center justify-center text-white flex-shrink-0">
-                <User size={16} />
+            <div className="glass-effect rounded-[24px] p-1 shadow-sm">
+              <div className="flex items-center gap-3 p-2 rounded-2xl group transition-all hover:bg-white/50 dark:hover:bg-black/20">
+                <div className="w-10 h-10 rounded-xl bg-ai-gradient flex items-center justify-center text-white flex-shrink-0 shadow-glow-primary overflow-hidden relative">
+                  <User size={20} />
+                  <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[14px] font-bold truncate leading-tight" style={{ color: 'rgb(var(--color-text))' }}>
+                    {user?.username || 'Admin'}
+                  </p>
+                  <p className="text-[10px] font-semibold uppercase tracking-wider mt-0.5" style={{ color: 'rgb(var(--color-text-muted))' }}>
+                    {user?.rol || 'Docente'}
+                  </p>
+                </div>
+                <button 
+                  onClick={logout} 
+                  className="w-9 h-9 flex items-center justify-center rounded-xl text-red-500 hover:bg-red-500/10 transition-colors"
+                  title="Cerrar sesión"
+                >
+                  <LogOut size={18} />
+                </button>
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-[12px] font-bold truncate" style={{ color: 'rgb(var(--color-text))' }}>
-                  {user?.username || 'Docente Pro'}
-                </p>
-                <p className="text-[10px] truncate" style={{ color: 'rgb(var(--color-text-muted))' }}>
-                  {user?.rol || 'Premium'}
-                </p>
-              </div>
-              <button onClick={logout} className="btn-ghost p-1.5 rounded-lg text-red-400 hover:text-red-500 hover:bg-red-500/10">
-                <LogOut size={15} />
-              </button>
             </div>
           ) : (
-            <div className="flex flex-col items-center gap-2">
-              <div className="w-8 h-8 rounded-xl bg-primary-600/10 flex items-center justify-center">
-                <User size={15} className="text-primary-500" />
-              </div>
-              <button onClick={logout} className="btn-ghost p-1.5 rounded-lg text-red-400 hover:text-red-500">
-                <LogOut size={15} />
+            <div className="flex flex-col items-center gap-4">
+              <motion.div 
+                whileHover={{ scale: 1.1 }}
+                className="w-12 h-12 rounded-2xl bg-ai-gradient flex items-center justify-center text-white shadow-glow-primary cursor-pointer"
+              >
+                <User size={22} />
+              </motion.div>
+              <button onClick={logout} className="w-10 h-10 flex items-center justify-center rounded-xl text-red-400 hover:text-red-500 hover:bg-red-500/10 transition-all">
+                <LogOut size={20} />
               </button>
             </div>
           )}
@@ -208,58 +241,70 @@ export default function Layout() {
 
         {/* Header */}
         <header
-          className={`h-16 flex items-center justify-between px-4 md:px-6 border-b flex-shrink-0 z-50 transition-all duration-200 ${scrolled ? 'backdrop-blur-xl shadow-card' : ''}`}
-          style={{ borderColor: 'rgb(var(--color-border))', background: scrolled ? 'rgb(var(--color-surface-elevated) / 0.85)' : 'rgb(var(--color-surface-elevated))' }}
+          className={`h-20 flex items-center justify-between px-6 md:px-8 flex-shrink-0 z-50 transition-all duration-300 ${scrolled ? 'backdrop-blur-xl border-b' : ''}`}
+          style={{ borderColor: 'rgb(var(--color-border))', background: scrolled ? 'rgb(var(--color-surface-elevated) / 0.8)' : 'transparent' }}
         >
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-6">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="lg:hidden btn-ghost p-2 rounded-xl"
+              className="lg:hidden w-10 h-10 flex items-center justify-center bg-white dark:bg-slate-800 rounded-2xl border shadow-sm"
+              style={{ borderColor: 'rgb(var(--color-border))' }}
             >
-              <Menu size={18} />
+              <Menu size={20} />
             </button>
+
+            {/* Collapse toggle for desktop */}
+            <button
+              onClick={() => setIsCollapsed(!isCollapsed)}
+              className="hidden lg:flex w-9 h-9 items-center justify-center rounded-xl border border-black/5 hover:bg-black/5 dark:border-white/5 dark:hover:bg-white/5 transition-all shadow-sm"
+              style={{ background: 'rgb(var(--color-surface-elevated))' }}
+            >
+              <motion.div animate={{ rotate: isCollapsed ? 180 : 0 }}>
+                <ChevronLeft size={16} />
+              </motion.div>
+            </button>
+
             {/* Breadcrumb */}
-            <div className="flex items-center gap-2 text-[12px]">
-              <span style={{ color: 'rgb(var(--color-text-muted))' }}>DSystem</span>
+            <div className="flex items-center gap-3 text-[13px]">
+              <div className="w-1.5 h-1.5 rounded-full bg-primary-500 shadow-glow-primary" />
+              <span className="font-medium opacity-50" style={{ color: 'rgb(var(--color-text))' }}>DSystem</span>
               {currentLabel && (
                 <>
-                  <ChevronRight size={12} style={{ color: 'rgb(var(--color-text-muted))' }} />
-                  <span className="font-semibold" style={{ color: 'rgb(var(--color-text))' }}>{currentLabel}</span>
+                  <ChevronRight size={14} className="opacity-30" />
+                  <span className="font-bold tracking-tight text-[15px]" style={{ color: 'rgb(var(--color-text))' }}>{currentLabel}</span>
                 </>
               )}
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            {/* AI quick trigger with badge */}
+          <div className="flex items-center gap-3">
+            {/* Theme Toggle */}
+            <button 
+              onClick={toggleTheme} 
+              className="w-10 h-10 flex items-center justify-center rounded-2xl border border-black/5 hover:bg-black/5 dark:border-white/5 dark:hover:bg-white/5 transition-all"
+              title="Cambiar tema"
+            >
+              {theme === 'dark' ? <Sun size={18} className="text-yellow-400" /> : <Moon size={18} className="text-slate-600" />}
+            </button>
+
+            {/* AI quick trigger */}
             <button
               onClick={() => window.dispatchEvent(new CustomEvent('toggle-ai-chat'))}
-              className="relative btn-ghost p-2 rounded-xl"
+              className="relative w-10 h-10 flex items-center justify-center bg-ai-gradient rounded-2xl text-white shadow-glow-primary hover:scale-105 transition-all ai-shimmer"
               title="DocenTico IA"
             >
-              <Zap size={18} className="text-primary-500" />
+              <Zap size={18} fill="currentColor" />
               {unreadCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 rounded-full text-[9px] font-bold text-white flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 border-2 border-white dark:border-slate-900 rounded-full text-[10px] font-bold text-white flex items-center justify-center">
                   {unreadCount}
                 </span>
               )}
             </button>
 
-            <button onClick={toggleTheme} className="btn-ghost p-2 rounded-xl" title="Cambiar tema">
-              {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+            {/* Notification trigger (placeholder or actual if implemented) */}
+            <button className="w-10 h-10 flex items-center justify-center rounded-2xl border border-black/5 hover:bg-black/5 dark:border-white/5 dark:hover:bg-white/5 transition-all">
+              <Bell size={18} style={{ color: 'rgb(var(--color-text))' }} />
             </button>
-
-            <div className="hidden md:flex items-center gap-2 ml-1 pl-3 border-l"
-                 style={{ borderColor: 'rgb(var(--color-border))' }}>
-              <div className="w-7 h-7 rounded-lg bg-primary-600 flex items-center justify-center text-white">
-                <User size={14} />
-              </div>
-              <div>
-                <p className="text-[12px] font-semibold" style={{ color: 'rgb(var(--color-text))' }}>
-                  {user?.username || 'Prof. Mendoza'}
-                </p>
-              </div>
-            </div>
           </div>
         </header>
 
