@@ -40,22 +40,25 @@ const EXAMPLE_PROMPTS = [
   { label: 'Informe de Gestión', prompt: 'Generá un informe del progreso de mis cursos.' }
 ]
 
-function TypingIndicator() {
+function TypingIndicator({ message = "DocenTico está analizando..." }) {
   return (
     <div className="flex items-end gap-3 px-2">
-      <div className="w-8 h-8 rounded-full bg-primary-500/10 border border-primary-500/20 flex items-center justify-center flex-shrink-0">
-        <Bot size={16} className="text-primary-500" />
+      <div className="w-8 h-8 rounded-lg bg-primary-600 flex items-center justify-center flex-shrink-0 shadow-lg shadow-primary-950/20">
+        <Bot size={14} className="text-white" />
       </div>
-      <div className="bg-surface-subtle dark:bg-white/5 px-6 py-4 rounded-[1.5rem] rounded-bl-sm">
-        <div className="flex gap-2 items-center h-4">
-          {[0, 0.15, 0.3].map((delay, i) => (
-            <motion.div
-              key={i}
-              className="w-2 h-2 rounded-full bg-primary-400"
-              animate={{ y: [0, -6, 0] }}
-              transition={{ duration: 0.6, delay, repeat: Infinity }}
-            />
-          ))}
+      <div className="bg-surface-subtle dark:bg-white/5 px-5 py-3 rounded-2xl rounded-bl-none border border-black/5 dark:border-white/10">
+        <div className="flex flex-col gap-2">
+           <span className="text-[10px] font-black uppercase tracking-widest text-primary-500 animate-pulse">{message}</span>
+           <div className="flex gap-1.5 items-center h-2">
+             {[0, 0.15, 0.3].map((delay, i) => (
+               <motion.div
+                 key={i}
+                 className="w-1.5 h-1.5 rounded-full bg-primary-400"
+                 animate={{ opacity: [0.3, 1, 0.3] }}
+                 transition={{ duration: 0.8, delay, repeat: Infinity }}
+               />
+             ))}
+           </div>
         </div>
       </div>
     </div>
@@ -212,7 +215,13 @@ export default function AIChat() {
                            </div>
                         </motion.div>
                      ))}
-                     {isStreaming && messages[messages.length - 1]?.content === '' && <TypingIndicator />}
+                     {isStreaming && messages[messages.length - 1]?.content === '' && (
+                        <TypingIndicator message={
+                           input.toLowerCase().includes('asistencia') ? 'Analizando registros de asistencia...' :
+                           input.toLowerCase().includes('riesgo') ? 'Escaneando rendimiento académico...' :
+                           'Consultando a la Mente Artificial...'
+                        } />
+                     )}
                      <div ref={chatEndRef} />
                   </>
                )}

@@ -27,7 +27,7 @@ export default function AIAssistantSection({ title, insight, metrics = [], actio
         </div>
 
         {/* Insight content */}
-        <div className="bg-surface-subtle dark:bg-white/5 border border-black/5 dark:border-white/10 p-4 rounded-xl">
+        <div className="bg-surface-subtle dark:bg-slate-950/50 border border-black/5 dark:border-white/10 p-4 rounded-xl">
           <p className="text-[11px] font-medium leading-relaxed italic text-slate-600 dark:text-slate-400">
             &quot;{insight}&quot;
           </p>
