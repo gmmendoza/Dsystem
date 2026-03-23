@@ -101,13 +101,13 @@ export default function AIChat() {
     setMessages(prev => [...prev, { id: aiId, role: 'assistant', content: '', streaming: true }])
 
     let accumulated = ''
-    await callAI(content, messages, (chunk, full) => {
+    const response = await callAI(content, messages, (chunk, full) => {
       accumulated = full
       setMessages(prev => prev.map(m => m.id === aiId ? { ...m, content: full } : m))
     })
 
     setMessages(prev => prev.map(m =>
-      m.id === aiId ? { ...m, content: accumulated || m.content, streaming: false, canCopy: true } : m
+      m.id === aiId ? { ...m, content: response || accumulated || m.content, streaming: false, canCopy: true } : m
     ))
     setIsStreaming(false)
   }, [input, messages, isStreaming, callAI])
@@ -199,7 +199,7 @@ export default function AIChat() {
                           key={msg.id}
                           initial={{ opacity: 0, x: msg.role === 'user' ? 15 : -15 }}
                           animate={{ opacity: 1, x: 0 }}
-                          className={`flex items-start gap-4 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}
+                          className={`flex ${msg.role === 'user' ? 'flex-row-reverse' : 'items-start'} gap-4`}
                         >
                            <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 shadow-md ${
                              msg.role === 'user' ? 'bg-primary-600 text-white' : 'bg-surface-subtle dark:bg-white/10 text-primary-500'

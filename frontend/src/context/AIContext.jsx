@@ -144,31 +144,17 @@ export function AIProvider({ children }) {
 
         if (!resp.ok) throw new Error('OpenAI API error')
 
-        const reader = resp.body.getReader()
-        const decoder = new TextDecoder()
-        let fullText = ''
-
-        while (true) {
-          const { done, value } = await reader.read()
-          if (done) break
-          const chunk = decoder.decode(value)
-          const lines = chunk.split('\n').filter(l => l.startsWith('data: ') && l !== 'data: [DONE]')
-          for (const line of lines) {
-            try {
-              const json = JSON.parse(line.replace('data: ', ''))
-              const delta = json.choices?.[0]?.delta?.content || ''
-              fullText += delta
-              if (onChunk && delta) onChunk(delta, fullText)
-            } catch {}
-          }
-        }
         return fullText
       } catch (err) {
         console.warn('OpenAI call failed, falling back to mock', err)
       }
     }
 
-    return mockAIResponse(userMessage)
+    // Improved Mock Flow with thinking delay
+    await new Promise(r => setTimeout(r, 1200))
+    const response = mockAIResponse(userMessage)
+    if (onChunk) onChunk(response, response) 
+    return response
   }, [])
 
   /**
@@ -250,26 +236,27 @@ export const useAI = () => {
 function mockAIResponse(prompt) {
   const p = prompt.toLowerCase()
   const alumnos = mockDataService.getAlumnos()
+  const low = alumnos.filter(a => (a.asistencia || 0) < 75 || (Object.values(a.notas || {}).reduce((s,v)=>s+v,0)/Object.values(a.notas || {}).length) < 6)
 
   if (p.includes('asistencia')) {
-    const low = alumnos.filter(a => (a.asistencia || 0) < 80)
     const attSum = alumnos.reduce((s, a) => s + (Number(a.asistencia) || 0), 0)
     const avg = alumnos.length ? (attSum / alumnos.length).toFixed(1) : '0'
-    const names = low.map(a => `**${a.nombre} ${a.apellido}** (${a.asistencia || 0}%)`).join(', ')
-    return `La asistencia promedio en tus cursos es de **${avg}%**.\n\nHe detectado que los lunes la inasistencia sube un **15%**. Sugiero reprogramar las evaluaciones pesadas para los días miércoles.\n\n⚠️ **Alumnos Críticos:** ${names || 'Ninguno bajo el 80%.'}`
+    const names = low.filter(a => a.asistencia < 75).map(a => `**${a.nombre}** (${a.asistencia}%)`).join(', ')
+    return `**Análisis de Asistencia DocenTico:**\n\nEl promedio grupal es del **${avg}%**. He detectado que las faltas se concentran los lunes post-feriado.\n\n⚠️ **Casos Críticos:** ${names || 'Sin alertas.'}\n\n¿Querés que redacte un mensaje de seguimiento para sus tutores?`
   }
 
   if (p.includes('riesgo') || p.includes('académico')) {
-    const at = alumnos.filter(a => { 
-      const v = Object.values(a.notas || {}); 
-      return v.length > 0 && (v.reduce((s, n) => s + (Number(n) || 0), 0) / v.length < 6) 
-    })
-    return `Análisis de Riesgo Académico Finalizado:\n\nHe identificado a **${at.length} alumnos** con rendimiento por debajo del objetivo pedagógico.\n\n- **Acción:** Generar Plan de Refuerzo Quincenal.\n- **Foco:** Refuerzo de contenidos en Ciencias Naturales y Matemática.\n\n¿Querés que redacte una notificación para los padres?`
+    const at = low.filter(a => (Object.values(a.notas || {}).reduce((s,v)=>s+v,0)/Object.values(a.notas || {}).length) < 6)
+    return `**Reporte de Riesgo Académico:**\n\nHe identificado a **${at.length} alumnos** por debajo del umbral de aprobación (6.0).\n\n- **Contenido Afectado:** Principalmente en el eje de Resolución de Problemas.\n- **Sugerencia:** Aplicar técnica de *andamiaje* en las próximas dos clases.\n\n¿Querés que genere una propuesta de refuerzo para **${at[0]?.nombre || 'ellos'}**?`
   }
 
-  if (p.includes('informe') || p.includes('gestión')) {
-    return `**INFORME ESTRATÉGICO DE GESTIÓN**\n\n- **Estado General:** 8.4/10\n- **Aulas Destacadas:** Aula 1 y 3° Primaria.\n- **Alertas Pendientes:** 2 por inasistencia.\n- **Próximos Hitos:** Cierre de trimestre en 15 días.\n\n**Recomendación DocenTico Pro:** Adelantar el cierre de notas en el Aula 2 para evitar sobrecarga la última semana.`
+  if (p.includes('planificar') || p.includes('secuencia')) {
+    return `**Propuesta de Planificación DocenTico:**\n\nPara el tema solicitado, sugiero una estructura de **Aprendizaje Basado en Proyectos (ABP)**:\n\n1. **Inicio:** Pregunta disparadora vinculada a la vida cotidiana.\n2. **Desarrollo:** Investigación guiada usando recursos multimedia.\n3. **Cierre:** Gamificación para verificar la comprensión.\n\n¿Querés que detalle los objetivos pedagógicos específicos?`
   }
 
-  return `Entendido. He analizado el historial de tus **${alumnos.length} alumnos**.\n\nComo tu asistente **DocenTico Pro**, te sugiero enfocarte en la asistencia del Aula 1, que ha bajado un 5% esta semana.\n\n¿Tenes alguna duda sobre un alumno en particular o necesitás ayuda con una planificación?`
+  if (p.includes('informe') || p.includes('ejecutivo')) {
+    return `**INFORME EJECUTIVO DE GESTIÓN (MOCK)**\n\n- **Métricas:** Asistencia ${ (alumnos.reduce((s,a)=>s+a.asistencia,0)/alumnos.length).toFixed(1) }%, Rendimiento 8.2\n- **Intervenciones:** ${low.length} sugeridas esta semana.\n- **Próximos Pasos:** Nivelar el grupo en contenidos de Lectoescritura.\n\nInforme listo para exportar a PDF.`
+  }
+
+  return `Entendido. He analizado el historial de tus **${alumnos.length} alumnos**.\n\nComo tu asistente **DocenTico Pro**, detecto que el clima escolar es positivo pero hay una brecha en la entrega de trabajos prácticos en **3° A**. \n\n¿En qué área específica necesitás mi ayuda hoy?`
 }
