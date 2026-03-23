@@ -71,25 +71,23 @@ export default function CommandPalette({ isOpen, onClose }) {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.97, y: -8 }}
             transition={{ duration: 0.18 }}
-            className="fixed top-[20%] left-1/2 -translate-x-1/2 z-[201] w-full max-w-md"
+            className="fixed top-[15%] left-1/2 -translate-x-1/2 z-[201] w-full max-w-xl px-4"
           >
-            <div className="card-glass shadow-float overflow-hidden">
+            <div className="bg-surface-elevated border border-black/5 dark:border-white/10 rounded-3xl shadow-float overflow-hidden">
               {/* Search input */}
-              <div className="flex items-center gap-3 px-4 py-3.5 border-b"
-                   style={{ borderColor: 'rgb(var(--color-border))' }}>
-                <Search size={16} style={{ color: 'rgb(var(--color-text-muted))' }} />
+              <div className="flex items-center gap-4 px-5 py-4 border-b border-black/5 dark:border-white/10">
+                <Search size={18} className="text-slate-400 dark:text-slate-500" />
                 <input
                   ref={inputRef}
                   type="text"
                   placeholder="Buscar páginas, acciones..."
-                  className="flex-1 bg-transparent outline-none text-sm font-medium placeholder:font-normal"
-                  style={{ color: 'rgb(var(--color-text))', caretColor: 'rgb(var(--color-primary))' }}
+                  className="flex-1 bg-transparent outline-none text-[15px] font-bold tracking-tight text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 caret-primary-500"
                   value={query}
                   onChange={e => { setQuery(e.target.value); setActiveIndex(0) }}
                 />
-                <button onClick={onClose} className="p-1 btn-ghost rounded-lg">
-                  <X size={14} />
-                </button>
+                <div className="flex items-center gap-2">
+                  <kbd className="hidden sm:inline-block px-1.5 py-0.5 text-[10px] font-mono bg-surface-subtle border border-black/5 dark:border-white/10 rounded-md text-slate-400 dark:text-slate-500">ESC</kbd>
+                </div>
               </div>
 
               {/* Results */}
@@ -128,13 +126,10 @@ export default function CommandPalette({ isOpen, onClose }) {
               </div>
 
               {/* Footer hint */}
-              <div className="px-4 py-2.5 border-t flex items-center gap-4"
-                   style={{ borderColor: 'rgb(var(--color-border))' }}>
+              <div className="px-5 py-3 border-t border-black/5 dark:border-white/10 flex items-center gap-6 bg-surface-subtle/50">
                 {[['↑↓', 'Navegar'], ['↵', 'Seleccionar'], ['Esc', 'Cerrar']].map(([key, hint]) => (
-                  <span key={key} className="flex items-center gap-1 text-[11px]"
-                        style={{ color: 'rgb(var(--color-text-muted))' }}>
-                    <kbd className="px-1.5 py-0.5 rounded bg-surface-muted text-[10px] font-mono border"
-                         style={{ borderColor: 'rgb(var(--color-border))' }}>{key}</kbd>
+                  <span key={key} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">
+                    <kbd className="px-1.5 py-0.5 rounded bg-surface-muted text-[9px] font-mono border border-black/5 dark:border-white/5 shadow-sm">{key}</kbd>
                     {hint}
                   </span>
                 ))}

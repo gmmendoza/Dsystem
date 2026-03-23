@@ -88,25 +88,26 @@ export default function Layout() {
         initial={false}
         animate={{ 
           width: isCollapsed ? 80 : 260,
-          margin: isCollapsed ? '12px 0 12px 12px' : '12px 0 12px 12px'
+          height: 'calc(100vh - 24px)',
+          margin: '12px 12px 12px 12px'
         }}
         transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
         className={`
           fixed lg:static inset-y-0 left-0 z-[70] flex flex-col flex-shrink-0
-          overflow-hidden rounded-3xl border border-black/5 dark:border-white/10 
+          overflow-hidden rounded-[32px] border border-black/5 dark:border-white/10 
           bg-surface-elevated shadow-premium
           ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
           transition-all lg:transition-none duration-300
         `}
       >
         {/* Logo Section */}
-        <div className="flex items-center justify-between px-5 py-6 flex-shrink-0">
+        <div className="flex items-center justify-between px-5 py-5 flex-shrink-0">
           <div className="flex items-center gap-3 overflow-hidden">
             <motion.div 
               whileHover={{ scale: 1.05, rotate: 5 }}
-              className="w-10 h-10 bg-ai-gradient rounded-2xl flex items-center justify-center flex-shrink-0 shadow-glow-primary ai-shimmer"
+              className="w-9 h-9 bg-ai-gradient rounded-xl flex items-center justify-center flex-shrink-0 shadow-glow-primary ai-shimmer"
             >
-              <GraduationCap className="w-5 h-5 text-white" />
+              <GraduationCap className="w-4 h-4 text-white" />
             </motion.div>
             {!isCollapsed && (
               <motion.div 
@@ -114,10 +115,10 @@ export default function Layout() {
                 animate={{ opacity: 1, x: 0 }} 
                 className="overflow-hidden"
               >
-                <p className="text-[16px] font-extrabold tracking-tight leading-none" style={{ color: 'rgb(var(--color-text))' }}>
+                <p className="text-[14px] font-black tracking-tight leading-none text-slate-900 dark:text-white">
                   DSystem
                 </p>
-                <p className="text-[9px] font-bold mt-1 uppercase tracking-widest text-primary-500 opacity-80">
+                <p className="text-[8px] font-bold mt-1 uppercase tracking-[0.2em] text-primary-500 opacity-80">
                   Education OS
                 </p>
               </motion.div>
