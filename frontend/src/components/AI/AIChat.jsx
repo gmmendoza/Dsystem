@@ -114,31 +114,31 @@ export default function AIChat() {
   }
 
   return (
-    <div className="fixed bottom-8 right-8 z-[200] flex flex-col items-end gap-3 font-sans">
+    <div className="fixed bottom-6 right-6 z-[200] flex flex-col items-end gap-3 font-sans">
       <AnimatePresence>
         {isOpen && (
           <motion.div
             initial={{ opacity: 0, scale: 0.9, y: 40 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 40 }}
-            className="w-[380px] bg-white dark:bg-slate-950 rounded-[2rem] shadow-2xl overflow-hidden border border-black/5 dark:border-white/10 flex flex-col h-[600px]"
+            className="w-[380px] bg-white dark:bg-slate-950 rounded-[1.5rem] shadow-2xl overflow-hidden border border-black/5 dark:border-white/10 flex flex-col h-[500px]"
           >
             {/* Header Premium */}
-            <div className="px-6 py-5 bg-surface-subtle/50 border-b border-black/5 dark:border-white/5 flex items-center justify-between shrink-0">
-               <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 bg-primary-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-primary-950/20 rotate-3">
-                     <Bot size={20} />
+            <div className="px-5 py-4 bg-surface-subtle/50 border-b border-black/5 dark:border-white/5 flex items-center justify-between shrink-0">
+               <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 bg-primary-600 rounded-lg flex items-center justify-center text-white shadow-lg shadow-primary-950/20 rotate-3">
+                     <Bot size={18} />
                   </div>
                   <div>
-                     <h3 className="text-lg font-black uppercase italic tracking-tighter leading-none">DocenTico <span className="text-primary-500">Pro</span></h3>
-                     <div className="flex items-center gap-2 mt-1">
-                        <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                        <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">Mente Artificial Educativa</span>
+                     <h3 className="text-base font-black uppercase italic tracking-tighter leading-none">DocenTico <span className="text-primary-500">Pro</span></h3>
+                     <div className="flex items-center gap-2 mt-0.5">
+                        <div className="w-1 h-1 bg-emerald-500 rounded-full animate-pulse" />
+                        <span className="text-[8px] font-black uppercase tracking-widest text-slate-500">Mente Artificial Educativa</span>
                      </div>
                   </div>
                </div>
                <button onClick={() => setIsOpen(false)} className="p-2 text-slate-400 hover:text-primary-500 transition-all">
-                  <X size={20} />
+                  <X size={18} />
                </button>
             </div>
 
