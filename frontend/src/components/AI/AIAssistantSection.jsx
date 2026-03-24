@@ -19,7 +19,7 @@ export default function AIAssistantSection({ title, insight, metrics = [], actio
               <Bot size={15} />
             </div>
             <div>
-              <h3 className="text-[9px] font-black uppercase tracking-[0.2em] text-primary-500 leading-none mb-1">DocenTico Insight</h3>
+              <h3 className="text-[9px] font-black uppercase tracking-[0.2em] text-primary-500 leading-none mb-1">DocenTico AI</h3>
               <p className="text-[13px] font-black uppercase italic tracking-tighter text-slate-900 dark:text-white leading-none">{title}</p>
             </div>
           </div>

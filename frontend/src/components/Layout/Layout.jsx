@@ -119,7 +119,7 @@ export default function Layout() {
                   DSystem
                 </p>
                 <p className="text-[8px] font-bold mt-1 uppercase tracking-[0.2em] text-primary-500 opacity-80">
-                  Education OS
+                  Sistema Educativo
                 </p>
               </motion.div>
             )}
@@ -134,7 +134,7 @@ export default function Layout() {
               className="w-full flex items-center gap-3 px-4 py-2.5 rounded-2xl border border-black/5 dark:border-white/10 bg-surface-subtle text-left transition-all hover:border-primary-500/30 hover:bg-primary-500/5 group shadow-sm"
             >
               <Search size={14} className="text-slate-400 dark:text-slate-500 transition-colors group-hover:text-primary-500" />
-              <span className="text-[13px] flex-1 font-medium text-slate-500 dark:text-slate-400">Quick search...</span>
+              <span className="text-[13px] flex-1 font-medium text-slate-500 dark:text-slate-400">Búsqueda rápida...</span>
               <kbd className="text-[10px] px-2 py-1 rounded-lg font-mono border border-black/10 dark:border-white/10 bg-surface-muted text-slate-400 dark:text-slate-500 shadow-sm group-hover:border-primary-500/20 group-hover:bg-primary-500/10 transition-all">
                 ⌘K
               </kbd>

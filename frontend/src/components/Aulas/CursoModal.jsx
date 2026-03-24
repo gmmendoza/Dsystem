@@ -59,7 +59,7 @@ export default function CursoModal({ isOpen, onClose, onSave, curso = null }) {
                 </div>
                 <div>
                   <h3 className="text-xl font-black italic uppercase tracking-tighter text-gray-900 dark:text-white">
-                    {curso ? 'Editar Workspace' : 'Nuevo Workspace'}
+                    {curso ? 'Editar Aula' : 'Nueva Aula'}
                   </h3>
                   <p className="text-[10px] font-bold text-gray-800 dark:text-gray-500 uppercase tracking-widest">
                     Configuración del Aula Virtual
@@ -147,7 +147,7 @@ export default function CursoModal({ isOpen, onClose, onSave, curso = null }) {
                   type="submit"
                   className="flex-[2] btn-primary flex items-center justify-center gap-3"
                 >
-                  <Sparkles size={18} /> {curso ? 'Guardar Cambios' : 'Crear Workspace'}
+                  <Sparkles size={18} /> {curso ? 'Guardar Cambios' : 'Crear Aula'}
                 </button>
               </div>
             </form>

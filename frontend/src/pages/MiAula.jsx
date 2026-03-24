@@ -57,10 +57,10 @@ export default function MiAula() {
     try {
       if (editingCurso) {
         await cursoAPI.update(editingCurso.id, data)
-        setToast({ message: 'Workspace actualizado con éxito', type: 'success' })
+        setToast({ message: 'Aula actualizada con éxito', type: 'success' })
       } else {
         await cursoAPI.create(data)
-        setToast({ message: 'Nuevo Workspace creado con éxito', type: 'success' })
+        setToast({ message: 'Nueva Aula creada con éxito', type: 'success' })
       }
       setIsModalOpen(false)
       setEditingCurso(null)
@@ -129,7 +129,7 @@ export default function MiAula() {
           <div className="flex items-center gap-3">
              <div className="w-1.5 h-1.5 rounded-full bg-primary-500 animate-pulse" />
              <h2 className="text-4xl font-black uppercase italic tracking-tighter">
-               Mis <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-indigo-500">Workspaces</span>
+               Mis <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-indigo-500">Aulas</span>
              </h2>
           </div>
           
@@ -149,7 +149,7 @@ export default function MiAula() {
           onClick={() => { setEditingCurso(null); setIsModalOpen(true); }}
           className="btn-primary flex items-center gap-3 self-start md:self-end"
         >
-          <Plus size={18} /> Nuevo Workspace
+          <Plus size={18} /> Nueva Aula
         </button>
       </div>
 
@@ -221,7 +221,7 @@ export default function MiAula() {
                         <span className="text-[8px] font-black text-gray-900 dark:text-gray-500 uppercase mb-1 opacity-60">Estado</span>
                         <div className="flex items-center gap-1.5 font-black uppercase tracking-widest text-[10px] text-green-500">
                           <Zap size={14} />
-                          <span>Live</span>
+                          <span>Activo</span>
                         </div>
                       </div>
                     </div>
@@ -248,7 +248,7 @@ export default function MiAula() {
                  <Plus size={40} />
                </div>
                <div className="space-y-2">
-                 <p className="text-xs font-black uppercase tracking-[0.2em] text-gray-800 dark:text-gray-400">Nuevo Espacio de Trabajo</p>
+                 <p className="text-xs font-black uppercase tracking-[0.2em] text-gray-800 dark:text-gray-400">Nuevo Aula</p>
                  <p className="text-[10px] font-bold text-gray-900 dark:text-gray-500 uppercase tracking-widest">Digitaliza un nuevo aula <br/> con ayuda de DocenTico</p>
                </div>
             </motion.div>

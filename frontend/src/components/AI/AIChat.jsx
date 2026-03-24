@@ -14,32 +14,40 @@ const CAPABILITIES = [
     title: 'Análisis de Riesgo', 
     desc: 'Detecto alumnos con inasistencias o bajas notas.',
     icon: ShieldAlert,
-    color: 'text-red-500',
-    bg: 'bg-red-500/10',
+    color: 'text-rose-500',
+    bg: 'bg-rose-500/10',
     prompt: 'Hacé un análisis de riesgo académico de mis alumnos ahora.'
   },
   { 
     title: 'Planificación Smart', 
-    desc: 'Genero secuencias didácticas en segundos.',
+    desc: 'Secuencias didácticas alineadas al diseño curricular.',
     icon: BookOpen,
     color: 'text-primary-500',
     bg: 'bg-primary-500/10',
     prompt: 'Ayudame a planificar una secuencia didáctica innovadora.'
   },
   { 
-    title: 'Informes Ejecutivos', 
-    desc: 'Resumo el estado de tus aulas para dirección.',
-    icon: BarChart2,
-    color: 'text-indigo-500',
-    bg: 'bg-indigo-500/10',
-    prompt: 'Generá un informe ejecutivo del estado de mis aulas para la dirección.'
+    title: 'Diseño de Rúbricas', 
+    desc: 'Creo criterios de evaluación claros y objetivos.',
+    icon: ClipboardList,
+    color: 'text-amber-500',
+    bg: 'bg-amber-500/10',
+    prompt: 'Ayudame a diseñar una rúbrica para evaluar un proyecto de ciencias.'
+  },
+  { 
+    title: 'Adaptación DUA', 
+    desc: 'Adapto contenidos para la diversidad del aula.',
+    icon: Sparkles,
+    color: 'text-emerald-500',
+    bg: 'bg-emerald-500/10',
+    prompt: '¿Cómo puedo adaptar esta clase para un alumno con dislexia?'
   }
 ]
 
 const EXAMPLE_PROMPTS = [
   { label: 'Analizar Riesgo Académico', prompt: '¿Qué alumnos están en riesgo académico y por qué?' },
-  { label: 'Resumen de Asistencia', prompt: 'Dame un resumen de la asistencia de esta semana.' },
-  { label: 'Sugerir Actividad', prompt: 'Sugerí una actividad interactiva para el Aula 2.' },
+  { label: 'Sugerir Dinámica de Grupo', prompt: 'Sugerí una dinámica rompehielo para un grupo difícil.' },
+  { label: 'Objetivos de Aprendizaje', prompt: 'Redactá 3 objetivos de aprendizaje para una clase de historia.' },
   { label: 'Informe de Gestión', prompt: 'Generá un informe del progreso de mis cursos.' }
 ]
 
@@ -153,10 +161,10 @@ export default function AIChat() {
                      <Bot size={18} />
                   </div>
                   <div>
-                     <h3 className="text-base font-black uppercase italic tracking-tighter leading-none">DocenTico <span className="text-primary-500">Pro</span></h3>
+                     <h3 className="text-base font-black uppercase italic tracking-tighter leading-none">DocenTico <span className="text-primary-500">Inteligente</span></h3>
                      <div className="flex items-center gap-2 mt-0.5">
                         <div className="w-1 h-1 bg-emerald-500 rounded-full animate-pulse" />
-                        <span className="text-[8px] font-black uppercase tracking-widest text-slate-500">Mente Artificial Educativa</span>
+                        <span className="text-[8px] font-black uppercase tracking-widest text-slate-500">Co-Piloto Pedagógico Pro</span>
                      </div>
                   </div>
                </div>

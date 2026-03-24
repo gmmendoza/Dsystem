@@ -145,7 +145,7 @@ export default function AulaWorkspace() {
            </button>
            <div className="space-y-0.5">
              <div className="flex items-center gap-2">
-                <span className="text-[9px] font-black uppercase tracking-widest text-primary-500">Aula Workspace</span>
+                <span className="text-[9px] font-black uppercase tracking-widest text-primary-500">Gestión de Aula</span>
                 <span className="text-gray-300">/</span>
                 <span className="text-[9px] font-black uppercase tracking-widest text-gray-500">{curso.nivel}</span>
              </div>
