@@ -270,6 +270,18 @@ export function AIProvider({ children }) {
     }
   }, [])
 
+  const downloadReport = useCallback((content, filename = 'Informe_DocenTico.txt') => {
+    const blob = new Blob([content], { type: 'text/plain' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = filename
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+  }, [])
+
   return (
     <AIContext.Provider value={{ 
       suggestions, 
@@ -281,7 +293,8 @@ export function AIProvider({ children }) {
       suggestSolution,
       getWeeklyStrategy,
       getStudentRoadmap,
-      refineContent
+      refineContent,
+      downloadReport
     }}>
       {children}
     </AIContext.Provider>

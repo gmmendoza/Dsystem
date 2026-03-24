@@ -81,10 +81,17 @@ export default function AIChat() {
   const navigate = useNavigate()
   const [isOpen, setIsOpen] = useState(false)
   const [tab, setTab] = useState('chat') // 'chat' | 'suggestions'
-  const [messages, setMessages] = useState([])
+  const [messages, setMessages] = useState(() => {
+    const saved = localStorage.getItem('docentico_messages')
+    return saved ? JSON.parse(saved) : []
+  })
   const [input, setInput] = useState('')
   const [isStreaming, setIsStreaming] = useState(false)
   const chatEndRef = useRef(null)
+
+  useEffect(() => {
+    localStorage.setItem('docentico_messages', JSON.stringify(messages))
+  }, [messages])
 
   useEffect(() => {
     const handler = () => { setIsOpen(o => !o) }
@@ -99,6 +106,12 @@ export default function AIChat() {
   const handleSend = useCallback(async (text) => {
     const content = (text || input).trim()
     if (!content || isStreaming) return
+
+    if (content === 'DESCARGAR_REPORTE') {
+      const lastAIResponse = messages.findLast(m => m.role === 'assistant')?.content || ''
+      downloadReport(lastAIResponse, 'Informe_DocenTico_Gestion.txt')
+      return
+    }
 
     const userMsg = { id: Date.now(), role: 'user', content }
     setMessages(prev => [...prev, userMsg])
@@ -134,6 +147,9 @@ export default function AIChat() {
     if (content.includes('objetivos simplificados')) {
        return [{ label: 'Ver Objetivos', prompt: 'si, mostrame los objetivos' }]
     }
+    if (content.includes('informe listo para exportar a pdf') || content.includes('informe ejecutivo de gestión')) {
+      return [{ label: 'Descargar PDF (Reporte)', prompt: 'DESCARGAR_REPORTE' }]
+    }
     return []
   }
 
@@ -142,6 +158,13 @@ export default function AIChat() {
       .replace(/\*\*(.*?)\*\*/g, '<strong class="text-primary-500">$1</strong>')
       .replace(/ - (.*?)\n/g, '<li class="ml-4 list-disc mb-1">$1</li>')
       .replace(/\n/g, '<br/>')
+  }
+
+  const handleClear = () => {
+    if (window.confirm('¿Deseas vaciar el historial del chat?')) {
+      setMessages([])
+      localStorage.removeItem('docentico_messages')
+    }
   }
 
   return (
@@ -168,9 +191,14 @@ export default function AIChat() {
                      </div>
                   </div>
                </div>
-               <button onClick={() => setIsOpen(false)} className="p-2 text-slate-400 hover:text-primary-500 transition-all">
-                  <X size={18} />
-               </button>
+               <div className="flex items-center gap-1">
+                  <button onClick={handleClear} className="p-2 text-slate-400 hover:text-rose-500 transition-all title='Vaciar Chat'">
+                     <RotateCcw size={16} />
+                  </button>
+                  <button onClick={() => setIsOpen(false)} className="p-2 text-slate-400 hover:text-primary-500 transition-all">
+                     <X size={18} />
+                  </button>
+               </div>
             </div>
 
             {/* Chat Content */}
