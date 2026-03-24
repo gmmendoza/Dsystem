@@ -4,7 +4,7 @@ import {
   Bot, X, Send, User, Sparkles, MessageSquare, Zap,
   RotateCcw, ArrowRight, ThumbsUp, ThumbsDown, Copy,
   AlertTriangle, Info, CheckCircle2, ChevronDown, 
-  BrainCircuit, BookOpen, BarChart2, ShieldAlert
+  BrainCircuit, BookOpen, BarChart2, ShieldAlert, ClipboardList
 } from 'lucide-react'
 import { useAI } from '../../context/AIContext'
 import { useNavigate } from 'react-router-dom'
@@ -77,13 +77,18 @@ function TypingIndicator({ message = "DocenTico está analizando..." }) {
 }
 
 export default function AIChat() {
-  const { suggestions, unreadCount, callAI } = useAI()
+  const { suggestions, unreadCount, callAI, downloadReport } = useAI()
   const navigate = useNavigate()
   const [isOpen, setIsOpen] = useState(false)
   const [tab, setTab] = useState('chat') // 'chat' | 'suggestions'
   const [messages, setMessages] = useState(() => {
-    const saved = localStorage.getItem('docentico_messages')
-    return saved ? JSON.parse(saved) : []
+    try {
+      const saved = localStorage.getItem('docentico_messages')
+      return saved ? JSON.parse(saved) : []
+    } catch (e) {
+      console.error('Error parsing saved messages', e)
+      return []
+    }
   })
   const [input, setInput] = useState('')
   const [isStreaming, setIsStreaming] = useState(false)
@@ -108,7 +113,7 @@ export default function AIChat() {
     if (!content || isStreaming) return
 
     if (content === 'DESCARGAR_REPORTE') {
-      const lastAIResponse = messages.findLast(m => m.role === 'assistant')?.content || ''
+      const lastAIResponse = [...messages].reverse().find(m => m.role === 'assistant')?.content || ''
       downloadReport(lastAIResponse, 'Informe_DocenTico_Gestion.txt')
       return
     }
