@@ -354,6 +354,18 @@ function mockAIResponse(prompt, history = []) {
      return `¡De nada! Quedo a tu disposición para cualquier otra consulta sobre tus aulas o alumnos. ¡Que tengas una excelente jornada escolar! 🍎`
   }
 
+  if (p.includes('lengua') || p.includes('literatura')) {
+    return `**DocenTico Pedagógico:**\n\nVeo que estás trabajando el área de **Lengua**. Es un momento ideal para trabajar la *comprensión lectora* mediante textos discontinuos.\n\n¿Querés que te sugiera una actividad de análisis de noticias para tu curso?`
+  }
+
+  if (p.includes('matemática') || p.includes('geometría') || p.includes('álgebra')) {
+    return `**DocenTico Pedagógico:**\n\nEl área de **Matemática** puede ser un desafío. Sugiero utilizar el enfoque de *Resolución de Problemas Reales* para aumentar el interés.\n\n¿Querés que genere un problema matemático contextualizado en la vida diaria de los alumnos?`
+  }
+
+  if (p.includes('exámen') || p.includes('evaluación') || p.includes('prueba')) {
+    return `**Asistente DocenTico:**\n\nPara una **evaluación efectiva**, recomiendo usar una mezcla de preguntas de opción múltiple y desarrollo de pensamiento crítico.\n\n¿Te gustaría que diseñara una matriz de evaluación (rúbrica) para este examen?`
+  }
+
   // Fallback / Initial
-  return `Entendido. He analizado el historial de tus **${alumnos.length} alumnos**.\n\nComo tu asistente **DocenTico Pro**, detecto que el clima escolar es positivo pero hay una brecha en la entrega de trabajos prácticos en **3° A**. \n\n¿En qué área específica necesitás mi ayuda hoy?`
+  return `Entendido. He analizado tu consulta sobre "**${prompt}**".\n\nComo tu asistente **DocenTico Pro**, estoy listo para ayudarte a profundizar en este tema desde una perspectiva pedagógica innovadora.\n\n¿Querés que analice el impacto de este tema en el rendimiento de tus alumnos o prefieres que genere una actividad práctica?`
 }
