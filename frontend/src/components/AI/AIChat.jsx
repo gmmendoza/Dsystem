@@ -95,7 +95,9 @@ export default function AIChat() {
   const chatEndRef = useRef(null)
 
   useEffect(() => {
-    localStorage.setItem('docentico_messages', JSON.stringify(messages))
+    if (messages.length > 0) {
+      localStorage.setItem('docentico_messages', JSON.stringify(messages))
+    }
   }, [messages])
 
   useEffect(() => {

@@ -317,7 +317,9 @@ function mockAIResponse(prompt, history = []) {
   const lastAI = [...history].reverse().find(m => m.role === 'assistant')?.content?.toLowerCase() || ''
   
   // 1. Contextual Follow-up Detection
-  if (p === 'si' || p === 'claro' || p === 'dale' || p === 'bueno' || p === 'procedé') {
+  const isAffirmative = p.startsWith('si') || p.startsWith('claro') || p.startsWith('dale') || p.startsWith('bueno') || p.startsWith('procedé') || p.includes('mostrame')
+
+  if (isAffirmative) {
     if (lastAI.includes('asistencia')) {
       return `**¡Perfecto!** Redactando informe de seguimiento para los tutores de los alumnos rezagados. \n\n¿Querés que lo envíe automáticamente o preferís revisarlo primero?`
     }
@@ -326,6 +328,9 @@ function mockAIResponse(prompt, history = []) {
     }
     if (lastAI.includes('planificar') || lastAI.includes('secuencia')) {
       return `**Excelente elección.** Vamos a detallar la secuencia didáctica. \n\n¿Preferís que el enfoque sea principalmente **Práctico/Técnico** o más **Investigativo/ABP**?`
+    }
+    if (p.includes('objetivos')) {
+      return `**Objetivos Pedagógicos Propuestos:**\n\n- **Cognitivo:** Identificar las causas principales de la problemática abordada.\n- **Procedimental:** Desarrollar habilidades de análisis crítico mediante el debate.\n- **Actitudinal:** Fomentar el respeto por las opiniones diversas en el aula.\n\n¿Te gustaría que asocie estos objetivos a una **actividad de cierre** específica?`
     }
   }
 
