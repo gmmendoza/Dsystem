@@ -366,6 +366,38 @@ function mockAIResponse(prompt, history = []) {
     return `**Asistente DocenTico:**\n\nPara una **evaluación efectiva**, recomiendo usar una mezcla de preguntas de opción múltiple y desarrollo de pensamiento crítico.\n\n¿Te gustaría que diseñara una matriz de evaluación (rúbrica) para este examen?`
   }
 
+  if (p.includes('ciencias naturales') || p.includes('biología') || p.includes('física') || p.includes('química')) {
+    return `**DocenTico Científico:**\n\nLas **Ciencias Naturales** se aprenden mejor haciendo. ¿Has pensado en implementar un *laboratorio en el aula* con materiales reciclados?\n\n¿Querés que te ayude a diseñar un experimento sencillo sobre el ciclo del agua o la fotosíntesis?`
+  }
+
+  if (p.includes('ciencias sociales') || p.includes('historia') || p.includes('geografía') || p.includes('formación ética')) {
+    return `**DocenTico Social:**\n\nEn **Ciencias Sociales**, el pensamiento crítico es clave. Sugiero usar *fuentes primarias* o testimonios para que el pasado cobre vida.\n\n¿Te gustaría una propuesta de debate sobre los procesos migratorios o la revolución industrial?`
+  }
+
+  if (p.includes('arte') || p.includes('plástica') || p.includes('música')) {
+    return `**DocenTico Creativo:**\n\nEl **Arte** es el lenguaje de las emociones. Es una excelente oportunidad para la *interdisciplinariedad* (ej: pintar lo que escuchan en música).\n\n¿Querés una idea para un proyecto artístico que integre contenidos de historia?`
+  }
+
+  if (p.includes('educación física') || p.includes('deporte') || p.includes('gimnasia')) {
+    return `**DocenTico Activo:**\n\nLa **Educación Física** es fundamental para el desarrollo neurocognitivo. Podés integrar conceptos de *matemática o lengua* en juegos de postas.\n\n¿Querés que te sugiera una dinámica de equipo que trabaje la cooperación y el liderazgo?`
+  }
+
+  if (p.includes('bullying') || p.includes('acoso') || p.includes('conflicto') || p.includes('pelea')) {
+    return `**DocenTico Mediador:**\n\nHe detectado que te preocupa el **clima escolar**. Es vital abordar el conflicto desde la *comunicación no violenta* y la empatía.\n\n¿Querés que te brinde un protocolo de mediación rápido para aplicar en el aula ahora mismo?`
+  }
+
+  if (p.includes('padre') || p.includes('madre') || p.includes('familia') || p.includes('tutor') || p.includes('reunión')) {
+    return `**DocenTico Institucional:**\n\nLa **alianza familia-escuela** es el pilar del éxito. Para una reunión efectiva, siempre empezá resaltando un *logro positivo* del alumno.\n\n¿Querés que redacte una convocatoria para una reunión de padres que sea motivadora y clara?`
+  }
+
+  if (p.includes('acto') || p.includes('festejo') || p.includes('efeméride') || p.includes('celebración')) {
+    return `**DocenTico Organizador:**\n\nLos **actos escolares** son momentos de comunidad. Sugiero salir de lo tradicional e invitar a los alumnos a *ser protagonistas* con dramatizaciones o podcasts.\n\n¿Querés una idea creativa para el próximo acto del 25 de mayo o el 9 de julio?`
+  }
+
+  if (p.includes('inclusión') || p.includes('diversidad') || p.includes('discapacidad') || p.includes('dua')) {
+    return `**DocenTico Inclusivo:**\n\nEl **Diseño Universal para el Aprendizaje (DUA)** no es para "algunos", es para *todos*. Ofrecer múltiples formas de expresión es el primer paso.\n\n¿Querés que analice cómo adaptar tu próxima clase para que sea 100% accesible y participativa?`
+  }
+
   // Fallback / Initial
   return `Entendido. He analizado tu consulta sobre "**${prompt}**".\n\nComo tu asistente **DocenTico Pro**, estoy listo para ayudarte a profundizar en este tema desde una perspectiva pedagógica innovadora.\n\n¿Querés que analice el impacto de este tema en el rendimiento de tus alumnos o prefieres que genere una actividad práctica?`
 }
