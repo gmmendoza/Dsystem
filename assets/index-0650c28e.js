@@ -545,7 +545,39 @@ El área de **Matemática** puede ser un desafío. Sugiero utilizar el enfoque d
 
 Para una **evaluación efectiva**, recomiendo usar una mezcla de preguntas de opción múltiple y desarrollo de pensamiento crítico.
 
-¿Te gustaría que diseñara una matriz de evaluación (rúbrica) para este examen?`:`Entendido. He analizado tu consulta sobre "**${t}**".
+¿Te gustaría que diseñara una matriz de evaluación (rúbrica) para este examen?`:n.includes("ciencias naturales")||n.includes("biología")||n.includes("física")||n.includes("química")?`**DocenTico Científico:**
+
+Las **Ciencias Naturales** se aprenden mejor haciendo. ¿Has pensado en implementar un *laboratorio en el aula* con materiales reciclados?
+
+¿Querés que te ayude a diseñar un experimento sencillo sobre el ciclo del agua o la fotosíntesis?`:n.includes("ciencias sociales")||n.includes("historia")||n.includes("geografía")||n.includes("formación ética")?`**DocenTico Social:**
+
+En **Ciencias Sociales**, el pensamiento crítico es clave. Sugiero usar *fuentes primarias* o testimonios para que el pasado cobre vida.
+
+¿Te gustaría una propuesta de debate sobre los procesos migratorios o la revolución industrial?`:n.includes("arte")||n.includes("plástica")||n.includes("música")?`**DocenTico Creativo:**
+
+El **Arte** es el lenguaje de las emociones. Es una excelente oportunidad para la *interdisciplinariedad* (ej: pintar lo que escuchan en música).
+
+¿Querés una idea para un proyecto artístico que integre contenidos de historia?`:n.includes("educación física")||n.includes("deporte")||n.includes("gimnasia")?`**DocenTico Activo:**
+
+La **Educación Física** es fundamental para el desarrollo neurocognitivo. Podés integrar conceptos de *matemática o lengua* en juegos de postas.
+
+¿Querés que te sugiera una dinámica de equipo que trabaje la cooperación y el liderazgo?`:n.includes("bullying")||n.includes("acoso")||n.includes("conflicto")||n.includes("pelea")?`**DocenTico Mediador:**
+
+He detectado que te preocupa el **clima escolar**. Es vital abordar el conflicto desde la *comunicación no violenta* y la empatía.
+
+¿Querés que te brinde un protocolo de mediación rápido para aplicar en el aula ahora mismo?`:n.includes("padre")||n.includes("madre")||n.includes("familia")||n.includes("tutor")||n.includes("reunión")?`**DocenTico Institucional:**
+
+La **alianza familia-escuela** es el pilar del éxito. Para una reunión efectiva, siempre empezá resaltando un *logro positivo* del alumno.
+
+¿Querés que redacte una convocatoria para una reunión de padres que sea motivadora y clara?`:n.includes("acto")||n.includes("festejo")||n.includes("efeméride")||n.includes("celebración")?`**DocenTico Organizador:**
+
+Los **actos escolares** son momentos de comunidad. Sugiero salir de lo tradicional e invitar a los alumnos a *ser protagonistas* con dramatizaciones o podcasts.
+
+¿Querés una idea creativa para el próximo acto del 25 de mayo o el 9 de julio?`:n.includes("inclusión")||n.includes("diversidad")||n.includes("discapacidad")||n.includes("dua")?`**DocenTico Inclusivo:**
+
+El **Diseño Universal para el Aprendizaje (DUA)** no es para "algunos", es para *todos*. Ofrecer múltiples formas de expresión es el primer paso.
+
+¿Querés que analice cómo adaptar tu próxima clase para que sea 100% accesible y participativa?`:`Entendido. He analizado tu consulta sobre "**${t}**".
 
 Como tu asistente **DocenTico Pro**, estoy listo para ayudarte a profundizar en este tema desde una perspectiva pedagógica innovadora.
 
